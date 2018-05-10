@@ -14,18 +14,19 @@ class Logging extends CI_controller {
 
 		$this->load->helper('form');
 		$this->load->library('form_validation');
+		$this->load->helper('url');
 
 		$this->form_validation->set_rules('date', 'Date', 'required');
-        $this->form_validation->set_rules('action', 'Action', 'required');
-        $this->form_validation->set_rules('user_id', 'User ID', 'required');
-
-        
+        $this->form_validation->set_rules('action', 'Action', 'required'); 
 
 		if ($this->form_validation->run() === FALSE) {	
 			$this->load->view('templates/header', $data);
 			$this->load->view('logging/logging-form', $data);
 		} else {
 			$this->logging_model->log_action();
+
+			$data['title'] = 'Success';
+			$this->load->view('templates/header');
 			$this->load->view('logging/success');
 		}
 

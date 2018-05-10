@@ -1,8 +1,19 @@
 <body>
-	<h1>Hello, <?php echo $name; ?>. Welcome to your Dashboard</h1>
+	<div class="hero is-info">
+		<div class="hero-body">
+			<h1 class="title">Hello, <?php echo $name; ?>. Welcome to your Dashboard</h1>
+		</div>
+	</div>
+	<div class="column is-half is-offset-one-quarter">
+		<div class="box has-text-centered">
+			<div class="field">
+				<?php echo anchor('logging', 'Logging Form', 'class="button is-link"'); ?>
+			</div>
+			<div class="field">
+				<?php echo anchor('logout', 'Logout', 'class="button is-link"'); ?>
+			</div>
+		</div>
+	</div>
 
-	<h2><?php echo anchor('logout', 'Logout'); ?></h2>
-	<h2><?php echo anchor('logging', 'Logging Form'); ?><h2>
-	
 </body>
 </html>

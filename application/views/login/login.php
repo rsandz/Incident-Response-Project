@@ -1,20 +1,40 @@
 <body>
 
-<?php echo form_open('login', 'class="pure-form pure-form-aligned"');?>
-	
-	<h1>Login to your Account</h1><br>
+	<div class="column is-half is-offset-one-quarter">
+		<div class="box">
+			<div class="box has-background-info ">
+					<h1 class="title has-text-white">Login to your Account</h1>
+					
+			</div>
 
-	<?php echo validation_errors() // Displays Errors ?>
+			<?php echo form_open('login');?>
+			<div class="field">
+				<label class="label">Email:</label>
+				<div class="control">
+					<input type="text" name="email" value="<?php echo set_value('email'); ?>"> <br>
+				</div>
+			</div>
 
-	<label>Email:</label>
-	<input type="text" name="email" value="<?php echo set_value('email'); ?>"> <br>
-	
-	<label>Password:</label>
-	<input type="Password" name="password"> <br>
-	
-	<input type="submit" name="submit_btn" class="pure-button" value="Login">
+			<div class="field">
+				<label class="label">Password:</label>
 
-	<?php if (isset($errors)) echo $errors;?>
-</form>
+				<input type="Password" name="password"> <br>
+			</div>
+
+			<div class="field">
+				<div class="control">
+					<input type="submit" name="submit_btn" class="pure-button" value="Login">
+
+				</div>
+			</div>
+
+			<!-- Displays Errors -->
+			<?php echo validation_errors('<span class="has-text-danger">', '</span><br>')?>
+			<span class="has-text-danger"><?php if (isset($errors)) echo $errors;?></span>
+
+		</div>
+	</div>
+		
+	</form>
 </body>
 </html>
