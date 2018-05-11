@@ -10,20 +10,27 @@
 			<?php echo form_open('login');?>
 			<div class="field">
 				<label class="label">Email:</label>
-				<div class="control">
-					<input type="text" name="email" value="<?php echo set_value('email'); ?>"> <br>
+				<div class="control has-icons-left">
+					<input class="input" type="text" name="email" value="<?php echo set_value('email'); ?>">
+					<span class="icon is-small is-left">
+				      <i class="fas fa-envelope"></i>
+				    </span>
 				</div>
 			</div>
 
 			<div class="field">
 				<label class="label">Password:</label>
-
-				<input type="Password" name="password"> <br>
+				<div class="control has-icons-left">
+					<input class="input" type="Password" name="password">
+					<span class="icon is-small is-left">
+						<i class="fas fa-key"></i>
+					</span>
+				</div>
 			</div>
 
 			<div class="field">
 				<div class="control">
-					<input type="submit" name="submit_btn" class="pure-button" value="Login">
+					<input class="button is-primary" type="submit" name="submit_btn" class="pure-button" value="Login">
 
 				</div>
 			</div>

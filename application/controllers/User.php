@@ -2,7 +2,7 @@
 class User extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
-		$this->load->model('login_model');
+		$this->load->model('user_model');
 		$this->load->library('session');
 		$this->load->helper('url');
 	}
@@ -19,14 +19,16 @@ class User extends CI_Controller {
 		if ($this->form_validation->run() === FALSE) {
 			$this->load->view('templates/header', $data);
 			$this->load->view('login/login');
+			$this->load->view('templates/footer');
 		} else {
-			$result = $this->login_model->login_user();
+			$result = $this->user_model->login_user();
 
 			if ($result !== 'Loged_in') {
 				$data['errors'] = $result;
 
 				$this->load->view('templates/header', $data);
 				$this->load->view('login/login', $data);
+				$this->load->view('templates/footer');
 			} else {
 				redirect('home');
 			}

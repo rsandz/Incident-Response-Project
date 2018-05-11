@@ -1,5 +1,5 @@
 <?php 
-class login_model extends CI_Model {
+class user_model extends CI_Model {
 	public function __construct() {
 		parent:: __construct();
 		$this->load->database(); //load database
