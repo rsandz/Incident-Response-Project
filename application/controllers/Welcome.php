@@ -16,6 +16,7 @@ class Welcome extends CI_Controller {
 		if ($logged_in) {
 
 			$data['name'] = $this->session->name;
+			$data['privileges'] = $this->session->privileges;
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('dashboard');

@@ -19,6 +19,7 @@ class user_model extends CI_Model {
 				'email' => $query_result['email'],
 				'name' 	=> $query_result['name'],
 				'user_id' => $query_result['user_id'],
+				'privileges' => $query_result['privileges'],
 				'logged_in' => TRUE);
 			$this->session->set_userdata($sess_data);
 

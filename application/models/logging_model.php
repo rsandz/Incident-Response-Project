@@ -36,7 +36,7 @@ class logging_model extends CI_model {
 			->select('action_name, project_name, log_desc, log_date, log_time')
 			->join('actions','actions.action_id = action_log.action_id')
 			->join('projects','projects.project_id = action_log.project_id')
-			->order_by( 'log_date', 'log_time', 'DESC')
+			->order_by( 'log_date', 'log_time', 'ASC')
 			->limit(10);
 		
 		$sess_data = array(

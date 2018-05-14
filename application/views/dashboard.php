@@ -10,6 +10,9 @@
 				<?php echo anchor('logging', 'Logging Form', 'class="button is-link"'); ?>
 			</div>
 			<div class="field">
+				<?php if ($privileges == 'admin') echo anchor('admin', 'Admin', 'class="button is-link"'); ?>
+			</div>
+			<div class="field">
 				<?php echo anchor('logout', 'Logout', 'class="button is-link"'); ?>
 			</div>
 		</div>
