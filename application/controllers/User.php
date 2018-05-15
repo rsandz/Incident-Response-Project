@@ -7,6 +7,9 @@ class User extends CI_Controller {
 		$this->load->helper('url');
 	}
 
+	/**
+	 * Controller for login page
+	 */
 	public function loginUI() {
 		$data['title'] = 'login';
 
@@ -34,6 +37,9 @@ class User extends CI_Controller {
 			}
 		}
 	}
+	/**
+	 * Logs user out.
+	 */
 	public function logout() {
 
 		$this->session->sess_destroy();

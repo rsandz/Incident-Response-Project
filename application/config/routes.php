@@ -53,6 +53,7 @@ $route['home'] = 'Welcome/index';
 $route['login'] = 'User/loginUI';
 $route['logout'] = 'User/logout';
 $route['admin'] = 'Admin/index';
+$route['admin/create'] = 'Admin/create';
 $route['logging'] = 'Logging/log';
 $route['logging/(:any)'] = 'Logging/log';
 $route['default_controller'] = 'Welcome/index';

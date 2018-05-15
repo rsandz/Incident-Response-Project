@@ -7,7 +7,11 @@ class Logging extends CI_controller {
 
 	}
 
-	public function log() {
+	/**
+	 * Controller for the log form
+	 */
+	public function log() 
+	{
 
 		$data['title'] = 'Logging Form';
 		$data['time_zone'] = 'America/Edmonton';
@@ -25,13 +29,16 @@ class Logging extends CI_controller {
 		$this->form_validation->set_rules('time', 'Time', 'required');
         $this->form_validation->set_rules('action', 'Action', 'required'); 
 
-		if ($this->form_validation->run() === FALSE) {	
+		if ($this->form_validation->run() === FALSE) 
+		{	
 			$this->load->view('templates/header', $data);
 			$this->load->view('logging/logging-form', $data);
-		} else {
+		}
+		else 
+		{
 			$data['title'] = 'Success';
 			$this->logging_model->log_action();
-			
+
 			$this->load->view('templates/header');
 			$this->load->view('logging/success');
 

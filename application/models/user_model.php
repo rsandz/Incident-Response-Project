@@ -4,7 +4,10 @@ class user_model extends CI_Model {
 		parent:: __construct();
 		$this->load->database(); //load database
 	}
-
+	/**
+	 * Database interaction for logging in the user. Also sets session data on logon.
+	 * @return string Returns 'Loged_in' if user logged in. Otherwise, the error string.
+	 */
 	public function login_user() {
 		//Load Session library
 		$this->load->library('session');

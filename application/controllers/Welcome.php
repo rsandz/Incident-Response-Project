@@ -1,8 +1,12 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+
 class Welcome extends CI_Controller {
 
+	/**
+	 * Controller for the landing page
+	 */
 	public function index()
 	{
 		$this->load->helper('url');

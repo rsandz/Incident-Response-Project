@@ -1,29 +1,110 @@
 <?php
+/**
+ * Class for administrative database changes
 
+ */
 class Admin extends CI_Controller {
-	public function __construct() {
+	public function __construct() 
+	{
 		parent::__construct();
 		$this->load->library('session');
 		$this->load->library('form_validation');
 		$this->load->helper('url');
 		$this->load->helper('form');
+		
+		$this->load->model('logging_model');
 	}
-	public function index() {
-		if ($this->session->privileges !== 'admin'){
-			$this->load->view('templates/header');
+	/**
+	 * Loads the main administration Dashboard
+	 */
+	public function index() 
+	{
+		if ($this->session->privileges !== 'admin')
+		{
+			$data['title'] = '401 Error - Not Authenticated';
+			$this->load->view('templates/header', $data);
 			$this->load->view('admin/not-admin');
 			$this->load->view('templates/footer');
-		} else {
-			$this->load->view('templates/header');
+		} 
+		else 
+		{
+			$data['title'] = 'Admin Dashboard';
+			$this->load->view('templates/header', $data);
 			$this->load->view('admin/admin-dashboard');
 			$this->load->view('templates/footer');
 
 		}
 	}
 
-	public function create() {
-		//Creates a new item in database.
+	/**
+	 *	Creates a new item in database.
+	 */
 
+	public function create() 
+	{
+		$this->load->library('form_validation');
+		$this->load->helper('form');
+		$this->load->helper('inflector');
+
+		if (!isset($this->session->type))
+		{
+			$sess_data = array(
+				'type' => $this->input->post('type')
+			);
+			$this->session->set_userdata($sess_data);
+		}
+			$type = $this->session->type;
+
+		$fields = $this->db->list_fields($type);
+		
+		$data['title'] = ucwords($type.' Creation');
+		$data['type'] = ucfirst($type);
+		$data['field_data'] = $this->logging_model->get_field_data($type);
+
+
+		foreach ($data['field_data'] as $field)
+		{
+			$this->form_validation->set_rules($field->name, humanize($field->name), 'required');
+		}
+
+
+		//Form validation
+		foreach ($data['field_data'] as $field)
+		{
+			$this->form_validation->set_rules($field->name, humanize($field->name), 'required');
+		}
+
+
+		if ($this->form_validation->run()) 
+		{
+			$result = $this->logging_model->log_item($data['type'], $data['field_data']);
+			if ($result !== TRUE)
+			{
+				show_error($result);
+
+			}
+			else
+			{
+			$this->session->unset_userdata('type');
+
+			$this->load->view('templates/header', $data);
+			$this->load->view('admin/success');
+			}
+		}
+		else
+		{
+			//Make the form
+
+			if ($data['field_data'] !== NULL)
+			{
+				$this->load->view('templates/header', $data);
+				$this->load->view('admin/create', $data);
+			}
+			else
+			{
+				show_error('Table was not found');
+			}
+		}
 	}
 
 }

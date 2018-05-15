@@ -6,10 +6,10 @@
 	</div>
 
 	<div class="section">
-	<div class="column is-half is-offset-one-quarter">
+	<div class="column box is-half is-offset-one-quarter">
 		<div class="columns is-half is-offset-one-quarter">
-		<div class="column">
-
+		<div class="column has-text-centered">
+			<?php echo anchor('admin/view-logs', 'View Logs', 'class="button is-primary"')?>
 		</div>
 
 
@@ -20,10 +20,10 @@
 				<label class="label">Create New:</label>
 				<div class="control">
 					<select class="select" name="type">
-						<option value="user">User</option>
-						<option value="action">Action</option>
-						<option value="team">Team</option>
-						<option value="project">Project</option>
+						<option value="users">User</option>
+						<option value="actions">Action</option>
+						<option value="teams">Team</option>
+						<option value="projects">Project</option>
 					</select>
 				</div>
 				</div>
