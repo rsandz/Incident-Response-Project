@@ -107,4 +107,45 @@ class Admin extends CI_Controller {
 		}
 	}
 
+	/**
+	 * Views the entire action log
+	 *
+	 * @param int $page Page Number.
+	 */
+	public function view_logs($offset = 0) 
+	{
+		$per_page = 10;
+
+		$table_data = $this->logging_model->get_entries_table($per_page, FALSE, $offset);
+		$this->load->library('pagination');
+		
+		$config['base_url']       = site_url('Admin/view_logs');
+		$config['total_rows']     = $table_data['total_rows'];
+		$config['per_page']       = $per_page;
+		$config['num_tag_open']   = '<div class="pagination-link">';
+		$config['num_tag_close']  = '</div>';
+		$config['cur_tag_open']   = '<div class="pagination-link is-current">';
+		$config['cur_tag_close']  = '</div>';
+		$config['next_link']      = 'Next';
+		$config['next_tag_open']  = '<div class="pagination-next">';
+		$config['next_tag_close'] = '</div>';
+		$config['prev_link']      = 'Previous';
+		$config['prev_tag_open']  = '<div class="pagination-previous">';
+		$config['prev_tag_close'] = '</div>';
+		$config['first_tag_open']  = '<div class="pagination-next">';
+		$config['first_tag_close'] = '</div>';
+		$config['last_tag_open']  = '<div class="pagination-previous">';
+		$config['last_tag_close'] = '</div>';
+
+		$this->pagination->initialize($config);
+
+		$data['page_links'] = $this->pagination->create_links();
+		$data['table'] = $table_data['table'];
+		$data['total_entries'] = $table_data['total_rows'];
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('admin/view-logs', $data);
+		$this->load->view('templates/footer', $data);
+	}
+
 }

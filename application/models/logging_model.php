@@ -151,24 +151,38 @@ class logging_model extends CI_model {
 	}
 
 	/**
-	 * Creates a the previous entries table
-	 * @return string HTML Table string
-	 */
-	public function get_entries_table() {
+	 * Get entries from the action log
+	 * @param  int|null $limit       Limits items gotten from entries
+	 * @param  Boolean  $filter_user True if to filter by user ID
+	 * @return array 				 Contains Table and Number of Rows                
+	 */	
+	public function get_entries_table( int $limit = NULL, $filter_user = TRUE, int $offset = 0) {
+		//load required libraries
+		if ($this->load->is_loaded('table') == FALSE) $this->load->library('table');
 
-		$this->db->where('user_id', $this->session->user_id)
+		$this->db
 			->select('action_name, project_name, log_desc, log_date, log_time')
 			->join('actions','actions.action_id = action_log.action_id')
 			->join('projects','projects.project_id = action_log.project_id')
-			->order_by( 'log_date', 'log_time', 'ASC')
-			->limit(10);
+			->order_by( 'log_date', 'DESC')
+			->order_by( 'log_time', 'DESC');;
+
+		if ($filter_user)
+		{
+			$this->db->where('user_id', $this->session->user_id);
+			$this->table->set_heading(array('Action Name','Project', 'Log Description', 'Log Date', 'Log Time'));
+		}
+		else
+		{
+			$this->db->select('name')
+			->join('users','action_log.user_id=users.user_id');
+			$this->table->set_heading(array('Action Name','Project', 'Log Description', 'Log Date', 'Log Time', 'Name'));
+		}
 		
 		$prev_entries = $this->db->get('action_log');
+		$data['total_rows'] = $prev_entries->num_rows();
 
-	
-		
-		//load required libraries
-		if ($this->load->is_loaded('table') == FALSE) $this->load->library('table');
+		$prev_entries_array = array_slice($prev_entries->result_array(), $offset, $limit);
 
 		
 		///////////////////////////
@@ -187,7 +201,7 @@ class logging_model extends CI_model {
         'heading_cell_end'      => '</th>',
 
         'tbody_open'            => '<tbody class="tbody">',
-        'tbody_close'           => '</tbody>',
+		'tbody_close'		 	=> '</tbody>',
 
         'row_start'             => '<tr class="tr">',
         'row_end'               => '</tr>',
@@ -199,8 +213,9 @@ class logging_model extends CI_model {
 
 		$this->table->set_template($template);
 
-		$this->table->set_heading(array('Action Name','Project', 'Log Description', 'Log Date', 'Log Time'));
-		return $this->table->generate($prev_entries);
+		$data['num_rows'] = $prev_entries->num_rows();
+		$data['table'] = $this->table->generate($prev_entries_array);
+		return $data;
 	}
 
 	

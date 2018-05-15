@@ -27,7 +27,7 @@ class Welcome extends CI_Controller {
 
 			//Loads table for previous entries
 			$this->load->model('logging_model');
-			$data['entries_table'] = $this->logging_model->get_entries_table();
+			$data['entries_table'] = $this->logging_model->get_entries_table(10)['table'];
 			$this->load->view('logging/entries', $data); 
 
 			$this->load->view('templates/footer');
@@ -37,7 +37,7 @@ class Welcome extends CI_Controller {
 			$this->load->view('templates/header', $data);
 			$this->load->view('visitor');
 			$this->load->view('templates/footer');
-		}
+		}	
 	}
 
 }
