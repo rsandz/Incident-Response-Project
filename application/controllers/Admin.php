@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class for administrative database changes
 
@@ -13,27 +13,23 @@ class Admin extends CI_Controller {
 		$this->load->helper('form');
 		
 		$this->load->model('logging_model');
+
+		if ($this->session->privileges !== 'admin')
+		{
+			show_error('401 - Not Authorized');
+		} 
 	}
 	/**
 	 * Loads the main administration Dashboard
 	 */
 	public function index() 
 	{
-		if ($this->session->privileges !== 'admin')
-		{
-			$data['title'] = '401 Error - Not Authenticated';
-			$this->load->view('templates/header', $data);
-			$this->load->view('admin/not-admin');
-			$this->load->view('templates/footer');
-		} 
-		else 
-		{
+		
 			$data['title'] = 'Admin Dashboard';
 			$this->load->view('templates/header', $data);
 			$this->load->view('admin/admin-dashboard');
 			$this->load->view('templates/footer');
 
-		}
 	}
 
 	/**
@@ -46,14 +42,11 @@ class Admin extends CI_Controller {
 		$this->load->helper('form');
 		$this->load->helper('inflector');
 
-		if (!isset($this->session->type))
-		{
-			$sess_data = array(
-				'type' => $this->input->post('type')
-			);
-			$this->session->set_userdata($sess_data);
-		}
-			$type = $this->session->type;
+		$sess_data = array(
+			'type' => $this->input->post('type')
+		);
+		$this->session->set_userdata($sess_data);
+		$type = $this->session->type;
 
 		$fields = $this->db->list_fields($type);
 		

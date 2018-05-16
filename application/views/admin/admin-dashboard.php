@@ -30,7 +30,8 @@
 
 				<div class="field">
 				<div class="control">
-					<input class="button is-info" type="submit" name="submit" value="Create New">
+					<input class="button is-info" type="submit" name="submit" value="Create New" disabled>
+					<p>Sorry! This is broken</p>
 				</div>
 				</div>
 			</form>
