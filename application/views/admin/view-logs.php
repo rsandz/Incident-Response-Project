@@ -1,9 +1,4 @@
 <body>
-	<div class="hero is-info">
-		<div class="hero-body">
-			<h1 class="title">View All Logs</h1>
-		</div>
-	</div>
 	
 	<div class="section">
 	<div class="content">

@@ -16,7 +16,7 @@ class Admin extends CI_Controller {
 
 		if ($this->session->privileges !== 'admin')
 		{
-			show_error('401 - Not Authorized');
+			show_error('401 - Not Authorized', 401);
 		} 
 	}
 	/**
@@ -24,9 +24,11 @@ class Admin extends CI_Controller {
 	 */
 	public function index() 
 	{
-		
 			$data['title'] = 'Admin Dashboard';
+			$data['header']['text'] = "Admin Dashboard";
 			$this->load->view('templates/header', $data);
+			$this->load->view('hero-head', $data);
+			$this->load->view('navbar', $data);
 			$this->load->view('admin/admin-dashboard');
 			$this->load->view('templates/footer');
 
@@ -41,6 +43,7 @@ class Admin extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->helper('form');
 		$this->load->helper('inflector');
+	
 
 		$sess_data = array(
 			'type' => $this->input->post('type')
@@ -136,7 +139,13 @@ class Admin extends CI_Controller {
 		$data['table'] = $table_data['table'];
 		$data['total_entries'] = $table_data['total_rows'];
 
+		$data['header']['colour'] = 'is-info';
+		$data['header']['text'] = 'All Logs';
+		$data['title'] = 'View Logs';
+
 		$this->load->view('templates/header', $data);
+		$this->load->view('hero-head', $data);
+		$this->load->view('navbar', $data);
 		$this->load->view('admin/view-logs', $data);
 		$this->load->view('templates/footer', $data);
 	}

@@ -10,7 +10,6 @@ class Welcome extends CI_Controller {
 	public function index()
 	{
 		$this->load->helper('url');
-		$this->load->library('session');
 
 		$logged_in = $this->session->logged_in;
 
@@ -20,15 +19,21 @@ class Welcome extends CI_Controller {
 		if ($logged_in) {
 
 			$data['name'] = $this->session->name;
+
+			$data['header'] = array(
+				'text' => 'Hello '.$data['name'].', Welcome to your Dashboard',
+				'colour' => 'is-info');
+
 			$data['privileges'] = $this->session->privileges;
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('dashboard');
+			$this->load->view('hero-head');
+			$this->load->view('navbar');
 
 			//Loads table for previous entries
 			$this->load->model('logging_model');
 			$data['entries_table'] = $this->logging_model->get_entries_table(10)['table'];
-			$this->load->view('logging/entries', $data); 
+			$this->load->view('logging/user-entries', $data); 
 
 			$this->load->view('templates/footer');
 
