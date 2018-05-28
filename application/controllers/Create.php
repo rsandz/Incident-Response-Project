@@ -49,6 +49,10 @@ class Create extends CI_Controller {
 		{
 			$this->user_form($data);
 		}
+		elseif ($data['type'] === 'team' && $data['privileges'] !== 'user')
+		{
+			$this->team_form($data);
+		}
 		else
 		{
 			show_error('Not Authorized', 401);
@@ -80,12 +84,12 @@ class Create extends CI_Controller {
 			//Enter into Database
 			$insert_data = array
 				(
-				'action_name'    => $this->input->post('action_name'),
-				'action_type_id' => $this->input->post('action_type'),
-				'action_desc'    => $this->input->post('action_desc') == "" ? NULL : $this->input->post('action_desc'),
-				'project_id'     => $this->input->post('project_id'),
-				'is_active'      => 1,
-				'is_global'      => $this->input->post('is_global') == 1 ? 1 : 0,
+				'action_name' => $this->input->post('action_name'),
+				'type_id'     => $this->input->post('action_type'),
+				'action_desc' => $this->input->post('action_desc') == "" ? NULL : $this->input->post('action_desc'),
+				'project_id'  => $this->input->post('project_id'),
+				'is_active'   => 1,
+				'is_global'   => $this->input->post('is_global') == 1 ? 1 : 0,
 				);
 
 			$this->Logging_model->log_item('actions', $insert_data);
@@ -98,19 +102,19 @@ class Create extends CI_Controller {
 			);
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('hero-head', $data);
-			$this->load->view('navbar');
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar');
 			$this->load->view('create/tabs');
 			$this->load->view('create/success', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		} else {
-			$data['types'] = $this->Logging_model->get_items('action_types');
+			$data['types'] = $this->Logging_model->get_items('action_types', array('is_active !=' => '0'));
 
 			// Make the Form
 			$this->load->view('templates/header', $data);
-			$this->load->view('hero-head', $data);
-			$this->load->view('navbar');
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar');
 			$this->load->view('create/tabs');
 			$this->load->view('create/action', $data);
 			$this->load->view('create/errors', $data);
@@ -152,8 +156,8 @@ class Create extends CI_Controller {
 			);
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('hero-head', $data);
-			$this->load->view('navbar');
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar');
 			$this->load->view('create/tabs');
 			$this->load->view('create/success', $data);
 			$this->load->view('create/errors', $data);
@@ -162,8 +166,8 @@ class Create extends CI_Controller {
 		else 
 		{
 			$this->load->view('templates/header', $data);
-			$this->load->view('hero-head', $data);
-			$this->load->view('navbar');
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar');
 			$this->load->view('create/tabs');
 			$this->load->view('create/project', $data);
 			$this->load->view('create/errors', $data);
@@ -179,7 +183,6 @@ class Create extends CI_Controller {
 	public function user_form($data)
 	{
 
-		//Enter into Database
 		$insert_data = array
 			(
 			'name'       => $this->input->post('name'),
@@ -208,22 +211,71 @@ class Create extends CI_Controller {
 			);
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('hero-head', $data);
-			$this->load->view('navbar');
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar');
 			$this->load->view('create/tabs');
 			$this->load->view('create/success', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		} else {
 			$this->load->view('templates/header', $data);
-			$this->load->view('hero-head', $data);
-			$this->load->view('navbar');
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar');
 			$this->load->view('create/tabs');
 			$this->load->view('create/user', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		}
 
+	}
+
+	public function team_form($data) 
+	{
+
+		//Form Validation Rules
+		$this->form_validation->set_rules('team_name', 'Team Name', 'trim|required');
+		$this->form_validation->set_rules('team_leader', 'Team Leader', 'trim');
+		$this->form_validation->set_rules('team_desc', 'Team Description', 'trim');
+
+		if ($this->form_validation->run() == TRUE) 
+		{
+			//Logging action
+			$this->Logging_model->log_action('create', 'team');
+			//Enter into Database
+			$insert_data = array
+				(
+				'team_name'   => $this->input->post('team_name'),
+				'team_desc'   => $this->input->post('team_desc'),
+				'team_leader' => $this->input->post('team_leader'),
+				);
+
+			$this->Logging_model->log_item('teams', $insert_data);
+			//Success
+
+			$data['title'] = 'Created '.$data['type'];
+			$data['header'] = array(
+				'text'   => 'Success',
+				'colour' => 'is-success'
+			);
+
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar');
+			$this->load->view('create/tabs');
+			$this->load->view('create/success', $data);
+			$this->load->view('create/errors', $data);
+			$this->load->view('templates/footer');
+		} 
+		else 
+		{
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar');
+			$this->load->view('create/tabs');
+			$this->load->view('create/team', $data);
+			$this->load->view('create/errors', $data);
+			$this->load->view('templates/footer');
+		}
 	}
 
 }

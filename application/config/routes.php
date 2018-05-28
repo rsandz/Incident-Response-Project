@@ -60,4 +60,5 @@ $route['logging/(:any)'] = 'Logging/log';
 $route['create'] = 'Create/index/action';
 $route['create/index'] = 'Create/index/action';
 $route['create/index/(:any)'] = 'Create/index/$1';
+$route['search'] = 'Search/index';
 $route['default_controller'] = 'Welcome/index';

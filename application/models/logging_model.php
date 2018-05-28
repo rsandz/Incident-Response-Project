@@ -8,7 +8,6 @@ class logging_model extends CI_model {
 	public function __construct() {
 		parent:: __construct();
 		$this->load->database(); //load database
-		$this->load->library('session');
 	}
 	/**
 	 * Logs an action in action log table. Can log what was in a form, or whatever a
@@ -41,12 +40,25 @@ class logging_model extends CI_model {
 		}
 		elseif($log_type == 'create')
 		{	
+			//See if there is a 'create' action type in the first place
+			if(!$this->data_exists('action_types', array('type_name' => 'create')))
+			{
+				$insert_data = array(
+					'type_name' => 'Create',
+					'is_active' => 0
+				);
+
+				$this->log_item('action_types', $insert_data);
+			}
+
+			$type_id = $this->get_items('action_types', array('type_name' => 'create'))[0]->type_id;
+
 			//See if create action is in the actions table in the first place
 			if (!$this->data_exists('actions', array('action_name' => 'Created '.$action)))
 			{
 				$insert_data = array(
 					'action_name' => 'Created '.$action,
-					'action_type' => 'create',
+					'type_id' => $type_id,
 					'action_desc' => 'Created '.$action.' using the create page.',
 					'project_id' => NULL,
 					'is_active' => FALSE
@@ -248,7 +260,7 @@ class logging_model extends CI_model {
 		$this->db
 			->select('action_name, type_name, project_name, team_name, log_desc, log_date, log_time')
 			->join('actions','actions.action_id = action_log.action_id')
-			->join('action_types','actions.action_type_id = action_types.type_id', 'left')
+			->join('action_types','actions.type_id = action_types.type_id', 'left')
 			->join('projects','projects.project_id = actions.project_id', 'left')
 			->join('teams','teams.team_id = action_log.team_id', 'left')
 			->order_by( 'log_date', 'DESC')

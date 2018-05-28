@@ -27,8 +27,8 @@ class Welcome extends CI_Controller {
 			$data['privileges'] = $this->session->privileges;
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('hero-head');
-			$this->load->view('navbar');
+			$this->load->view('templates/hero-head');
+			$this->load->view('templates/navbar');
 
 			//Loads table for previous entries
 			$this->load->model('logging_model');

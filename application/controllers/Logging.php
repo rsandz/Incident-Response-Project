@@ -19,7 +19,7 @@ class Logging extends CI_controller {
 		$data['title'] = 'Logging Form';
 
         $data['projects'] = $this->logging_model->get_items('projects');
-        $data['types'] = $this->logging_model->get_items('action_types');
+        $data['types'] = $this->logging_model->get_items('action_types', array('is_active !=' => 0));
         $data['teams'] = $this->logging_model->get_items('teams');
 
 		$this->load->library('form_validation');
@@ -36,8 +36,8 @@ class Logging extends CI_controller {
 				'colour' => 'is-success');
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('hero-head', $data);
-			$this->load->view('navbar', $data);
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar', $data);
 			$this->load->view('logging/logging-form', $data);
 			$this->load->view('js/descriptions');
 		}
@@ -108,7 +108,7 @@ class Logging extends CI_controller {
 	public function get_action_items()
 	{
 		$attributes =
-			'action_type_id = '.$this->input->get('type_id').
+			'type_id = '.$this->input->get('type_id').
 			' AND is_active = 1'.
 			' AND (project_id = '.$this->input->get('project_id').
 			' OR is_global = 1)';
