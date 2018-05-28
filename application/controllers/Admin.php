@@ -46,7 +46,7 @@ class Admin extends CI_Controller {
 	
 
 		$sess_data = array(
-			'type' => $this->input->post('type')
+			'type' => $this->input->post('type', TRUE)
 		);
 		$this->session->set_userdata($sess_data);
 		$type = $this->session->type;

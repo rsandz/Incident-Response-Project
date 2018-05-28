@@ -58,13 +58,13 @@ class Search extends CI_Controller {
 			//Create an array for the query
 		
 			$query = array(
-				'keywords' => $this->parseResults($this->input->post('keywords')),
-				'keyword_filters' => $this->input->post('kfilters') !== NULL ? $this->input->post('kfilters') : NULL,
+				'keywords' => $this->parseResults($this->input->post('keywords', TRUE)),
+				'keyword_filters' => $this->input->post('kfilters') !== NULL ? $this->input->post('kfilters', TRUE) : NULL,
 
-				'from_date' => (string)$this->input->post('from_date'),
-				'to_date' => (string)$this->input->post('to_date'),
+				'from_date' => (string)$this->input->post('from_date' , TRUE),
+				'to_date' => (string)$this->input->post('to_date', TRUE),
 
-				'action_types' => $this->input->post('action_types[]'),
+				'action_types' => $this->input->post('action_types[]', TRUE),
 			);
 
 			$this->session->set_userdata('search_query', $query);
@@ -109,7 +109,7 @@ class Search extends CI_Controller {
 
 	public function validate_date($to_date)
 	{
-		$from_date = strtotime($this->input->post('from_date'));
+		$from_date = strtotime($this->input->post('from_date', TRUE));
 		$to_date = strtotime($to_date);
 
 		$date_diff = $to_date - $from_date;
@@ -135,30 +135,32 @@ class Search extends CI_Controller {
 	 */
 	public function view_logs($data) 
 	{
+		if ($data['table'] !== 'No Results')
+		{
+			$this->load->library('pagination');
+			
+			$config['base_url']       = site_url('Search/results');
+			$config['total_rows']     = $data['num_rows'];
+			$config['per_page']       = $data['per_page'];
+			$config['num_tag_open']   = '<div class="pagination-link">';
+			$config['num_tag_close']  = '</div>';
+			$config['cur_tag_open']   = '<div class="pagination-link is-current">';
+			$config['cur_tag_close']  = '</div>';
+			$config['next_link']      = 'Next';
+			$config['next_tag_open']  = '<div class="pagination-next">';
+			$config['next_tag_close'] = '</div>';
+			$config['prev_link']      = 'Previous';
+			$config['prev_tag_open']  = '<div class="pagination-previous">';
+			$config['prev_tag_close'] = '</div>';
+			$config['first_tag_open']  = '<div class="pagination-next">';
+			$config['first_tag_close'] = '</div>';
+			$config['last_tag_open']  = '<div class="pagination-previous">';
+			$config['last_tag_close'] = '</div>';
 
-		$this->load->library('pagination');
-		
-		$config['base_url']       = site_url('Search/results');
-		$config['total_rows']     = $data['num_rows'];
-		$config['per_page']       = $data['per_page'];
-		$config['num_tag_open']   = '<div class="pagination-link">';
-		$config['num_tag_close']  = '</div>';
-		$config['cur_tag_open']   = '<div class="pagination-link is-current">';
-		$config['cur_tag_close']  = '</div>';
-		$config['next_link']      = 'Next';
-		$config['next_tag_open']  = '<div class="pagination-next">';
-		$config['next_tag_close'] = '</div>';
-		$config['prev_link']      = 'Previous';
-		$config['prev_tag_open']  = '<div class="pagination-previous">';
-		$config['prev_tag_close'] = '</div>';
-		$config['first_tag_open']  = '<div class="pagination-next">';
-		$config['first_tag_close'] = '</div>';
-		$config['last_tag_open']  = '<div class="pagination-previous">';
-		$config['last_tag_close'] = '</div>';
+			$this->pagination->initialize($config);
 
-		$this->pagination->initialize($config);
-
-		$data['page_links'] = $this->pagination->create_links();
+			$data['page_links'] = $this->pagination->create_links();
+		}
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);

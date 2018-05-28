@@ -6,7 +6,7 @@
 
 			<div class="level">
 				<div class="level-item">
-					<?=$page_links?>
+					<?php  if (isset($page_links)) echo $page_links;?>
 				</div>
 			</div>
 		

@@ -84,12 +84,12 @@ class Create extends CI_Controller {
 			//Enter into Database
 			$insert_data = array
 				(
-				'action_name' => $this->input->post('action_name'),
-				'type_id'     => $this->input->post('action_type'),
-				'action_desc' => $this->input->post('action_desc') == "" ? NULL : $this->input->post('action_desc'),
-				'project_id'  => $this->input->post('project_id'),
+				'action_name' => $this->input->post('action_name', TRUE),
+				'type_id'     => $this->input->post('action_type', TRUE),
+				'action_desc' => $this->input->post('action_desc') == "" ? NULL : $this->input->post('action_desc', TRUE),
+				'project_id'  => $this->input->post('project_id', TRUE),
 				'is_active'   => 1,
-				'is_global'   => $this->input->post('is_global') == 1 ? 1 : 0,
+				'is_global'   => $this->input->post('is_global', TRUE) == 1 ? 1 : 0,
 				);
 
 			$this->Logging_model->log_item('actions', $insert_data);
@@ -141,9 +141,9 @@ class Create extends CI_Controller {
 			//Enter into Database
 			$insert_data = array
 				(
-				'project_name'   => $this->input->post('project_name'),
-				'project_desc'   => $this->input->post('project_desc'),
-				'project_leader' => $this->input->post('project_leader'),
+				'project_name'   => $this->input->post('project_name', TRUE),
+				'project_desc'   => $this->input->post('project_desc', TRUE),
+				'project_leader' => $this->input->post('project_leader', TRUE),
 				);
 
 			$this->Logging_model->log_item('projects', $insert_data);
@@ -185,9 +185,9 @@ class Create extends CI_Controller {
 
 		$insert_data = array
 			(
-			'name'       => $this->input->post('name'),
-			'email'      => $this->input->post('email'),
-			'password'   => $this->input->post('password'),
+			'name'       => $this->input->post('name', TRUE),
+			'email'      => $this->input->post('email', TRUE),
+			'password'   => crypt($this->input->post('password'), 'ifft', TRUE),
 			'privileges' => 'user',
 			);
 
@@ -244,9 +244,9 @@ class Create extends CI_Controller {
 			//Enter into Database
 			$insert_data = array
 				(
-				'team_name'   => $this->input->post('team_name'),
-				'team_desc'   => $this->input->post('team_desc'),
-				'team_leader' => $this->input->post('team_leader'),
+				'team_name'   => $this->input->post('team_name', TRUE),
+				'team_desc'   => $this->input->post('team_desc', TRUE),
+				'team_leader' => $this->input->post('team_leader', TRUE),
 				);
 
 			$this->Logging_model->log_item('teams', $insert_data);

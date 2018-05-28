@@ -29,11 +29,11 @@ class logging_model extends CI_model {
 		if ($log_type == 'form')
 		{
 			$data = array(
-				'action_id' => $this->input->post('action'),
-				'log_desc'  => $this->input->post('desc'),
-				'log_date'  => $this->input->post('date'),
-				'log_time'  => $this->input->post('time'),
-				'team_id'   => $this->input->post('team'),
+				'action_id' => $this->input->post('action', TRUE),
+				'log_desc'  => $this->input->post('desc', TRUE),
+				'log_date'  => $this->input->post('date', TRUE),
+				'log_time'  => $this->input->post('time', TRUE),
+				'team_id'   => $this->input->post('team', TRUE),
 				'user_id'   => $this->session->user_id
 				);
 			return $this->db->insert('action_log', $data);

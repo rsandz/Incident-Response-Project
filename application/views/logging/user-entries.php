@@ -11,11 +11,3 @@
 </div>
 
 </div>
-
-<div class="section">
-	<div class="box">
-		<div class="control">
-			<?php echo anchor('Search', 'Go Back', 'button is-info'); ?>
-		</div>
-	</div>
-</div>
