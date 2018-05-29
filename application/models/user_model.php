@@ -15,9 +15,8 @@ class User_model extends CI_Model {
 		$this->db->where('email', $this->input->post('email'));
 		$query = $this->db->get('users');
 
-		$stored_pass = $query->row()->password;
-
 		if ($query->num_rows() > 0) {
+			$stored_pass = $query->row()->password;
 			if ($stored_pass === crypt($this->input->post('password'), $stored_pass))
 				{
 					$query_result = $query->row_array();

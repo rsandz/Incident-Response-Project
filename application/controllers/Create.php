@@ -187,7 +187,7 @@ class Create extends CI_Controller {
 			(
 			'name'       => $this->input->post('name', TRUE),
 			'email'      => $this->input->post('email', TRUE),
-			'password'   => crypt($this->input->post('password'), 'ifft', TRUE),
+			'password'   => crypt($this->input->post('password'), 'ifft'),
 			'privileges' => 'user',
 			);
 

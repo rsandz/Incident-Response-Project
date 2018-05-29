@@ -85,6 +85,44 @@
 							<?php endforeach;?>
 						</div>
 					</div>
+					<div class="box">
+						<h3>Projects:</h3>
+						<div class="field is-grouped is-grouped-multiline">
+							<?php foreach($projects as $project):?>
+								<div class="control">
+									<label class="label"><?php echo $project->project_name?>
+									<?php echo form_checkbox('projects[]', $project->project_id, TRUE);?>
+									</label>
+								</div>
+							<?php endforeach;?>
+								<!-- No Project Condition -->
+							<div class="control">
+								<label class="label checkbox">
+									No Project
+									<input class="checkbox" type="checkbox" name="null_projects" value=TRUE checked>
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="box">
+						<h3>Teams:</h3>
+						<div class="field is-grouped is-grouped-multiline">
+							<?php foreach($teams as $team):?>
+								<div class="control">
+									<label class="label"><?php echo $team->team_name?>
+									<?php echo form_checkbox('teams[]', $team->team_id, TRUE);?>
+									</label>
+								</div>
+							<?php endforeach;?>
+							<!-- No Team Condition -->
+							<div class="control">
+								<label class="label checkbox">
+									No Team 
+									<input class="checkbox" type="checkbox" name="null_teams" value=TRUE checked>
+								</label>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

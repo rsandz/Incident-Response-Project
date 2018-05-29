@@ -28,6 +28,7 @@ class Search extends CI_Controller {
 			'text'   => 'Search'
 		);
 
+		$this->form_validation->set_rules('keywords', 'Keywords', 'trim');
 		$this->form_validation->set_rules('kfilters[]', 'Keyword Filters', 'trim|required');
 		$this->form_validation->set_rules('to_date', 'Date', 'callback_validate_date');
 		$this->form_validation->set_rules('action_types[]', 'Action Type', 'required');
@@ -38,6 +39,8 @@ class Search extends CI_Controller {
 			//Get the action types
 			
 			$data['action_types'] = $this->logging_model->get_items('action_types');
+			$data['teams'] = $this->logging_model->get_items('teams');
+			$data['projects'] = $this->logging_model->get_items('projects');
 
 			//Load the form
 			$this->load->view('templates/header', $data);
@@ -65,6 +68,12 @@ class Search extends CI_Controller {
 				'to_date' => (string)$this->input->post('to_date', TRUE),
 
 				'action_types' => $this->input->post('action_types[]', TRUE),
+
+				'projects' => $this->input->post('projects[]', TRUE),
+				'null_projects' => $this->input->post('null_projects', TRUE),
+			
+				'teams' => $this->input->post('teams[]', TRUE),
+				'null_teams' => $this->input->post('null_teams', TRUE),
 			);
 
 			$this->session->set_userdata('search_query', $query);
@@ -95,8 +104,20 @@ class Search extends CI_Controller {
 			'colour' => 'is-info',
 			'text'   => 'Results'
 		);
+		$data['query'] = $query;
 
-		$this->view_logs($data);
+		if ($data['table'] !== 'No Results') //No pages if there are no results! Otherwise, will cause error.
+		{
+			$this->load->helper('table_helper');
+			$data['page_links'] = get_pagelinks($data, 'Search/results');
+		}
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/hero-head', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('search/view-logs', $data);
+		$this->load->view('templates/footer', $data);
+		$this->load->view('js/page-link-fix');
 		
 	}
 
@@ -104,7 +125,17 @@ class Search extends CI_Controller {
 	private function parseResults($string) 
 	{
 		//TODO: add tags in the future. i.e. not:
-		return explode(' ', $string);
+		$keywords = explode(' ', $string);
+
+		foreach ($keywords as $key => $keyword) 
+		{
+			if ($keyword == "")
+			{
+				unset($keywords[$key]);
+			}
+		}
+
+		return $keywords;
 	}
 
 	public function validate_date($to_date)
@@ -125,51 +156,52 @@ class Search extends CI_Controller {
 		}
 	}
 
-	/**
-	 * Views the entire action log
-	 *
-	 * @see index() 
-	 * 
-	 * @param array $data Data Array containing page and search data.
-	 * @param int $page Page Number.
-	 */
-	public function view_logs($data) 
+
+	////////////////
+	//View Tables //
+	////////////////
+
+	public function view_tables($table = NULL, $offset = 0) 
 	{
-		if ($data['table'] !== 'No Results')
+		$data['per_page'] = 10;
+
+		if ($table === NULL)
 		{
-			$this->load->library('pagination');
+			//Display Dashboard for wish table to view.
+			$data = array(
+				'title' => 'View Tables',
+				'header' => array(
+					'text' => 'View Tables'
+					),
+				'tables' => array('actions', 'action_types', 'teams', 'projects', 'users')
+			);
 			
-			$config['base_url']       = site_url('Search/results');
-			$config['total_rows']     = $data['num_rows'];
-			$config['per_page']       = $data['per_page'];
-			$config['num_tag_open']   = '<div class="pagination-link">';
-			$config['num_tag_close']  = '</div>';
-			$config['cur_tag_open']   = '<div class="pagination-link is-current">';
-			$config['cur_tag_close']  = '</div>';
-			$config['next_link']      = 'Next';
-			$config['next_tag_open']  = '<div class="pagination-next">';
-			$config['next_tag_close'] = '</div>';
-			$config['prev_link']      = 'Previous';
-			$config['prev_tag_open']  = '<div class="pagination-previous">';
-			$config['prev_tag_close'] = '</div>';
-			$config['first_tag_open']  = '<div class="pagination-next">';
-			$config['first_tag_close'] = '</div>';
-			$config['last_tag_open']  = '<div class="pagination-previous">';
-			$config['last_tag_close'] = '</div>';
+			//Get Statistics
+			
+			$data['stats'] = $this->search_model->get_stats($data['tables']);
 
-			$this->pagination->initialize($config);
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar', $data);
+			$this->load->view('search/tabs', $data);
+			$this->load->view('search/view_tables/table_selection');
+		}
+		else
+		{
+			$data = $this->search_model->get_table_data($table, $offset, $data['per_page']);
+			$data['page_links'] = get_pagelinks($data, 'Search/view_tables/'.$table);
 
-			$data['page_links'] = $this->pagination->create_links();
+			$data['title'] = 'View Tables';
+			$data['header']['text'] = 'View Table';
+
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar', $data);
+			$this->load->view('search/tabs', $data);
+			$this->load->view('search/view_tables/view-table', $data);
 		}
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
-		$this->load->view('templates/navbar', $data);
-		$this->load->view('search/view-logs', $data);
-		$this->load->view('templates/footer', $data);
-		$this->load->view('js/page-link-fix');
 	}
-
 }
 
 /* End of file Search.php */

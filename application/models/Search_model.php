@@ -17,7 +17,11 @@ class Search_model extends CI_Model {
 	{
 		// Join statements
 		$this->db
-			->join('actions','actions.action_id = action_log.action_id');
+			->join('actions','actions.action_id = action_log.action_id', 'left')
+			->join('action_types','actions.type_id = action_types.type_id', 'left')
+			->order_by( 'log_date', 'DESC')
+			->order_by( 'log_time', 'DESC')
+			->select('action_log.log_id');
 
 		// Date Filter - Uses from_date and to_date
 		
@@ -33,13 +37,55 @@ class Search_model extends CI_Model {
 
 		// Type Filter - Based on type
 		
+		$this->db->group_start();
 		foreach ($query['action_types'] as $action_type) 
 		{
-			$this->db->or_where('type_id', $action_type);
+			$this->db->or_where('actions.type_id', $action_type);
 		}
-		
+		$this->db->group_end();
 
-		//Get ids that match criteria
+		// Team Filter
+		
+		$this->db->group_start();
+		if (is_array($query['teams']))
+		{
+			foreach ($query['teams'] as $team) 
+			{
+				$this->db->or_where('action_log.team_id', $team);
+			}
+				
+		}
+
+		if ($query['null_teams'])
+		{
+			$this->db->or_where('action_log.team_id IS NULL');
+		}
+		$this->db->group_end();	
+		//////////////////////////////////////////
+
+		// Project Filter
+		
+		$this->db->group_start();
+
+		if (is_array($query['projects']))
+		{
+			foreach ($query['projects'] as $project) 
+			{
+				$this->db->or_where('action_log.project_id', $project);
+			}
+		}
+
+		if ($query['null_projects'])
+		{
+			$this->db->or_where('action_log.project_id IS NULL');
+		}
+
+		$this->db->group_end();
+		///////////////////////////////////////
+
+		////////////////////////////////
+		//Get ids that match criteria //
+		////////////////////////////////
 		$this->db->select('log_id');
 
 		$filter_ids  = array();
@@ -93,6 +139,8 @@ class Search_model extends CI_Model {
 	
 	public function get_logs($log_ids, $offset = 0)
 	{
+		$this->load->helper('table_helper');
+
 		//Logs per page
 		$per_page = 10;
 		$data['per_page'] = 10;
@@ -128,43 +176,63 @@ class Search_model extends CI_Model {
 
 		//Get entries
 		$matches = $this->db->get('action_log');
+
 		$data['num_rows'] = $matches->num_rows();
+		$data['table_data'] = array_slice($matches->result_array(), $offset, $per_page); //Offset for pagination
+		$data['heading'] = array('Name', 'Action Name', 'Action Type', 'Project', 'Team', 'Log Description', 'Log Date', 'Log Time');
 
-		$matches = array_slice($matches->result_array(), $offset, $per_page); //Offset for pagination
-		$this->table->set_heading(array('Name', 'Action Name', 'Action Type', 'Project', 'Team', 'Log Description', 'Log Date', 'Log Time'));
+		$data['table'] = generate_table($data);
 		
-		///////////////////////////
-		//TABLE AESTHETICS SETUP //
-		///////////////////////////
-
-		$template = array(
-        'table_open'            => '<table class="table is-striped is-fullwidth">',
-
-        'thead_open'            => '<thead class="thead">',
-        'thead_close'           => '</thead>',
-
-        'heading_row_start'     => '<tr class="tr">',
-        'heading_row_end'       => '</tr>',
-        'heading_cell_start'    => '<th class="th">',
-        'heading_cell_end'      => '</th>',
-
-        'tbody_open'            => '<tbody class="tbody">',
-		'tbody_close'		 	=> '</tbody>',
-
-        'row_start'             => '<tr class="tr">',
-        'row_end'               => '</tr>',
-        'cell_start'            => '<td class="td">',
-        'cell_end'              => '</td>',
-
-        'table_close'           => '</table>'
-		);
-
-		$this->table->set_template($template);
-
-		$data['table'] = $this->table->generate($matches);
 		return $data;
 
 	}
+
+	public function get_table_data($table, $offset, $per_page)
+	{
+		$this->load->helper('inflector');
+		$this->load->helper('table_helper');
+
+		//Get Table DATA
+		$query = $this->logging_model->get_items_raw($table);
+		$data['table_data'] = array_slice($query->result_array(), $offset, $per_page); //Offset for pagination
+
+		$column_headings = $this->logging_model->get_field_data($table, TRUE);
+
+		$data['heading'] = array();
+
+		foreach ($column_headings as $heading) 
+		{
+			array_push($data['heading'], humanize($heading->name));
+		}
+
+		//Create The table
+		$data['table'] = generate_table($data);
+		$data['num_rows'] = $query->num_rows();
+		$data['table_name'] = $table;
+
+		return $data;
+	}
+
+	public function get_stats($table)
+	{
+		if (is_array($table))
+		{
+			//For arrays
+			$tables = $table;
+			foreach ($tables as $table)
+			{
+				$data[$table]['num_rows'] = $this->db->count_all($table);
+			}
+		}
+		else
+		{
+			//Not Array. Single Table
+			$data['num rows'] = $this->db->count_all($table);
+		}
+
+		return $data;
+	}
+
 
 }
 

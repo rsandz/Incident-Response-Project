@@ -142,16 +142,18 @@ class logging_model extends CI_model {
 	}
 
 	/**
-	 * Gets item from database given some parameters
+	 * Gets a Codeignitor query object from a database given parameters, without calling the result() method.
+	 *
 	 * @param  string $table Table string
-	 * @param  Mixed  $where Associative array of column-value pairs or string
-	 * query
-	 * @param  Mixed  $select Array or String of columns to select
-	 * @param  array  $join Associative array of table as key and join conditios
-	 * as value
-	 * @return array             result_array of results
+ 	 * @param  Mixed  $where Associative array of column-value pairs or string
+ 	 * query
+ 	 * @param  Mixed  $select Array or String of columns to select
+ 	 * @param  array  $join Associative array of table as key and join conditios
+ 	 * as value
+	 * 
+	 * @return object The query object returned by code ignitor's db->get()
 	 */
-	public function get_items($table, $where = NULL, $select = NULL, array $join = NULL) 
+	public function get_items_raw($table, $where = NULL, $select = NULL, array $join = NULL)
 	{
 		if (gettype($where) == 'array') 
 		{
@@ -184,18 +186,36 @@ class logging_model extends CI_model {
 			}
 		}
 
-			return $this->db->get($table)->result();
+			return $this->db->get($table);
 	}
+
+	/**
+	 * Gets items from database given some parameters. Unlike raw, returns query->results()
+	 * 
+	 * @param  string $table Table string
+	 * @param  Mixed  $where Associative array of column-value pairs or string
+	 * query
+	 * @param  Mixed  $select Array or String of columns to select
+	 * @param  array  $join Associative array of table as key and join conditios
+	 * as value
+	 * @return array             result_array of results
+	 */
+	public function get_items($table, $where = NULL, $select = NULL, array $join = NULL) 
+	{
+			return $this->get_items_raw($table, $where, $select, $join)->result();
+	}
+
 
 	/**
 	 *	Gets and Returns Table Fields Data
 	 *
 	 *	@param $table Table name to get field data.
+	 *	@param Boolean $keep_ids Whether to keep or remove the id fields.
 	 * 	
 	 *	@return object Field data object as per Code Ignitor's structure. Also includes enum values for enum type columns.
 	 */
 
-	public function get_field_data($table)
+	public function get_field_data($table, $keep_ids = FALSE)
 	{
 		if ($this->db->table_exists($table))
 		{	
@@ -209,7 +229,7 @@ class logging_model extends CI_model {
 					$field->enum_vals = $enum_vals;
 				}
 
-				if (stripos($field->name, 'id'))
+				if (stripos($field->name, 'id') && !$keep_ids)
 				{
 					unset($field_data[$key]);
 				}
