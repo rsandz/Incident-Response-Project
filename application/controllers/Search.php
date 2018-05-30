@@ -1,8 +1,25 @@
 <?php
+/**
+ * Search Controller
+ *
+ * This is the controller for the search functions of the application.
+ * It handles two types of searching:
+ * 	1. Keyword Searching
+ * 		- Uses the MySQL 'like' command to look for keyword instances in rows. i.e. "SELECT * FROM table WHERE column LIKE %keyword%".
+ * 			Can be filtered to search for keywords. 
+ * 			For more information on the way code igniter handeles the 'like' query, @see
+ * 			only in certain columns. 
+ * 	2. Filter Searching
+ */
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Search extends CI_Controller {
 
+	/**
+	 * Constructor for the Search Controller
+	 * Loads SOME of the required libraries, helpers and models. Also contains a check for user_login
+	 */
 	public function __construct() 
 	{
 		parent::__construct();
@@ -19,6 +36,13 @@ class Search extends CI_Controller {
 		} 
 	}
 
+	/**
+	 * Main Method for the search page. 
+	 * Shows:
+	 * 	1. Keyword Search
+	 * 	2. Filter Search
+	 * 	
+	 */
 	public function index()
 	{
 		//Data Setup
@@ -52,6 +76,10 @@ class Search extends CI_Controller {
 		
 	}
 
+	/**
+	 * Shows the results of a search querry
+	 * @param  integer $offset Offset for pagination. @see search_model->get_table_data() and codeigniter pagination documentation 
+	 */
 	public function results($offset = 0)
 	{
 		// If offset is false, it is a new query. Otherwise, request is looking for next page of query.
@@ -106,7 +134,8 @@ class Search extends CI_Controller {
 		);
 		$data['query'] = $query;
 
-		if ($data['table'] !== 'No Results') //No pages if there are no results! Otherwise, will cause error.
+		//No pagination needed if there are no results! Otherwise, will cause error if pagination is called.
+		if ($data['table'] !== 'No Results') 
 		{
 			$this->load->helper('table_helper');
 			$data['page_links'] = get_pagelinks($data, 'Search/results');
@@ -121,10 +150,16 @@ class Search extends CI_Controller {
 		
 	}
 
-
+	/**
+	 * Parses the given string into an array.
+	 * Intended to use for interpreting the keyword data from keyword search. @see $this->results() for usage
+	 * 
+	 * @param  string $string The string to parse
+	 * @return array         String turned into an array
+	 */
 	private function parseResults($string) 
 	{
-		//TODO: add tags in the future. i.e. not:
+		//TODO: add tags in the future. i.e. not: Bob (Interpreted as - rows without keyword 'bob') 
 		$keywords = explode(' ', $string);
 
 		foreach ($keywords as $key => $keyword) 
@@ -138,29 +173,17 @@ class Search extends CI_Controller {
 		return $keywords;
 	}
 
-	public function validate_date($to_date)
-	{
-		$from_date = strtotime($this->input->post('from_date', TRUE));
-		$to_date = strtotime($to_date);
 
-		$date_diff = $to_date - $from_date;
+	/////////////////////////
+	//View Table Functions //
+	/////////////////////////
 
-		if ($date_diff < 0)
-		{
-			$this->form_validation->set_message('validate_date', 'Invalid Date Interval - <strong>From Date</strong> is greater than <strong>To Date</strong>');
-			return FALSE;
-		}
-		else
-		{
-			return TRUE;
-		}
-	}
-
-
-	////////////////
-	//View Tables //
-	////////////////
-
+	/**
+	 * Controller for the view tables tab.
+	 * 
+	 * @param  string  $table  The name of the table to show. If Null, will show the table selection screen
+	 * @param  integer $offset Offset for pagination. @see search_model->get_table_data() and codeigniter pagination documentation 
+	 */
 	public function view_tables($table = NULL, $offset = 0) 
 	{
 
@@ -200,6 +223,37 @@ class Search extends CI_Controller {
 			$this->load->view('search/view_tables/view-table', $data);
 		}
 
+	}
+
+	/**
+	 * Returns True if the give '$to_date' is after the '$from_date'.
+	 * '$from_date' is retrieved using the post array while '$to_date' must be recieved as an argument
+	 * 
+	 * Function used in the code igniter form validation. 
+	 * @see https://www.codeigniter.com/userguide3/libraries/form_validation.html#callbacks-your-own-validation-methods doc
+	 * for more information on custom callbacks
+	 * 
+	 * @param  string $to_date Date to check
+	 * @return Boolean         True if valid, False if not
+	 */
+	public function validate_date($to_date)
+	{
+		$from_date = strtotime($this->input->post('from_date', TRUE));
+		$to_date = strtotime($to_date);
+
+		$date_diff = $to_date - $from_date;
+
+		if ($date_diff < 0)
+		{
+			$this->form_validation->set_message(
+				'validate_date', 'Invalid Date Interval - <strong>From Date</strong> is greater than <strong>To Date</strong>'
+			);
+			return FALSE;
+		}
+		else
+		{
+			return TRUE;
+		}
 	}
 }
 

@@ -2,7 +2,7 @@
 	<div class="navbar-brand">
 		<div class="navbar-burger"></div>
 	</div>
-	<div class="navbar-menu">
+	<div class="navbar-menu is-active">
 		<div class="navbar-start">
 			<?php echo anchor('home', 'Dashboard', 'class="navbar-item"'); ?>
 			<?php echo anchor('logging', 'Logging Form', 'class="navbar-item"'); ?>

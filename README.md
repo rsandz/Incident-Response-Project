@@ -1,11 +1,15 @@
-# Step Project
+# Incident Response Project
 
 
-Created by Ryan Sandoval and Supervised by Dr. Fehmi Jaafar. 
-			2018
-============================================================
+**Created by Ryan Sandoval and Supervised by Dr. Fehmi Jaafar. 2018**
 
-Desciption
+## Table of Contents
+
+- [Description](#Description)
+- [Framework and Libraries](#Frameworks-and-Libraries)
+- [Setup](#Setup)
+
+Description
 ==========
 This app is used to log actions to assist with the investigation, in the event that a security breech occurs.
 

@@ -7,7 +7,7 @@
 </div>
 <div class="column is-half is-offset-one-quarter ">
 	<div class="box has-text-centered">
-		<a class="button is-link is-centered full-width" href="<?php echo site_url('login') ?>">Login</a>
+		<?php echo anchor('login', 'Login', 'class="button is-info"'); ?>
 	</div>
 </div>
 </body>

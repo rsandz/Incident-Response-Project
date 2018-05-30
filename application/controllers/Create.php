@@ -14,9 +14,9 @@ class Create extends CI_Controller {
 		$this->load->helper('inflector');
 		
 		$this->load->model('Logging_model');
-		$this->load->model('Search_model');
+		$this->load->model('search_model');
 
-		date_default_timezone_set($this->config->get('timezone'));
+		date_default_timezone_set($this->config->item('timezone'));
 
 		if (!$this->session->logged_in)
 		{

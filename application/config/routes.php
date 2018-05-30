@@ -55,7 +55,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 //////////////////////////
 $route['setup'] = 'Setup/index';
 
-$route['home'] = 'Welcome/index';
+$route['home'] = 'User/index';
 $route['login'] = 'User/loginUI';
 $route['logout'] = 'User/logout';
 $route['admin'] = 'Admin/index';
@@ -67,4 +67,5 @@ $route['create'] = 'Create/index/action';
 $route['create/index'] = 'Create/index/action';
 $route['create/index/(:any)'] = 'Create/index/$1';
 $route['search'] = 'Search/index';
+$route['welcome'] = 'Welcome/index';
 $route['default_controller'] = 'Welcome/index';
