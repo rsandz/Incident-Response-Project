@@ -5,9 +5,9 @@
 
 ## Table of Contents
 
-- [Description](#Description)
-- [Framework and Libraries](#Frameworks-and-Libraries)
-- [Setup](#Setup)
+- [Description](#sescription)
+- [Framework and Libraries](#frameworks-and-libraries)
+- [Setup](#setup)
 
 Description
 ==========
