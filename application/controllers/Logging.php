@@ -5,9 +5,10 @@ class Logging extends CI_controller {
 	{
 		parent::__construct();
 		$this->load->model('logging_model');
+		$this->load->model('search_model');
 		$this->load->helper('form');
 
-		date_default_timezone_set('America/Edmonton'); //SETS DEFAULT TIME ZONE
+		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
 	}
 
 	/**
@@ -18,9 +19,9 @@ class Logging extends CI_controller {
 
 		$data['title'] = 'Logging Form';
 
-        $data['projects'] = $this->logging_model->get_items('projects');
-        $data['types'] = $this->logging_model->get_items('action_types', array('is_active !=' => 0));
-        $data['teams'] = $this->logging_model->get_items('teams');
+        $data['projects'] = $this->search_model->get_items('projects');
+        $data['types'] = $this->search_model->get_items('action_types', array('is_active !=' => 0));
+        $data['teams'] = $this->search_model->get_items('teams');
 
 		$this->load->library('form_validation');
 		$this->load->helper('url');
@@ -77,7 +78,7 @@ class Logging extends CI_controller {
 				singular($table).'_id' => $item_id
 		);
 
-		$query = $this->logging_model->get_items($table, $attributes); 
+		$query = $this->search_model->get_items($table, $attributes); 
 
 		$db_names = array(
 			'desc' => singular($table).'_desc',
@@ -116,7 +117,7 @@ class Logging extends CI_controller {
 			'action_name', 'action_id'
 		);
 
-		$query = $this->logging_model->get_items('actions', $attributes, $select);
+		$query = $this->search_model->get_items('actions', $attributes, $select);
 		$options = array();
 		foreach ($query as $row) {
 			$options[$row->action_id] = $row->action_name;

@@ -38,9 +38,9 @@ class Search extends CI_Controller {
 		} else {
 			//Get the action types
 			
-			$data['action_types'] = $this->logging_model->get_items('action_types');
-			$data['teams'] = $this->logging_model->get_items('teams');
-			$data['projects'] = $this->logging_model->get_items('projects');
+			$data['action_types'] = $this->search_model->get_items('action_types');
+			$data['teams'] = $this->search_model->get_items('teams');
+			$data['projects'] = $this->search_model->get_items('projects');
 
 			//Load the form
 			$this->load->view('templates/header', $data);
@@ -163,7 +163,6 @@ class Search extends CI_Controller {
 
 	public function view_tables($table = NULL, $offset = 0) 
 	{
-		$data['per_page'] = 10;
 
 		if ($table === NULL)
 		{
@@ -188,7 +187,7 @@ class Search extends CI_Controller {
 		}
 		else
 		{
-			$data = $this->search_model->get_table_data($table, $offset, $data['per_page']);
+			$data = $this->search_model->get_table_data($table, $offset);
 			$data['page_links'] = get_pagelinks($data, 'Search/view_tables/'.$table);
 
 			$data['title'] = 'View Tables';

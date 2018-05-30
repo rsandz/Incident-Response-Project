@@ -14,8 +14,9 @@ class Create extends CI_Controller {
 		$this->load->helper('inflector');
 		
 		$this->load->model('Logging_model');
+		$this->load->model('Search_model');
 
-		date_default_timezone_set('America/Edmonton');
+		date_default_timezone_set($this->config->get('timezone'));
 
 		if (!$this->session->logged_in)
 		{
@@ -65,7 +66,7 @@ class Create extends CI_Controller {
 	 */
 	public function action_form($data) 
 	{
-		$projects = $this->Logging_model->get_items('projects');
+		$projects = $this->search_model->get_items('projects');
 
 		foreach ($projects as $project) {
 			$data['projects'][$project->project_id] = $project->project_name;
@@ -109,7 +110,7 @@ class Create extends CI_Controller {
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		} else {
-			$data['types'] = $this->Logging_model->get_items('action_types', array('is_active !=' => '0'));
+			$data['types'] = $this->search_model->get_items('action_types', array('is_active !=' => '0'));
 
 			// Make the Form
 			$this->load->view('templates/header', $data);

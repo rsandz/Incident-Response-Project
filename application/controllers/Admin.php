@@ -55,7 +55,7 @@ class Admin extends CI_Controller {
 		
 		$data['title'] = ucwords($type.' Creation');
 		$data['type'] = ucfirst($type);
-		$data['field_data'] = $this->logging_model->get_field_data($type);
+		$data['field_data'] = $this->search_model->get_field_data($type);
 
 
 		foreach ($data['field_data'] as $field)

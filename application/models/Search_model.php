@@ -140,10 +140,7 @@ class Search_model extends CI_Model {
 	public function get_logs($log_ids, $offset = 0)
 	{
 		$this->load->helper('table_helper');
-
-		//Logs per page
-		$per_page = 10;
-		$data['per_page'] = 10;
+		$per_page  =$this->config->item('per_page');
 
 		//Join and select
 		$this->db
@@ -187,16 +184,17 @@ class Search_model extends CI_Model {
 
 	}
 
-	public function get_table_data($table, $offset, $per_page)
+	public function get_table_data($table, $offset)
 	{
 		$this->load->helper('inflector');
 		$this->load->helper('table_helper');
+		$per_page  =$this->config->item('per_page');
 
 		//Get Table DATA
-		$query = $this->logging_model->get_items_raw($table);
+		$query = $this->get_items_raw($table);
 		$data['table_data'] = array_slice($query->result_array(), $offset, $per_page); //Offset for pagination
 
-		$column_headings = $this->logging_model->get_field_data($table, TRUE);
+		$column_headings = $this->get_field_data($table, TRUE);
 
 		$data['heading'] = array();
 
@@ -232,6 +230,155 @@ class Search_model extends CI_Model {
 
 		return $data;
 	}
+
+		/**
+		 *	Querries if data provided is already in table.
+		 *
+		 *	@param string $table Table to check where data is in
+		 *	@param array  $data  Associative array with column-value pairs
+		 * 
+		 *	@return boolean True if in database. False if not.
+		 */
+		public function data_exists($table, $data) 
+		{
+			$this->db->where($data);
+		
+			if (!empty($this->db->get($table)->row()))
+			{
+				return $this->db->get($table)->row();
+
+			}
+			else
+			{
+				return FALSE;
+			}
+		}
+
+		/**
+		 * Gets a Codeignitor query object from a database given parameters, without calling the result() method.
+		 *
+		 * @param  string $table Table string
+	 	 * @param  Mixed  $where Associative array of column-value pairs or string
+	 	 * query
+	 	 * @param  Mixed  $select Array or String of columns to select
+	 	 * @param  array  $join Associative array of table as key and join conditios
+	 	 * as value
+		 * 
+		 * @return object The query object returned by code ignitor's db->get()
+		 */
+		public function get_items_raw($table, $where = NULL, $select = NULL, array $join = NULL)
+		{
+			if (gettype($where) == 'array') 
+			{
+				foreach ($where as $key => $value) 
+				{
+					if (strtoupper(strtok($key, ' ')) == 'OR')
+					{
+						$this->db->or_where(strtok(' '), $value);
+					}
+					else
+					{
+						$this->db->where($key, $value);
+					}		
+				}
+			}
+			elseif (gettype($where) == 'string')
+			{
+				$this->db->where($where);
+			}
+			
+			if (isset($select))
+			{
+					$this->db->select($select);
+			}
+
+			if (isset($join))
+			{
+				foreach ($join as $table => $condition) {
+					$this->db->join($table, $condition);
+				}
+			}
+
+				return $this->db->get($table);
+		}
+
+		/**
+		 * Gets items from database given some parameters. Unlike raw, returns query->results()
+		 * 
+		 * @param  string $table Table string
+		 * @param  Mixed  $where Associative array of column-value pairs or string
+		 * query
+		 * @param  Mixed  $select Array or String of columns to select
+		 * @param  array  $join Associative array of table as key and join conditios
+		 * as value
+		 * @return array             result_array of results
+		 */
+		public function get_items($table, $where = NULL, $select = NULL, array $join = NULL) 
+		{
+				return $this->get_items_raw($table, $where, $select, $join)->result();
+		}
+
+
+		/**
+		 *	Gets and Returns Table Fields Data
+		 *
+		 *	@param $table Table name to get field data.
+		 *	@param Boolean $keep_ids Whether to keep or remove the id fields.
+		 * 	
+		 *	@return object Field data object as per Code Ignitor's structure. Also includes enum values for enum type columns.
+		 */
+
+		public function get_field_data($table, $keep_ids = FALSE)
+		{
+			if ($this->db->table_exists($table))
+			{	
+				$field_data = $this->db->field_data($table);
+
+				foreach ($field_data as $key => &$field) 
+				{
+					if ($field->type == 'enum')
+					{
+						$enum_vals = $this->get_enum_vals($table, $field->name);
+						$field->enum_vals = $enum_vals;
+					}
+
+					if (stripos($field->name, 'id') && !$keep_ids)
+					{
+						unset($field_data[$key]);
+					}
+				}
+
+				return $field_data;
+			}
+			else
+			{
+				return NULL;
+			}
+		}
+
+		
+		/**
+		 * Gets the Enumeartion Values for a given field in a table
+		 * 
+		 * @param  string $table Table name in database
+		 * @param  string $field Field name in Database
+		 * @return array         Returns all enum values
+		 */
+		public function get_enum_vals($table, $field) 
+		{
+			$query = $this->db->query('SHOW COLUMNS FROM '.$table.' WHERE Field = "'.$field.'"')->row()->Type;
+			preg_match_all("/'.*?'/", $query, $results); //Reg match to get quoted enum values
+
+			//Stripping Quotes
+			$this->load->helper('string');
+			
+			foreach ($results[0] as &$result)//[0] is for array of full matches;
+			{
+				$result = strip_quotes($result);
+			} 
+
+			return $results[0];
+		}
 
 
 }
