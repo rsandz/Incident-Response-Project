@@ -5,7 +5,7 @@
 
 ## Table of Contents
 
-- [Description](#sescription)
+- [Description](#description)
 - [Framework and Libraries](#frameworks-and-libraries)
 - [Setup](#setup)
 
@@ -35,6 +35,6 @@ Edit the configuration files in:
 
 If there are no users in the database, aquire the SETUP.php in the setup folder. Open it and edit the fields to match your desired admin credentials. Run the setup in your borwser by going to:
 
-`yourwebsiteurl.com/Setup`
+`https://yourwebsiteurl.com/Setup`
 
 The setup file should automatically insert the admin account into the 'users' table in the database.

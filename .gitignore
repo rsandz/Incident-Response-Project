@@ -1,4 +1,6 @@
 .DS_Store
+user_guide/*
+.phpintel/*
 
 application/cache/*
 !application/cache/index.html
