@@ -33,9 +33,3 @@ If there are no users in the database, aquire the SETUP.php in the setup folder.
 	`yourwebsiteurl.com/Setup`
 
 The setup file should automatically insert the admin account into the 'users' table in the database.
-
-Need Help?
-==========
-
-Contact Ryan Sandoval:
-rsandova@ualberta.ca
