@@ -57,6 +57,7 @@ $route['setup'] = 'Setup/index';
 
 $route['home'] = 'User/index';
 $route['login'] = 'User/loginUI';
+$route['recover'] = 'User/recover_password';
 $route['logout'] = 'User/logout';
 $route['admin'] = 'Admin/index';
 $route['admin/view-logs'] = 'Admin/view_logs/0';

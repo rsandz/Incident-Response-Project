@@ -1,7 +1,7 @@
 <body>
 	<div class="hero is-info">
 		<div class="hero-body">
-			<h1 class="title">Welcome to the landing page for the Step Project - WIP</h1>
+			<h1 class="title">Incident Response Project - WIP</h1>
 		</div>
 	</div>
 </div>

@@ -25,3 +25,23 @@ $config['timezone'] = 'America/Edmonton';
  */
 
 $config['per_page'] = 10;
+
+/**
+ *  Salt
+ *
+ * 	For hashing, this salt will be used.
+ */
+
+$config['salt'] = 'ifft';
+
+/**=========================================
+ *		Email Configuration
+ * =========================================
+ */
+
+/**
+ * Password recovery Email
+ */
+
+$config['recovery_email'] = 'password_recovery@stepproject.com';
+$config['recovery_email_name'] = 'Password Manager'; 

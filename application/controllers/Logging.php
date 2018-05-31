@@ -1,4 +1,14 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php 
+/**
+ * Logging Controller
+ * ==================
+ * Written by: Ryan Sandoval, May 2018
+ *
+ * This controller handles the functionality regarding logging actions.It allows users to log actions using an interface
+ * 	It also contains methods used by $.ajax() to request descriptions on certain action_types, actions and projects
+ * 
+ */
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Logging extends CI_controller {
 	public function __construct() 

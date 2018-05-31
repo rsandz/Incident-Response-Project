@@ -1,9 +1,24 @@
 <?php
+/**
+ * Create Controller
+ * =================
+ * Written by: Ryan Sandoval, May 2018
+ *
+ * This is the controller for the 'create' functionality in the app. I allows users to create actions, teams, projects, etc.
+ * 	in the site using an iterface.
+ * Much of the data validation is handled by Code Igniter's form validation
+ * 	@see https://www.codeigniter.com/userguide3/libraries/form_validation.html
+ *
+ * Certain actions are locked to specific user prvilleges
+ */
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Create extends CI_Controller {
 	/**
-	 * Constructor class
+	 * Constructor class for Create
+	 *
+	 * Loads SOME of the necessary libraries, helpers and models.
 	 */
 	public function __construct()
 	{
@@ -25,7 +40,9 @@ class Create extends CI_Controller {
 	}
 
 	/**
-	 * Main Controller for the create pages
+	 * Main Controller for the create pages. Contains the logic of the create funcitionality.
+	 * 	Calls the necessary functions to load up forms and ensures priveleges are OK before displaying the form.
+	 * 
 	 * @param  string $type Type of data to create. (i.e. User, Action, Project)
 	 */
 	public function index($type) 
@@ -188,7 +205,7 @@ class Create extends CI_Controller {
 			(
 			'name'       => $this->input->post('name', TRUE),
 			'email'      => $this->input->post('email', TRUE),
-			'password'   => crypt($this->input->post('password'), 'ifft'),
+			'password'   => crypt($this->input->post('password'), $this->config->item('salt')),
 			'privileges' => 'user',
 			);
 

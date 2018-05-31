@@ -1,15 +1,25 @@
 <?php
 /**
  * Search Controller
+ * =================
+ * Written by: Ryan Sandoval, May 2018
  *
  * This is the controller for the search functions of the application.
- * It handles two types of searching:
+ *
+ *  It handles two types of searching:
  * 	1. Keyword Searching
  * 		- Uses the MySQL 'like' command to look for keyword instances in rows. i.e. "SELECT * FROM table WHERE column LIKE %keyword%".
- * 			Can be filtered to search for keywords. 
- * 			For more information on the way code igniter handeles the 'like' query, @see
- * 			only in certain columns. 
+ * 			Can be filtered to search for keywords only in certain columns (e.g. names only). 
+ * 			For more information on the way code igniter handeles the 'like' query, 
+ * 			@see https://www.codeigniter.com/userguide3/database/query_builder.html#looking-for-similar-data
+ * 			
  * 	2. Filter Searching
+ * 		- Uses checkboxes for user to select. If the checkbox for a certain value is checked, (i.e. project1) then the search query will return
+ * 			results on rows with that value (project1). If the checkbox is not checked, then the search will not return any rows with that keyword. 
+ * 			(e.g. if 'project2' is checkbox is not checked, then no results will contain project2)
+ * 	
+ * 	These 2 results are combined by intersection. So, a result will only be shown if it shows up in the valid results for both keyword searching and
+ * 		filter searching
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -38,9 +48,7 @@ class Search extends CI_Controller {
 
 	/**
 	 * Main Method for the search page. 
-	 * Shows:
-	 * 	1. Keyword Search
-	 * 	2. Filter Search
+	 * Shows Interface for searching by keyword and filters.
 	 * 	
 	 */
 	public function index()
@@ -142,6 +150,7 @@ class Search extends CI_Controller {
 		}
 
 		$this->load->view('templates/header', $data);
+		$this->load->view('js/page-link-fix');
 		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
 		$this->load->view('search/view-logs', $data);
@@ -203,6 +212,7 @@ class Search extends CI_Controller {
 			$data['stats'] = $this->search_model->get_stats($data['tables']);
 
 			$this->load->view('templates/header', $data);
+			$this->load->view('js/page-link-fix');
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
 			$this->load->view('search/tabs', $data);

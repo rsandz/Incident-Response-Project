@@ -1,5 +1,15 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
+ * Admin Controller
+ * ================
+ * Written by: Ryan Sandoval, May 2018
+ *
+ * Handles Administrative things.
+ *
+ * @Depreciated
+ * 
+ */
+/**
  * Class for administrative database changes
 
  */
