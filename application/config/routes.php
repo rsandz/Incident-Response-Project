@@ -56,6 +56,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['setup'] = 'Setup/index';
 
 $route['home'] = 'User/index';
+$route['help/markups'] = 'Help/markups';
 $route['login'] = 'User/loginUI';
 $route['recover'] = 'User/recover_password';
 $route['recover-form/(:any)/(:any)'] = 'User/recover_form/$1/$2';

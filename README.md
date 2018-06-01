@@ -28,11 +28,17 @@ This application usses the following libraries:
 
 Setup
 =====
+Before deploying, go to index.php (in root folder) and dhange the environment variable to production
+
 A copy of the database has been provided in the setup folder. Import this into a database manager.
 Edit the configuration files in:
-1. application/config/config.php	--> Code Igniter configuration. Read up on the code igniter documentation to learn more.
+1. application/config/config.php --> Code Igniter configuration. Read up on the code igniter documentation to learn more.
+	- The following are the config values that you should take a look at.
+		1. log_threshold -> Verbosity of logs at application/logs
+		2. base_url -> Change to your website.
 2. application/config/appconfig.php --> Configuration for application
 3. application/config/database.php --> Database credentials and config
+
 
 If there are no users in the database, aquire the SETUP.php in the setup folder. Open it and edit the fields to match your desired admin credentials. Run the setup in your borwser by going to:
 

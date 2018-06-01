@@ -39,6 +39,17 @@
 								</div>
 							</div>
 						</div>
+						<div class="field is-horizontal">
+							<div class="field-label"><label class="label">Search Type</label></div>
+							<div class="field-body">
+								<div class="field">
+									<div class="control">
+										<label class="radio"><input name="ksearch_type" type="radio" class="radio" value="all" <?=set_checkbox('ksearch_type', 'all', TRUE)?>>All Keywords</label>
+										<label class="radio"><input name="ksearch_type" type="radio" class="radio" value="any" <?=set_checkbox('ksearch_type', 'any')?>>Any Keyword</label>
+									</div>
+								</div>
+							</div>
+						</div>
 						<p class="is-danger"><?=form_error('kfilters[]')?></p>
 					</div>
 					<div class="column is-narrow">
@@ -64,7 +75,7 @@
 		<!-- Filter Content -->
 		<div class="columns is-centered">
 			<div class="column is-three-quarters">
-				<div class="box" id="filterBox" > <!-- style="display:none" -->
+				<div class="box" id="filterBox" style="display:none"> 
 					<h3 class="subtitle">Date Filter</h3>
 					<div class="field is-horizontal is-normal">
 						<div class="field-body">
@@ -180,15 +191,27 @@
 			if ($(this).hasClass('unselectedUser'))
 			{
 				$(this).appendTo('#selectedUsers');
+				
+				//Add the input so that it gets into Post Array
 				var inputStr = '<input name ="users[]" id="'+ $(this).html() +'_select" value="'+ $(this).attr('data') +'" hidden>';
 				$(inputStr).appendTo('#selectedUsers');
+
+				//Add Delete button
+				$(this).append('<span class="delete"></span>');
+
 				$(this).toggleClass('unselectedUser selectedUser is-info is-light');
 			}
 			else
 			{
 				$(this).appendTo('#users');
-				inputId = '#'+$(this).html() +'_select';
+
+				//Remove from post array
+				inputId = '#'+$(this).text() +'_select';
 				$(inputId).remove();
+
+				//Remove Delete button
+				$(this).children('.delete').remove();
+
 				$(this).toggleClass('unselectedUser selectedUser is-info is-light');
 			}
 		});
@@ -212,7 +235,7 @@
 
 		//Delete Function
 
-		$('.delete').click(function()
+		$('.delete:not(.tag)').click(function()
 		{
 			$(this).parent().remove();
 		});

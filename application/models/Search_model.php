@@ -144,7 +144,7 @@ class Search_model extends CI_Model {
 		$this->db
 			->join('actions','actions.action_id = action_log.action_id')
 			->join('action_types','actions.type_id = action_types.type_id', 'left')
-			->join('projects','projects.project_id = actions.project_id', 'left')
+			->join('projects','projects.project_id = action_log.project_id', 'left')
 			->join('teams','teams.team_id = action_log.team_id', 'left')
 			->join('users','users.user_id = action_log.user_id', 'left')
 			->order_by( 'log_date', 'DESC')
@@ -182,7 +182,7 @@ class Search_model extends CI_Model {
 			->join('actions','actions.action_id = action_log.action_id')
 			->join('users','users.user_id = action_log.user_id', 'left')
 			->join('action_types','actions.type_id = action_types.type_id', 'left')
-			->join('projects','projects.project_id = actions.project_id', 'left')
+			->join('projects','projects.project_id = action_log.project_id', 'left')
 			->join('teams','teams.team_id = action_log.team_id', 'left')
 			->order_by( 'log_date', 'DESC')
 			->order_by( 'log_time', 'DESC');
@@ -235,6 +235,15 @@ class Search_model extends CI_Model {
 		foreach ($column_headings as $heading) 
 		{
 			array_push($data['heading'], humanize($heading->name));
+		}
+
+		//Censoring Password Hashes - See configuration for disabling this
+		if (in_array('Password', $data['heading']) && !$this->config->item('show_hashes')) 
+		{
+			foreach ($data['table_data'] as &$row)
+			{
+				$row['password'] = '***********';
+			}
 		}
 
 		//Create The table

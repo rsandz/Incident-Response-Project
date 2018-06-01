@@ -48,7 +48,7 @@ $config['salt'] = 'ifft';
  * Whether to show password hashes in tables.
  */
 
-$config['show_hashes'] = FALSE;
+$config['show_hashes'] = TRUE;
 
 /**=========================================
  *		Email Configuration

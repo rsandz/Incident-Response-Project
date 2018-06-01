@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = ''; //SET THIS
+$config['base_url'] = 'http://localhost/step_project';
 
 /*
 |--------------------------------------------------------------------------
@@ -223,7 +223,7 @@ $config['allow_get_array'] = TRUE;
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 1;
+$config['log_threshold'] = 2;
 
 /*
 |--------------------------------------------------------------------------

@@ -110,23 +110,24 @@ class User extends CI_Controller {
 
 			//load Email Library
 			$this->load->library('email');
-			
-			$this->email->from($this->config->item('recovery_email'), $this->config->item('recovery_email_name'));
+			//Load email config
+			$this->load->config('email');
+
+			$this->email->from($this->config->item('smtp_user'), $this->config->item('recovery_name'));
 			$this->email->to($email);
 			
 			$this->email->subject('Password Recovery Request');
-			$this->email->message(
-				'Hello '.$user_data['name'].', <br>'
-				.'You have requested to change your password. If this was not you, please ignore this email <br>'
-				.'Please click on the following link to reset your password: <br>'
-				.site_url('recover-form/'.$user_data['user_id'].'/'.$user_data['email_code'])
-				.'<p></p>Kind Regards, <br>'
-				.$this->config->item('recovery_email_name')
-			);
+			
+			//Message formatting
+			$message = $this->config->item('recovery_message');
+			$message = str_replace('{name}', $user_data['name'], $message);
+			$message = str_replace('{recovery_name}', $this->config->item('recovery_name'), $message);
+			$message = str_replace('{link}', site_url('recover-form/'.$user_data['user_id'].'/'.$user_data['email_code']), $message);
+
+			$this->email->message($message);
+				
 			$this->email->send(FALSE);
 			echo $this->email->print_debugger();
-			
-
 		} 
 		else 
 		{

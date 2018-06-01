@@ -1,117 +1,124 @@
 <body>
 	<div class="section">
-		<div class="columns is-centered">
-		<div class="column is-three-quarters">
-			<?php echo form_open('logging/log'); ?>
-		
-				<div class="columns">
-		
-				<div class="column">
-				<div class="field">
-					<label class="label">Project</label>
-					<!-- Creates the selection for Projects -->
-					<div class="control">
-						<div class="select"> 
-							<select name="project" id="project-selector">
-								<?php foreach ($projects as $project_row): ?>
-									<?php echo '<option value="'.$project_row->project_id.'">'.$project_row->project_name.'</option><br>' ?>
-								<?php endforeach ?>
-							</select>
-						</div>
-					</div>
-				</div>
-				</div>
-		
-				<!-- PROJECT DESCRIPTION -->
-				<div class="column">
-					<div class="content">
-						<p id="project-desc"></p>
-					</div>
-				</div>
-		
-				<!-- Extra Column -->
-				<div class="column"></div> 
-		
-				</div>
-		
-				<div class="field">
-					<label class="label">Team</label>
-					<!-- Creates the selection for Teams -->
-					<div class="control">
-						<div class="select"> 
-							<select name="team">
-								<?php foreach ($teams as $team_row): ?>
-									<?php echo '<option value="'.$team_row->team_id.'">'.$team_row->team_name.'</option><br>' ?>
-								<?php endforeach ?>
-							</select>
-						</div>
-					</div>
-				</div>
-		
-				<div class="columns">
-
-				<!-- Action Type -->
-				<div class="column">
-					<label class="label">Action Type</label>
-					<div class="select">
-						<select name="action_type" class="select" id="type-selector">
-							<?php foreach ($types as $type): ?>
-								<?php echo '<option value="'.$type->type_id.'">'.$type->type_name.'</option><br>' ?>
+	<div class="container">
+		<?php echo form_open('logging/log'); ?>
+				
+			<div class="columns">
+				
+			<div class="column">
+			<div class="field">
+				<label class="label">Project</label>
+				<!-- Creates the selection for Projects -->
+				<div class="control">
+					<div class="select"> 
+						<select name="project" id="project-selector">
+							<?php foreach ($projects as $project_row): ?>
+								<?php echo '<option value="'.$project_row->project_id.'">'.$project_row->project_name.'</option><br>' ?>
 							<?php endforeach ?>
 						</select>
 					</div>
 				</div>
-
-				<!-- Action Selection -->
-				<div class="column">
-				<div class="field">
-					<label class="label">Actions</label>
-					<!-- Creates the selection for actions -->
-					<div class="control">
-						<div class="select" id="action-div"> 
-						</div>
-					</div>
-				</div>
-				</div>
-		
-		
-				<!-- ACTION DESCRIPTION -->
-				<div class="column">
-					<div class="content">
-						<p id="action-desc"></p>
-					</div>
-				</div>
-				</div>
+			</div>
+			</div>
 				
-				<div class="field">
-					<label class="label "for="date">Date</label>
-					<div class="control"> 
-						<input class="input" type="date" name="date" value="<?php echo date('Y-m-d');?>">
+			<!-- PROJECT DESCRIPTION -->
+			<div class="column">
+				<div class="content">
+					<p id="project-desc"></p>
+				</div>
+			</div>
+				
+			<!-- Extra Column -->
+			<div class="column"></div> 
+				
+			</div>
+				
+			<div class="field">
+				<label class="label">Team</label>
+				<!-- Creates the selection for Teams -->
+				<div class="control">
+					<div class="select"> 
+						<select name="team">
+							<?php foreach ($teams as $team_row): ?>
+								<?php echo '<option value="'.$team_row->team_id.'">'.$team_row->team_name.'</option><br>' ?>
+							<?php endforeach ?>
+						</select>
 					</div>
 				</div>
-				<div class="field">
-					<label class="label "for="date">Time</label>
-					<div class="control">
-						<input class="input" type="time" name="time" value = "<?php echo date('H:i');?>">
-					</div>
-				</div>
-				<div class="field">
-					<label for="desc">Description</label>
-					<div class="control ">
-						<textarea class="textarea" name="desc"></textarea>
-					</div>
-				</div>
+			</div>
+				
+			<div class="columns">
 		
-				<div class="field">
-					<input type="submit" class = "button is-primary" name="submit" value="New Log" />
+			<!-- Action Type -->
+			<div class="column">
+				<label class="label">Action Type</label>
+				<div class="select">
+					<select name="action_type" class="select" id="type-selector">
+						<?php foreach ($types as $type): ?>
+							<?php echo '<option value="'.$type->type_id.'">'.$type->type_name.'</option><br>' ?>
+						<?php endforeach ?>
+					</select>
 				</div>
 			</div>
 		
-			<span class="has-text-danger"><?php echo validation_errors(); ?></span>
-		
-			</form>
+			<!-- Action Selection -->
+			<div class="column">
+			<div class="field">
+				<label class="label">Actions</label>
+				<!-- Creates the selection for actions -->
+				<div class="control">
+					<div class="select" id="action-div"> 
+					</div>
+				</div>
+			</div>
+			</div>
+				
+				
+			<!-- ACTION DESCRIPTION -->
+			<div class="column">
+				<div class="content">
+					<p id="action-desc"></p>
+				</div>
+			</div>
+			</div>
+			
+			<div class="columns">
+				<div class="column">
+					<div class="field">
+						<label class="label "for="date">Date</label>
+						<div class="control"> 
+							<input class="input" type="date" name="date" value="<?php echo date('Y-m-d');?>">
+						</div>
+					</div>
+				</div>
+				<div class="column">
+					<div class="field">
+						<label class="label "for="date">Time</label>
+						<div class="control">
+							<input class="input" type="time" name="time" value = "<?php echo date('H:i');?>">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="field">
+				<label class="label" ">Description</label>
+				<div class="control ">
+					<textarea class="textarea" name="desc"></textarea>
+				</div>
+				<p class="has-text-right">Supports some HTML Markups. Click <?php echo anchor('Help/markups', 'here');?> to learn more.</p>
+			</div>
+				
+			<div class="field">
+				<input type="submit" class = "button is-primary" name="submit" value="New Log" />
+			</div>
 		</div>
-		</div>
+				
+		<span class="has-text-danger"><?php echo validation_errors(); ?></span>
+				
+		</form>
+				</div>
+				</div>
+	</div>
 	</div>
 
 

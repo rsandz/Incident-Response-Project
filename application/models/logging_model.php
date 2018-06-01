@@ -26,16 +26,17 @@ class logging_model extends CI_model {
 	 * @return True on Sucess. False on failure
 	 *
 	 */	
-	public function log_action($log_type, $action = NULL) { 
+	public function log_action($log_type, $action = NULL, $name = NULL) { 
 		if ($log_type == 'form')
 		{
 			$data = array(
-				'action_id' => $this->input->post('action', TRUE),
-				'log_desc'  => $this->input->post('desc', TRUE),
-				'log_date'  => $this->input->post('date', TRUE),
-				'log_time'  => $this->input->post('time', TRUE),
-				'team_id'   => $this->input->post('team', TRUE),
-				'user_id'   => $this->session->user_id
+				'action_id'  => $this->input->post('action', TRUE),
+				'log_desc'   => $this->input->post('desc', TRUE),
+				'log_date'   => $this->input->post('date', TRUE),
+				'log_time'   => $this->input->post('time', TRUE),
+				'team_id'    => $this->input->post('team', TRUE),
+				'project_id' => $this->input->post('project', TRUE),
+				'user_id'    => $this->session->user_id
 				);
 			return $this->db->insert('action_log', $data);
 		}
@@ -72,6 +73,7 @@ class logging_model extends CI_model {
 				'action_id' => $this->search_model->get_items('actions', array('action_name' => 'Created '.$action))[0]->action_id,
 				'log_date' => date('Y-m-d'),
 				'log_time' => date('H:i'),
+				'log_desc' => 'Inserted '.$name.' into '.$action.' table.',
 				'team_id' => NULL,
 				'user_id' => $this->session->user_id
 				);
@@ -134,7 +136,7 @@ class logging_model extends CI_model {
 			->select('action_name, type_name, project_name, team_name, log_desc, log_date, log_time')
 			->join('actions','actions.action_id = action_log.action_id')
 			->join('action_types','actions.type_id = action_types.type_id', 'left')
-			->join('projects','projects.project_id = actions.project_id', 'left')
+			->join('projects','projects.project_id = action_log.project_id', 'left')
 			->join('teams','teams.team_id = action_log.team_id', 'left')
 			->order_by( 'log_date', 'DESC')
 			->order_by( 'log_time', 'DESC');;

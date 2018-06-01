@@ -97,7 +97,7 @@ class Create extends CI_Controller {
 
 		if ($this->form_validation->run()) {
 			//Logging action
-			$this->Logging_model->log_action('create', 'action');			
+			$this->Logging_model->log_action('create', 'action', $this->input->post('action_name', TRUE));			
 
 			//Enter into Database
 			$insert_data = array
@@ -155,7 +155,7 @@ class Create extends CI_Controller {
 		if ($this->form_validation->run() == TRUE) 
 		{
 			//Logging action
-			$this->Logging_model->log_action('create', 'project');
+			$this->Logging_model->log_action('create', 'project', $this->input->post('project_name', TRUE));
 			//Enter into Database
 			$insert_data = array
 				(
@@ -217,7 +217,7 @@ class Create extends CI_Controller {
 
 		if ($this->form_validation->run()) {
 			//Logging action
-			$this->Logging_model->log_action('create', 'user');
+			$this->Logging_model->log_action('create', 'user', $this->input->post('name', TRUE));
 
 			$this->Logging_model->log_item('users', $insert_data);
 			//Success
@@ -258,7 +258,7 @@ class Create extends CI_Controller {
 		if ($this->form_validation->run() == TRUE) 
 		{
 			//Logging action
-			$this->Logging_model->log_action('create', 'team');
+			$this->Logging_model->log_action('create', 'team', $this->input->post('team_name', TRUE));
 			//Enter into Database
 			$insert_data = array
 				(

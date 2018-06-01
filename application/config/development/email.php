@@ -7,11 +7,11 @@
  * @see https://www.codeigniter.com/userguide3/libraries/email.html
  */
 
+$config['smtp_user']    = 'rsandovatest@gmail.com';
+$config['smtp_pass']    = 'Blueman8427';
 $config['protocol']    = 'smtp';
-$config['smtp_user']    = '';
-$config['smtp_pass']    = '';
-$config['smtp_host']    = '';
-$config['smtp_port']    = '';
+$config['smtp_host']    = 'ssl://smtp.gmail.com';
+$config['smtp_port']    = '465';
 $config['smtp_timeout'] = '7';
 $config['charset']    = 'utf-8';
 $config['newline']    = "\r\n";
