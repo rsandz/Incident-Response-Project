@@ -3,7 +3,7 @@
 	<div class="columns is-centered">
 		<div class="column is-half">
 			<div class="content">
-				<?php if ($show_form_errors) echo validation_errors('<div class="notification is-danger"><p class="has-text-white">', '</p></div>')?>
+				<?php echo validation_errors('<div class="notification is-danger"><p class="has-text-white">', '</p></div>')?>
 			</div>
 		</div>
 	</div>

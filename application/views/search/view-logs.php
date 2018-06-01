@@ -13,7 +13,7 @@
 					</div>
 				</div>
 				<div class="level-right">
-					<p><strong>Total Matches:</strong> <?php echo $num_rows?></p>
+					<p><strong>Total Matches:</strong> <?php if (isset($num_rows)) echo $num_rows?></p>
 				</div>
 			</div>
 		

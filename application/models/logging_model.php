@@ -8,6 +8,7 @@ class logging_model extends CI_model {
 	public function __construct() {
 		parent:: __construct();
 		$this->load->database(); //load database
+		$this->load->model('search_model');
 	}
 	/**
 	 * Logs an action in action log table. Can log what was in a form, or whatever a
@@ -41,7 +42,7 @@ class logging_model extends CI_model {
 		elseif($log_type == 'create')
 		{	
 			//See if there is a 'create' action type in the first place
-			if(!$this->data_exists('action_types', array('type_name' => 'create')))
+			if(!$this->search_model->data_exists('action_types', array('type_name' => 'create')))
 			{
 				$insert_data = array(
 					'type_name' => 'Create',
@@ -51,10 +52,10 @@ class logging_model extends CI_model {
 				$this->log_item('action_types', $insert_data);
 			}
 
-			$type_id = $this->get_items('action_types', array('type_name' => 'create'))[0]->type_id;
+			$type_id = $this->search_model->get_items('action_types', array('type_name' => 'create'))[0]->type_id;
 
 			//See if create action is in the actions table in the first place
-			if (!$this->data_exists('actions', array('action_name' => 'Created '.$action)))
+			if (!$this->search_model->data_exists('actions', array('action_name' => 'Created '.$action)))
 			{
 				$insert_data = array(
 					'action_name' => 'Created '.$action,
@@ -68,7 +69,7 @@ class logging_model extends CI_model {
 			}
 
 			$data = array(
-				'action_id' => $this->get_items('actions', array('action_name' => 'Created '.$action))[0]->action_id,
+				'action_id' => $this->search_model->get_items('actions', array('action_name' => 'Created '.$action))[0]->action_id,
 				'log_date' => date('Y-m-d'),
 				'log_time' => date('H:i'),
 				'team_id' => NULL,
@@ -91,9 +92,9 @@ class logging_model extends CI_model {
 	 */
 	public function log_item($table, $data, $update = FALSE)
 	{
-		if ($this->data_exists($table, $data))
+		if ($this->search_model->data_exists($table, $data))
 		{
-			$existing_data = $this->data_exists($table, $data);
+			$existing_data = $this->search_model->data_exists($table, $data);
 
 			if ($update)
 			{

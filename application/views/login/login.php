@@ -4,12 +4,10 @@
 		<div class="container">
 			<div class="columns is-centered">
 				<div class="column is-half">
-					<?php echo form_open('recover');?>
 					<div class="box">
 						<div class="box has-background-info ">
 								<h1 class="title has-text-white">Login to your Account</h1>
 						</div>
-				
 						<?php echo form_open('login');?>
 						<div class="field">
 							<label class="label">Email:</label>

@@ -114,21 +114,22 @@ class User extends CI_Controller {
 			$this->email->from($this->config->item('recovery_email'), $this->config->item('recovery_email_name'));
 			$this->email->to($email);
 			
-			$this->email->subject('Password Recovery Requesy');
+			$this->email->subject('Password Recovery Request');
 			$this->email->message(
-				'Hello '.$user_data['name'].', \n'
-				.'You have requested to change your password. If this was not you, please ignore this email \n'
-				.'Please click on the following link to reset your password: \n'
-				.site_url($email.'/'.$user_data['email_code'])
-				.'\n\nKind Regards,'
-				.'\n'.$this->config->item('recovery_email_name')
+				'Hello '.$user_data['name'].', <br>'
+				.'You have requested to change your password. If this was not you, please ignore this email <br>'
+				.'Please click on the following link to reset your password: <br>'
+				.site_url('recover-form/'.$user_data['user_id'].'/'.$user_data['email_code'])
+				.'<p></p>Kind Regards, <br>'
+				.$this->config->item('recovery_email_name')
 			);
 			$this->email->send(FALSE);
 			echo $this->email->print_debugger();
 			
 
-		} else {
-			$data['show_form_errors'] = TRUE;
+		} 
+		else 
+		{
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('login/recover', $data);
@@ -147,9 +148,58 @@ class User extends CI_Controller {
 		}
 		else
 		{
-			$this->form_validation->set_message('in_database', 'Email could not be found in database');
+			$this->form_validation->set_message('in_database', 'Invalid Email');
 			return FALSE;
 		}
+	}
+
+	public function recover_form($user_id, $email_code)
+	{
+		$this->load->library('form_validation');
+
+		$this->form_validation->set_rules('password', 'Password', 'required');
+		$this->form_validation->set_rules('password_confirm', 'Confirm Password', 'required|matches[password]');
+
+		if ($this->form_validation->run())
+		{
+			$reset_hash = $this->input->post('reset_hash');
+			if ($this->user_model->validate_reset_hash($user_id, $email_code, $reset_hash))
+			{
+				$data['title'] = 'Reset Successful';
+
+				$this->user_model->reset_password($user_id, $this->input->post('password'));
+				$this->load->view('templates/header', $data);
+				$this->load->view('user/reset/success', $data);
+			}
+			else
+			{
+				show_error('Error during password reset.', 400);
+			}
+		}
+		else
+		{
+			//Validate Email Code
+			if (password_verify($this->user_model->user_email($user_id), $email_code))
+			{
+				$reset_hash = $this->user_model->get_reset_hash($user_id, $email_code);
+			
+				$data['reset_hash'] = $reset_hash;
+				$data['email_code'] = $email_code;
+				$data['user_id'] = $user_id;
+			
+				$data['title'] = 'Reset Password';
+				$data['show_form_errors'] = TRUE;
+			
+				$this->load->view('templates/header', $data);
+				$this->load->view('user/reset/reset_form', $data);
+				$this->load->view('templates/error');
+			}
+			else
+			{
+				show_error('Invalid Link', 401);
+			}
+		}
+		
 	}
 
 

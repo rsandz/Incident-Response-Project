@@ -43,5 +43,5 @@ $config['salt'] = 'ifft';
  * Password recovery Email
  */
 
-$config['recovery_email'] = 'password_recovery@stepproject.com';
+$config['recovery_email'] = 'ryan_sandoval@live.com';
 $config['recovery_email_name'] = 'Password Manager'; 

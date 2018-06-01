@@ -36,56 +36,90 @@ class Search_model extends CI_Model {
 		}
 
 		// Type Filter - Based on type
-		
-		$this->db->group_start();
-		foreach ($query['action_types'] as $action_type) 
+		if (is_array($query['action_types']))
 		{
-			$this->db->or_where('actions.type_id', $action_type);
+			$this->db->group_start();
+			foreach ($query['action_types'] as $action_type) 
+			{
+				$this->db->or_where('actions.type_id', $action_type);
+			}
+			$this->db->group_end();
 		}
-		$this->db->group_end();
-
 		// Team Filter
-		
-		$this->db->group_start();
+	
 		if (is_array($query['teams']))
 		{
+			$this->db->group_start();
 			foreach ($query['teams'] as $team) 
 			{
 				$this->db->or_where('action_log.team_id', $team);
 			}
-				
+
+			if ($query['null_teams'])
+			{
+				$this->db->or_where('action_log.team_id IS NULL');
+			}
+
+			$this->db->group_end();	
+		}
+		else
+		{
+			if ($query['null_teams'])
+			{
+				$this->db->where('action_log.team_id IS NULL');
+			}
 		}
 
-		if ($query['null_teams'])
-		{
-			$this->db->or_where('action_log.team_id IS NULL');
-		}
-		$this->db->group_end();	
+		
+		
 		//////////////////////////////////////////
 
 		// Project Filter
 		
-		$this->db->group_start();
-
 		if (is_array($query['projects']))
 		{
+			$this->db->group_start();
 			foreach ($query['projects'] as $project) 
 			{
 				$this->db->or_where('action_log.project_id', $project);
 			}
-		}
 
-		if ($query['null_projects'])
+			if ($query['null_projects'])
+			{
+				$this->db->or_where('action_log.project_id IS NULL');
+			}
+
+			$this->db->group_end();
+		}
+		else
 		{
-			$this->db->or_where('action_log.project_id IS NULL');
+			if ($query['null_projects'])
+			{
+				$this->db->or_where('action_log.project_id IS NULL');
+			}
 		}
 
-		$this->db->group_end();
+		
+
+		
 		///////////////////////////////////////
 
+		//User Filter
+
+		if (is_array($query['users']))
+		{
+			$this->db->group_start();
+			foreach ($query['users'] as $user_id) 
+			{
+				$this->db->or_where('action_log.user_id', $user_id);
+			}
+			$this->db->group_end();
+		}
+		
 		////////////////////////////////
 		//Get ids that match criteria //
 		////////////////////////////////
+		// show_error($this->db->get_compiled_select('action_log'));
 		$this->db->select('log_id');
 
 		$filter_ids  = array();

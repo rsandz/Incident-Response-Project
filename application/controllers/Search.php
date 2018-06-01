@@ -63,7 +63,6 @@ class Search extends CI_Controller {
 		$this->form_validation->set_rules('keywords', 'Keywords', 'trim');
 		$this->form_validation->set_rules('kfilters[]', 'Keyword Filters', 'trim|required');
 		$this->form_validation->set_rules('to_date', 'Date', 'callback_validate_date');
-		$this->form_validation->set_rules('action_types[]', 'Action Type', 'required');
 
 		if ($this->form_validation->run()) {
 			$this->results(FALSE); //Show search Matches
@@ -73,6 +72,7 @@ class Search extends CI_Controller {
 			$data['action_types'] = $this->search_model->get_items('action_types');
 			$data['teams'] = $this->search_model->get_items('teams');
 			$data['projects'] = $this->search_model->get_items('projects');
+			$data['users'] = $this->search_model->get_items('users');
 
 			//Load the form
 			$this->load->view('templates/header', $data);
@@ -110,6 +110,8 @@ class Search extends CI_Controller {
 			
 				'teams' => $this->input->post('teams[]', TRUE),
 				'null_teams' => $this->input->post('null_teams', TRUE),
+
+				'users' => $this->input->post('users[]', TRUE),
 			);
 
 			$this->session->set_userdata('search_query', $query);

@@ -11,7 +11,7 @@
 							<div class="field">
 								<label class="label">Enter your email address</label>
 								<div class="control">
-									<input class="input" type="text" name="email">
+									<input class="input <?php if (form_error('email') !== '') {echo 'is-danger';}?>" type="text" name="email">
 								</div>
 							</div>
 						</div>

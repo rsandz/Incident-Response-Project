@@ -29,9 +29,9 @@ class Setup extends CI_Controller {
 
 	//EDIT THESE FIELDS//////////////////////////////////
 
-	public $email = 'EMAIL@Foo.com';
-	public $password = 'ADMIN';
-	public $name = 'ADMIN';
+	public $email = 'User1@foo.com';
+	public $password = 'User1';
+	public $name = 'User1';
 
 	/////////////////////////////////////////////////////
 
@@ -51,9 +51,9 @@ class Setup extends CI_Controller {
 
 		$insert_data = array
 			(
-			'name'       => $name,
-			'email'      => $email,
-			'password'   => crypt('$password', 'ADMIN'),
+			'name'       => $this->name,
+			'email'      => $this->email,
+			'password'   => crypt($this->password, $this->config->item('salt')),
 			'privileges' => 'admin',
 			);
 

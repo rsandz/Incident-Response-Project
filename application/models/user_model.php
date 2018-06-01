@@ -3,6 +3,8 @@ class User_model extends CI_Model {
 	public function __construct() {
 		parent:: __construct();
 		$this->load->database(); //load database
+
+		$this->load->model('search_model');
 	}
 	/**
 	 * Database interaction for logging in the user. Also sets session data on logon.
@@ -55,12 +57,11 @@ class User_model extends CI_Model {
 
 	public function recovery_data($email)
 	{
-		$this->load->model('search_model');
 
 		//Get User information
 
 		$this->db->select(array(
-			'name', 'user_id'
+			'name', 'user_id', 'password'
 		))
 			->where('email', $email);
 
@@ -77,13 +78,52 @@ class User_model extends CI_Model {
 			$data['user_id'] = $query->row()->user_id;
 
 			//Generate code to access password recovery form
-			$data['email_code'] = crypt($data['name'], $this->config->item('salt'));
+			$data['email_code'] = crypt($email.$query->row()->password, $this->config->item('salt'));
 
 			return $data;
 
 		}
 
 	}	
+
+	public function user_email($user_id)
+	{
+		return $this->search_model->get_items_raw('users', array('user_id' => $user_id))->row()->email;
+	}
+
+	public function get_reset_hash($user_id, $email_code)
+	{
+		$query = $this->search_model->get_items_raw('users', array('user_id' => $user_id));
+		if ($query->num_rows() !== 1)
+		{
+			return FALSE;
+		}
+		$query = $query->row();
+
+		return crypt($email_code.$query->password.$query->email, $this->config->item('salt'));
+	}
+
+	public function validate_reset_hash($user_id, $email_code, $reset_hash)
+	{
+		$email = $this->user_email($user_id);
+		$query = $this->search_model->get_items_raw('users', array('user_id' => $user_id))->row();
+		if (password_verify($email_code.$query->password.$email, $reset_hash))
+		{
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	public function reset_password($user_id, $password)
+	{
+		$this->db->where('user_id', $user_id);
+		$this->db->update('users', array('password' => crypt($password, $this->config->item('salt'))));
+
+		return TRUE;
+	}
 
 
 }
