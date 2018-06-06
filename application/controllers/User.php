@@ -15,11 +15,12 @@ class User extends CI_Controller {
 		$this->load->model('user_model');
 		$this->load->library('session');
 		$this->load->helper('url');
+		$this->load->helper('user');
 	}
 
 	public function index()
 	{
-		$this->check_login(); //Ensures that the user is logged in.
+		check_login(TRUE); //Ensures that the user is logged in.
 
 		$data['title']='Dashboard';
 		$data['name'] = $this->session->name;
@@ -37,7 +38,7 @@ class User extends CI_Controller {
 
 		//Loads table for previous entries
 		$this->load->model('logging_model');
-		$data['entries_table'] = $this->logging_model->get_entries_table(10)['table'];
+		$data['entries_table'] = $this->logging_model->get_my_entries_table()['table'];
 		$this->load->view('logging/user-entries', $data); 
 
 		$this->load->view('templates/footer');
@@ -80,14 +81,6 @@ class User extends CI_Controller {
 
 		$this->session->sess_destroy();
 		redirect('welcome');
-	}
-
-	public function check_login() 
-	{
-		if (!$this->session->logged_in)
-		{
-			redirect('login','refresh');
-		} 
 	}
 
 	public function recover_password()
@@ -201,6 +194,29 @@ class User extends CI_Controller {
 			}
 		}
 		
+	}
+
+	public function mystats()
+	{
+		check_login(TRUE);
+		
+		$this->load->helper('form');
+
+		$data['title'] = 'My Statistics';
+		$data['header']['text'] = "My Statistics";
+
+		$data['interval_options'] = array(
+			'daily' => 'Daily',
+			'weekly' => 'Weekly',
+			'monthly' => 'Monthly',
+			'yearly' => 'Yearly'
+		);
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/hero-head', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('stats/mystats', $data);
+		$this->load->view('templates/footer');
 	}
 
 

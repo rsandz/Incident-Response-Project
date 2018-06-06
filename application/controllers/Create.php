@@ -25,18 +25,16 @@ class Create extends CI_Controller {
 		parent::__construct();
 		$this->load->library('form_validation');
 		$this->load->helper('form');
-		$this->load->helper('url');
 		$this->load->helper('inflector');
+		$this->load->helper('user');
 		
 		$this->load->model('Logging_model');
 		$this->load->model('search_model');
 
 		date_default_timezone_set($this->config->item('timezone'));
 
-		if (!$this->session->logged_in)
-		{
-			show_error('401 - Not Authorized. Please Log in.', 401);
-		} 
+		check_login(TRUE);
+
 	}
 
 	/**
@@ -136,7 +134,6 @@ class Create extends CI_Controller {
 			$this->load->view('create/tabs');
 			$this->load->view('create/action', $data);
 			$this->load->view('create/errors', $data);
-			$this->load->view('js/descriptions');
 			$this->load->view('templates/footer');
 		}
 	}

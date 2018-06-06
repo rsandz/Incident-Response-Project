@@ -25,6 +25,7 @@ class Admin extends CI_Controller {
 
 		if ($this->session->privileges !== 'admin')
 		{
+			redirect('home','refresh');
 			show_error('401 - Not Authorized', 401);
 		} 
 	}

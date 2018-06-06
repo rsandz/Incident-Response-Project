@@ -58,6 +58,7 @@ class Setup extends CI_Controller {
 			);
 
 		$this->Logging_model->log_item('users', $insert_data);
+		echo('Admin account has been inserted into database');
 	}
 
 }

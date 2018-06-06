@@ -92,6 +92,7 @@ if (!function_exists('generate_table'))
 		$CI->table->set_template($template);
 
 		$table_html = $CI->table->generate($data['table_data']);
+		$table_html .= '<script src="'.base_url('js/page-link-fix.js').'"></script>'; // Adds script to fix the page numbers not being clickable
 
 		return $table_html;
 	}

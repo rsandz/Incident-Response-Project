@@ -1,7 +1,7 @@
 <body>
 	<!-- Tabs -->
 	
-	<div class="tabs is-boxed is-fullwidth is-medium">
+	<div class="tabs">
 		<ul>
 			<li <?php if ($type == 'action') {echo 'class="is-active"';}?>>
 				<?php echo anchor('Create/index/action', 'Action');?>

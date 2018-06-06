@@ -50,6 +50,22 @@ $config['salt'] = 'ifft';
 
 $config['show_hashes'] = FALSE;
 
+/**
+ * Search Viewing privileges
+ *
+ * Specific privileges can be set to only view certain results
+ * These results are:
+ * 	- 'user_only' - Can only view search results that match current user_id
+ * 	- 'team_only' - Can only view search results that have the same team_ids as current teams
+ * 	- 'all' - Can view all search results
+ */
+
+$config['search_privileges'] = array(
+	'user' => 'user_only',
+	'team_leader' => 'team_only',
+	'admin' => 'all'
+);
+
 /**=========================================
  *		Email Configuration
  * =========================================

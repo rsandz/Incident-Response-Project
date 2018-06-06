@@ -8,11 +8,9 @@ class Help extends CI_Controller {
 		parent::__construct();
 
 		$this->load->helper('url');
+		$this->load->helper('user');
 
-		if ($this->session->user_id == NULL)
-		{
-			show_error('401 - Not Authorized', 401);
-		} 
+		check_login(TRUE);
 	}
 
 	public function index()

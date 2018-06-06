@@ -124,71 +124,29 @@ class logging_model extends CI_model {
 
 	/**
 	 * Get entries from the action log
-	 * @param  int|null $limit       Limits items gotten from entries
-	 * @param  Boolean  $filter_user True if to filter by user ID
+	 * @param  int  $offset 		 Offset for pagination
 	 * @return array 				 Contains Table and Number of Rows                
 	 */	
-	public function get_entries_table( int $limit = NULL, $filter_user = TRUE, int $offset = 0) {
+	public function get_my_entries_table(int $offset = 0) {
 		//load required libraries
 		if ($this->load->is_loaded('table') == FALSE) $this->load->library('table');
+		$this->load->helper('table_helper');
+		$this->load->config('appconfig');
 
 		$this->db
-			->select('action_name, type_name, project_name, team_name, log_desc, log_date, log_time')
-			->join('actions','actions.action_id = action_log.action_id')
-			->join('action_types','actions.type_id = action_types.type_id', 'left')
-			->join('projects','projects.project_id = action_log.project_id', 'left')
-			->join('teams','teams.team_id = action_log.team_id', 'left')
 			->order_by( 'log_date', 'DESC')
-			->order_by( 'log_time', 'DESC');;
+			->order_by( 'log_time', 'DESC')
+			->where('user_id', $this->session->user_id);
 
-		if ($filter_user)
-		{
-			$this->db->where('user_id', $this->session->user_id);
-			$this->table->set_heading(array('Action Name','Action Type', 'Project', 'Team', 'Log Description', 'Log Date', 'Log Time'));
-		}
-		else
-		{
-			$this->db->select('name')
-			->join('users','action_log.user_id=users.user_id');
-			$this->table->set_heading(array('Action Name', 'Action Type', 'Project', 'Team', 'Log Description', 'Log Date', 'Log Time', 'Name'));
-		}
-		
-		$prev_entries = $this->db->get('action_log');
-		$data['total_rows'] = $prev_entries->num_rows();
+		$this->search_model->execute_table_filters('prev_entries');
 
-		$prev_entries_array = array_slice($prev_entries->result_array(), $offset, $limit);
+		$query = $this->db->get('action_log');
+		$data['table_data'] = array_slice($query->result_array(), $offset, $this->config->item('per_page'));
 
-		
-		///////////////////////////
-		//TABLE AESTHETICS SETUP //
-		///////////////////////////
+		$data['num_rows'] = $query->num_rows();
+		$data['heading'] = $this->search_model->get_table_headings('prev_entries');
 
-		$template = array(
-        'table_open'            => '<table class="table is-striped is-fullwidth">',
-
-        'thead_open'            => '<thead class="thead">',
-        'thead_close'           => '</thead>',
-
-        'heading_row_start'     => '<tr class="tr">',
-        'heading_row_end'       => '</tr>',
-        'heading_cell_start'    => '<th class="th">',
-        'heading_cell_end'      => '</th>',
-
-        'tbody_open'            => '<tbody class="tbody">',
-		'tbody_close'		 	=> '</tbody>',
-
-        'row_start'             => '<tr class="tr">',
-        'row_end'               => '</tr>',
-        'cell_start'            => '<td class="td">',
-        'cell_end'              => '</td>',
-
-        'table_close'           => '</table>'
-		);
-
-		$this->table->set_template($template);
-
-		$data['num_rows'] = $prev_entries->num_rows();
-		$data['table'] = $this->table->generate($prev_entries_array);
+		$data['table'] = generate_table($data);
 		return $data;
 	}
 

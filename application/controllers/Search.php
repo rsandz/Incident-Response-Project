@@ -37,13 +37,11 @@ class Search extends CI_Controller {
 		$this->load->helper('form');
 		$this->load->helper('url');
 		
-		$this->load->model('logging_model');
+		$this->load->model('statistics_model');
 		$this->load->model('search_model');
 
-		if (!isset($this->session->user_id))
-		{
-			show_error('401 - Not Logged In', 401);
-		} 
+		$this->load->helper('user');
+		check_login(TRUE);
 	}
 
 	/**
@@ -112,6 +110,8 @@ class Search extends CI_Controller {
 				'null_teams' => $this->input->post('null_teams', TRUE),
 
 				'users' => $this->input->post('users[]', TRUE),
+
+				'ksearch_type' => $this->input->post('ksearch_type', TRUE)
 			);
 
 			$this->session->set_userdata('search_query', $query);
@@ -127,7 +127,7 @@ class Search extends CI_Controller {
 		
 
 		//Keywords
-		$keyword_ids = $this->search_model->keyword_search($query['keywords'], $query['keyword_filters']);
+		$keyword_ids = $this->search_model->keyword_search($query['keywords'], $query['keyword_filters'], $query['ksearch_type']);
 		
 		//Filters
 		$filter_ids = $this->search_model->filter_search($query);
@@ -135,7 +135,7 @@ class Search extends CI_Controller {
 		//Intersect ids
 		$match_ids = array_intersect($keyword_ids, $filter_ids);
 
-		$data = $this->search_model->get_logs($match_ids, $offset); //Gets Tables for logs
+		$data = $this->search_model->get_logs_table($match_ids, $offset); //Gets Tables for logs
 
 		$data['title'] = 'Search Results';
 		$data['header'] = array(
@@ -152,12 +152,10 @@ class Search extends CI_Controller {
 		}
 
 		$this->load->view('templates/header', $data);
-		$this->load->view('js/page-link-fix');
 		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
 		$this->load->view('search/view-logs', $data);
 		$this->load->view('templates/footer', $data);
-		$this->load->view('js/page-link-fix');
 		
 	}
 
@@ -206,15 +204,14 @@ class Search extends CI_Controller {
 				'header' => array(
 					'text' => 'View Tables'
 					),
-				'tables' => array('actions', 'action_types', 'teams', 'projects', 'users')
+				'tables' => array('actions', 'action_types', 'teams', 'projects', 'users', 'user_teams')
 			);
 			
 			//Get Statistics
 			
-			$data['stats'] = $this->search_model->get_stats($data['tables']);
+			$data['stats'] = $this->statistics_model->get_stats($data['tables']);
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('js/page-link-fix');
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
 			$this->load->view('search/tabs', $data);

@@ -1,6 +1,11 @@
+<script type="text/javascript" src="<?php echo base_url('js/descriptions.js')?>"></script>
 <body>
 	<div class="section">
 	<div class="container">
+		<div class="">
+			<span class="has-text-danger"><?php echo validation_errors(); ?></span>
+			<span class="has-text-danger" id="errors"></span>
+		</div>
 		<?php echo form_open('logging/log'); ?>
 				
 			<div class="columns">
@@ -112,9 +117,7 @@
 				<input type="submit" class = "button is-primary" name="submit" value="New Log" />
 			</div>
 		</div>
-				
-		<span class="has-text-danger"><?php echo validation_errors(); ?></span>
-				
+
 		</form>
 				</div>
 				</div>
