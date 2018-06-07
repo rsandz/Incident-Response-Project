@@ -264,6 +264,57 @@ class Search extends CI_Controller {
 			return TRUE;
 		}
 	}
+
+	public function graph_search($offset = 0)
+	{
+		$user_lock = ($this->input->post('user_lock', TRUE)) ?: TRUE;
+		$query = array(
+			'keywords' => [],
+			'keyword_filters' => [],
+
+			'from_date' => (string)$this->input->post('from_date' , TRUE),
+			'to_date' => (string)$this->input->post('to_date', TRUE),
+
+			'users' => ($user_lock == TRUE) ? array($this->session->user_id) : NULL, 
+			//Need to put in array since the model checks if its an array before filtering
+
+			'action_types' => NULL,
+
+			'projects' => NULL,
+			'null_projects' => NULL,
+			
+			'teams' => NULL,
+			'null_teams' => NULL,
+
+			'ksearch_type' => NULL
+		);
+
+		$match_ids = $this->search_model->filter_search($query);
+
+		$data = $this->search_model->get_logs_table($match_ids, $offset); //Gets Tables for logs
+
+		$data['title'] = 'Search Results';
+		$data['header'] = array(
+			'colour' => 'is-info',
+			'text'   => 'Results'
+		);
+		$data['query'] = $query;
+
+		//No pagination needed if there are no results! Otherwise, will cause error if pagination is called.
+		if ($data['table'] !== 'No Results') 
+		{
+			$this->load->helper('table_helper');
+			$data['page_links'] = get_pagelinks($data, 'Search/results');
+		}
+
+		$data['type'] = 'graph';
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/hero-head', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('search/view-logs', $data);
+		$this->load->view('templates/footer', $data);
+
+	}
 }
 
 /* End of file Search.php */

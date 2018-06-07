@@ -13,7 +13,6 @@ class chartManager
 	{
 		var dateArray = [];
 		var logArray = [];
-		console.log(this);
 		var dataDates = this.data.logData.map(x => new Date(x.log_date));
 
 		//Correct for timezone, since the above puts the date in UTC
@@ -67,6 +66,64 @@ class chartManager
 						logArray.push(this.data.logData[index].amount);
 					}
 				}
+				break;
+			case 'monthly':
+				for (var i = this.limit - 1 + this.offset; i >= this.offset; i--) 
+				{
+					let currentDate = new Date();
+					//Steping by a week
+					currentDate.setMonth(currentDate.getMonth() - i);
+
+					//Remove Time and Day portions
+					currentDate.setHours(0,0,0,0);
+					currentDate.setDate(1);
+
+					dateArray.push(currentDate);
+
+					let limitDate = new Date(currentDate.getTime());
+					limitDate.setMonth(currentDate.getMonth() + 1);
+
+					//Find the logs on this day
+					let index = dataDates.findIndex(x => (currentDate <= x && x < limitDate))
+					if (index == -1)
+					{
+						logArray.push(0);
+					}
+					else
+					{
+						logArray.push(this.data.logData[index].amount);
+					}
+				}
+				break;
+				case 'yearly':
+				for (var i = this.limit - 1 + this.offset; i >= this.offset; i--) 
+				{
+					let currentDate = new Date();
+					//Steping by a week
+					currentDate.setFullYear(currentDate.getFullYear() - i);
+
+					//Remove Time and Day portions
+					currentDate.setHours(0,0,0,0);
+					currentDate.setMonth(0,1);
+
+					dateArray.push(currentDate);
+
+					let limitDate = new Date(currentDate.getTime());
+					limitDate.setFullYear(currentDate.getFullYear() + 1);
+
+					//Find the logs on this day
+					let index = dataDates.findIndex(x => (currentDate <= x && x < limitDate))
+					if (index == -1)
+					{
+						logArray.push(0);
+					}
+					else
+					{
+						logArray.push(this.data.logData[index].amount);
+					}
+				}
+				console.log(dataDates);
+				break;
 		}
 		return {dateArray:dateArray, logArray: logArray, maxYVal: Math.max.apply(null, logArray) + 2};
 	}
@@ -79,10 +136,9 @@ class chartManager
 
 	getData(callback)
 	{
-		var self = this;
 		$.get($('#ajax-link').attr('data')+'/get_user_log_frequency',
-		{'interval_type' : this.type}, (data) => {self.data = $.parseJSON(data);})
-		.done((data) => {callback(self)});
+		{'interval_type' : this.type}, (data) => {this.data = $.parseJSON(data);})
+		.done(callback.bind(this));
 	}
 
 	createChart()
@@ -90,13 +146,14 @@ class chartManager
 		this.getData(this.renderChart);
 	}
 
-	renderChart(self)
+	renderChart()
 	{
-		var chartData = self.generateData();
+		console.log(this);
+		var chartData = this.generateData();
 		if($('#chart').length)
 		{
 			var canvas =  document.getElementById("chart").getContext("2d");
-			self.chart = new Chart(canvas,
+			this.chart = new Chart(canvas,
 			{
 				type: 'bar',
 				data: 
@@ -124,9 +181,23 @@ class chartManager
 			                }
 			            }]
 			        },
+			        onClick: function(e) //For loading the graph search
+			        {
+			        	var index = this.getElementAtEvent(e)[0]._index;
+			        	var dateObj = new Date(this.data.labels[index]);
+			        	var elementData = {
+			        		date : dateObj.getFullYear() + "-" + (dateObj.getMonth() + 1) + "-" + dateObj.getDate(),
+			        		//PLUS 1 for the month since js months go from 0-11 shile sql months go from 1-12
+			        		amount : this.data.datasets[0].data[index]
+			        		};
+			        	console.log();
+			        	$('#to_date').val(elementData.date);
+			        	$('#from_date').val(elementData.date);
+			        	$('#search-form').submit();
+			        }
 				}
 			});
-			self.offset = 0;
+			this.offset = 0;
 		}
 	}
 
@@ -138,33 +209,39 @@ class chartManager
 		this.getData(this.updateChart);
 	}
 
-	updateChart(self = this) //TODO readd the spinner
+	updateChart() //TODO readd the spinner
 	{
-		switch (self.type)
+		let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+		switch (this.type)
 		{
 			case 'daily':
-				var chartData = self.generateData();
-				var label_array = chartData.dateArray.map(x => x.toDateString());
-				break;
 			case 'weekly':
-				var chartData = self.generateData();
+				var chartData = this.generateData();
 				var label_array = chartData.dateArray.map(x => x.toDateString());
 				break;
 			case 'monthly':
+				var chartData = this.generateData();
+				var label_array = chartData.dateArray.map(x => (months[x.getMonth()]+ " " + x.getFullYear()));
+				break;
 			case 'yearly':
+				var chartData = this.generateData();
+				var label_array = chartData.dateArray.map(x => x.getFullYear());
+				console.log(chartData);
 				break;
 			default:
 				console.log('Interval Error');
 				break;
 		}
 
-		self.chart.data.labels = label_array;
-		self.chart.data.datasets[0].data = chartData.logArray;
-		self.chart.options.scales.yAxes[0].ticks.max = chartData.maxYVal;
-		self.chart.update();
+		this.chart.data.labels = label_array;
+		this.chart.data.datasets[0].data = chartData.logArray;
+		this.chart.options.scales.yAxes[0].ticks.max = chartData.maxYVal;
+		this.chart.update();
 	}
 
 }
+
+
 
 // Chart Variables
 var manager = new chartManager('daily');

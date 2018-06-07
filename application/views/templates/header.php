@@ -11,6 +11,7 @@
 	  crossorigin="anonymous"></script>
 
 	<script id='ajax-link' data="<?php echo site_url('Ajax')?>"></script>	
+	<script id='site-link' data="<?php echo site_url()?>"></script>	
 
 	<title><?php echo $title; ?></title>
 

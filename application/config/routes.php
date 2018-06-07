@@ -71,6 +71,7 @@ $route['create/index'] = 'Create/index/action';
 $route['create/index/(:any)'] = 'Create/index/$1';
 $route['User/mystats'] = 'User/mystats';
 $route['search'] = 'Search/index';
+$route['search/(:any)'] = 'Search/$1';
 $route['welcome'] = 'Welcome/index';
 $route['Ajax/(:any)'] = 'Ajax/$1';
 $route['default_controller'] = 'Welcome/index';
