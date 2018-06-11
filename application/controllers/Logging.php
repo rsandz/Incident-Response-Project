@@ -59,7 +59,16 @@ class Logging extends CI_controller {
 			if ($this->session->user_id !== NULL) 
 			{
 			$data['title'] = 'Success';
-			$this->logging_model->log_action('form');
+			$insert_data = array(
+				'action_id'  => $this->input->post('action', TRUE),
+				'log_desc'   => $this->input->post('desc', TRUE),
+				'log_date'   => $this->input->post('date', TRUE),
+				'log_time'   => $this->input->post('time', TRUE),
+				'team_id'    => $this->input->post('team', TRUE),
+				'project_id' => $this->input->post('project', TRUE),
+				'hours'      => $this->input->post('hours', TRUE),
+				'user_id'    => $this->session->user_id,
+				);
 
 			$this->load->view('templates/header');
 			$this->load->view('logging/success');
@@ -71,74 +80,5 @@ class Logging extends CI_controller {
 
 		}	
 	}
-
-	/**
-	 * Gets the Description and/or type for fields in certain Tables.
-	 * 		i.e. action table and project table both have descriptions and these will grab them
-	 * For use with $.ajax(). Uses $_Get Array to get information
-	 * @param $_Get string table
-	 * @param $_Get string table_id
-	 * 
-	 */
-	public function get_info()
-	{
-		$this->load->helper('inflector');
-		$table = $this->input->get('table');
-		$item_id = $this->input->get(singular($table).'_id');
-
-		$attributes = array(
-				singular($table).'_id' => $item_id
-		);
-
-		$query = $this->search_model->get_items($table, $attributes); 
-
-		$db_names = array(
-			'desc' => singular($table).'_desc',
-			'type' => singular($table).'_type'
-		);
-
-		if (sizeof($query) > 0)
-		{
-			$data[$db_names['desc']] = isset($query[0]->{$db_names['desc']}) ? $query[0]->{$db_names['desc']} : 'No Descsription';
-			$data[$db_names['type']] = isset($query[0]->{$db_names['type']}) ? $query[0]->{$db_names['type']} : 'No Type';
-		}
-		else
-		{
-			$data['error'] = 'No Descsription or Type';
-		}
-
-		echo json_encode($data);
-	}
-
-	/**
-	 * Gets the valud items in the action table to be displayed in a form.
-	 * For use with $.ajax(). Uses $_Get array to get information
-	 *
-	 * @param  $_Get string type_id
-	 * @param  $_Get string project_id
-	 * 
-	 */
-	public function get_action_items()
-	{
-		$attributes =
-			'type_id = '.$this->input->get('type_id').
-			' AND is_active = 1'.
-			' AND (project_id = '.$this->input->get('project_id').
-			' OR is_global = 1)';
-		$select = array(
-			'action_name', 'action_id'
-		);
-
-		$query = $this->search_model->get_items('actions', $attributes, $select);
-		$options = array();
-		foreach ($query as $row) {
-			$options[$row->action_id] = $row->action_name;
-		}
-		
-		if (empty($options)) $options['NULL'] = 'No Actions';
-
-		echo json_encode(form_dropdown('action', $options, NULL, 'id = "action-selector"'));
-	}
-
 
 }

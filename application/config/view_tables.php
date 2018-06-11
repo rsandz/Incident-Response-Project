@@ -60,7 +60,7 @@ $config['logs']['join'] = array(
  */
 
 $config['prev_entries']['select'] = array(
-	'action_name', 'type_name', 'project_name', 'team_name', 'log_desc', 'log_date', 'log_time'
+	'action_name', 'type_name', 'project_name', 'team_name', 'log_desc', 'hours', 'log_date', 'log_time'
 );
 
 $config['prev_entries']['join'] = array(

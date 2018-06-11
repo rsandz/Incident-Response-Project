@@ -37,10 +37,23 @@
 							<label for="" class="label">Jump to:</label>
 							<div class="field has-addons">
 								<div class="control">
-									<input type="date" name="from_date" class="input" value="<?=set_value('from_date')?>">
+									<input type="date" id="jump-date" name="jump-date" class="input" value="">
 								</div>
 								<div class="control">
-									<p class="button">Jump</p>
+									<p class="button" id="jump">Jump</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="panel-block">
+						<div class="control">
+							<label for="" class="label">Number of Bars:</label>
+							<div class="field has-addons">
+								<div class="control">
+									<input type="number" id="limit-num" name="limit-num" class="input" value="10">
+								</div>
+								<div class="control">
+									<p class="button" id="limit">Set</p>
 								</div>
 							</div>
 						</div>
@@ -51,7 +64,7 @@
 	</div>
 </div>
 
-<?php echo form_open(site_url('Search/graph_search'), 'id="search-form"');?>
+<?php echo form_open(site_url('Search/graph_search'), 'id="search-form"');?> <!-- The -1 is used to tell the method that this is a new query-->
 <input id="from_date" name="from_date" hidden>
 <input id="to_date" name="to_date" hidden>
 </form>

@@ -3,7 +3,6 @@
 $(function() 
 {
 	$('.pagination-link:not(.is-current)').add('.pagination-next').add('.pagination-previous').each(function(index, el) {
-		console.log($(this).html());
 		link = $(this).children('a').attr('href');
 		$(this).wrap('<a href = "'+ link +'">', '</a>');
 	});

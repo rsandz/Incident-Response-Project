@@ -88,9 +88,8 @@ class Search extends CI_Controller {
 	 */
 	public function results($offset = 0)
 	{
-		// If offset is false, it is a new query. Otherwise, request is looking for next page of query.
-		
-		if ($offset === FALSE) 
+		// If there is a post request method, then it is a new query. Otherwise, its just a pagination request
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') 
 		{
 			//Create an array for the query
 		
@@ -198,7 +197,7 @@ class Search extends CI_Controller {
 
 		if ($table === NULL)
 		{
-			//Display Dashboard for wish table to view.
+			//Display Dashboard for which table to view.
 			$data = array(
 				'title' => 'View Tables',
 				'header' => array(
@@ -268,26 +267,42 @@ class Search extends CI_Controller {
 	public function graph_search($offset = 0)
 	{
 		$user_lock = ($this->input->post('user_lock', TRUE)) ?: TRUE;
-		$query = array(
-			'keywords' => [],
-			'keyword_filters' => [],
+		// If there is a post request method, then it is a new query. Otherwise, its just a pagination request
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') 
+		{
+			//Create an array for the query
+		
+			$query = array(
+				'keywords' => [],
+				'keyword_filters' => [],
 
-			'from_date' => (string)$this->input->post('from_date' , TRUE),
-			'to_date' => (string)$this->input->post('to_date', TRUE),
+				'from_date' => (string)$this->input->post('from_date' , TRUE),
+				'to_date' => (string)$this->input->post('to_date', TRUE),
 
-			'users' => ($user_lock == TRUE) ? array($this->session->user_id) : NULL, 
-			//Need to put in array since the model checks if its an array before filtering
+				'users' => ($user_lock == TRUE) ? array($this->session->user_id) : NULL, 
+				//Need to put in array since the model checks if its an array before filtering
 
-			'action_types' => NULL,
+				'action_types' => NULL,
 
-			'projects' => NULL,
-			'null_projects' => NULL,
-			
-			'teams' => NULL,
-			'null_teams' => NULL,
+				'projects' => NULL,
+				'null_projects' => NULL,
+				
+				'teams' => NULL,
+				'null_teams' => NULL,
 
-			'ksearch_type' => NULL
-		);
+				'ksearch_type' => NULL
+			);
+
+			$this->session->set_userdata('search_query', $query);
+
+			$offset = 0; //Reset Offset
+		}
+		else
+		{
+			$query = $this->session->search_query;
+			// Retrieve array for query
+		}
+
 
 		$match_ids = $this->search_model->filter_search($query);
 
@@ -304,7 +319,7 @@ class Search extends CI_Controller {
 		if ($data['table'] !== 'No Results') 
 		{
 			$this->load->helper('table_helper');
-			$data['page_links'] = get_pagelinks($data, 'Search/results');
+			$data['page_links'] = get_pagelinks($data, 'Search/graph_search');
 		}
 
 		$data['type'] = 'graph';

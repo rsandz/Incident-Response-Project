@@ -37,7 +37,9 @@
 			<div class="column"></div> 
 				
 			</div>
-				
+			
+			<hr>
+
 			<div class="field">
 				<label class="label">Team</label>
 				<!-- Creates the selection for Teams -->
@@ -51,6 +53,8 @@
 					</div>
 				</div>
 			</div>
+
+			<hr>
 				
 			<div class="columns">
 		
@@ -86,6 +90,8 @@
 				</div>
 			</div>
 			</div>
+
+			<hr>
 			
 			<div class="columns">
 				<div class="column">
@@ -104,7 +110,16 @@
 						</div>
 					</div>
 				</div>
+				<div class="column is-2">
+					<div class="field">
+						<label class="label">Number of Hours</label>
+						<div class="control">
+							<input type="number" class="input" value="0" name="hours">
+						</div>
+					</div>
+				</div>
 			</div>
+			
 			<div class="field">
 				<label class="label" ">Description</label>
 				<div class="control ">

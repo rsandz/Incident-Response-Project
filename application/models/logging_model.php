@@ -21,28 +21,21 @@ class logging_model extends CI_model {
 	 * 
 	 * @param string $log_type What to log. 
 	 *                         (i.e. 'form' for action log and 'create' for create logs)
-	 * @param string $action For use with 'create logging'. Determnes what item was created.
-	 *                       (i.e. User, action, Project)
+	 * @param string $data If the log type is form, this will be the log form data. 
+	 *                     If the log type is create, this will be the create type (i.e. User, Team, Project, etc.)
+	 * @param string $name FOr use with the create log type. This is the name of the item created. i.e. If you create a user named 'Bob'
+	 *                     then 'Bob' should be passed in here
 	 * @return True on Sucess. False on failure
 	 *
 	 */	
-	public function log_action($log_type, $action = NULL, $name = NULL) { 
+	public function log_action($log_type, $data = NULL, $name = NULL) { 
 		if ($log_type == 'form')
 		{
-			$data = array(
-				'action_id'  => $this->input->post('action', TRUE),
-				'log_desc'   => $this->input->post('desc', TRUE),
-				'log_date'   => $this->input->post('date', TRUE),
-				'log_time'   => $this->input->post('time', TRUE),
-				'team_id'    => $this->input->post('team', TRUE),
-				'project_id' => $this->input->post('project', TRUE),
-				'user_id'    => $this->session->user_id
-				);
 			return $this->db->insert('action_log', $data);
 		}
 		elseif($log_type == 'create')
 		{	
-			//See if there is a 'create' action type in the first place
+			//See if there is a 'create' action type in the first place (i.e. Action Type Name = create)
 			if(!$this->search_model->data_exists('action_types', array('type_name' => 'create')))
 			{
 				$insert_data = array(
@@ -55,13 +48,13 @@ class logging_model extends CI_model {
 
 			$type_id = $this->search_model->get_items('action_types', array('type_name' => 'create'))[0]->type_id;
 
-			//See if create action is in the actions table in the first place
-			if (!$this->search_model->data_exists('actions', array('action_name' => 'Created '.$action)))
+			//See if create action is in the actions table in the first place (Action name = Create ****)
+			if (!$this->search_model->data_exists('actions', array('action_name' => 'Created '.$data)))
 			{
 				$insert_data = array(
-					'action_name' => 'Created '.$action,
+					'action_name' => 'Created '.$data,
 					'type_id' => $type_id,
-					'action_desc' => 'Created '.$action.' using the create page.',
+					'action_desc' => 'Created '.$data.' using the create page.',
 					'project_id' => NULL,
 					'is_active' => FALSE
 				);
@@ -69,19 +62,20 @@ class logging_model extends CI_model {
 				$this->log_item('actions', $insert_data);
 			}
 
-			$data = array(
-				'action_id' => $this->search_model->get_items('actions', array('action_name' => 'Created '.$action))[0]->action_id,
+			$insert_data = array(
+				'action_id' => $this->search_model->get_items('actions', array('action_name' => 'Created '.$data))[0]->action_id,
 				'log_date' => date('Y-m-d'),
 				'log_time' => date('H:i'),
-				'log_desc' => 'Inserted '.$name.' into '.$action.' table.',
+				'log_desc' => 'Inserted '.$name.' into '.$data.' table.',
 				'team_id' => NULL,
 				'user_id' => $this->session->user_id
 				);
-			return $this->db->insert('action_log', $data);
+			return $this->db->insert('action_log', $insert_data);
 		}
 		else
 		{
-			return 'Invalid Log Type';
+			show_error('Invalid Log Type');
+			return FALSE; //Invalid Log type
 		}
 	}
 
@@ -138,7 +132,8 @@ class logging_model extends CI_model {
 			->order_by( 'log_time', 'DESC')
 			->where('user_id', $this->session->user_id);
 
-		$this->search_model->execute_table_filters('prev_entries');
+		$this->search_model->execute_table_filters('prev_entries'); 
+		//Prev Entries is a config field. The search model will try to find it in the table config.
 
 		$query = $this->db->get('action_log');
 		$data['table_data'] = array_slice($query->result_array(), $offset, $this->config->item('per_page'));

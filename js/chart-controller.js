@@ -1,14 +1,38 @@
-//Chart Data Manager Class
+/*
+ *	Configuration 
+ */
+
+var debugMode = false; //Set to true to log the chart manager object to the console.
+
+
+/**
+ * The class that hadles chart creation and modification
+ * Contains the chart object
+ */
 class chartManager
 {
+	/**
+	 * Creates the chart manager
+	 * @param {string} type - The date interval type i.e. 'Daily', 'Weekly', 'Monthly', 'Yearly'
+	 * @param {number} limit - The number of bars to display
+	 */
 	constructor(type, limit = 10) 
 	{
 		this.limit = limit;
+		this.limitMax = 365;
+		this.limitMin = 1;
 		this.offset = 0;
 		this.type = type;
 		this.chart = "";
+
+		this.createChart(this.type);
 	}
 
+	/**
+	 * Generates the data to graph
+	 *
+	 * @return {object} An object containing the arrays of data to plot and misc data
+	 */
 	generateData()
 	{
 		var dateArray = [];
@@ -43,7 +67,6 @@ class chartManager
 			case 'weekly':
 				for (var i = this.limit - 1 + this.offset; i >= this.offset; i--) 
 				{
-					console.log(this.data);
 					let currentDate = new Date();
 					//Steping by a week
 					currentDate.setDate(currentDate.getDate() - 7*i);
@@ -71,7 +94,7 @@ class chartManager
 				for (var i = this.limit - 1 + this.offset; i >= this.offset; i--) 
 				{
 					let currentDate = new Date();
-					//Steping by a week
+					//Steping by a Month
 					currentDate.setMonth(currentDate.getMonth() - i);
 
 					//Remove Time and Day portions
@@ -99,7 +122,7 @@ class chartManager
 				for (var i = this.limit - 1 + this.offset; i >= this.offset; i--) 
 				{
 					let currentDate = new Date();
-					//Steping by a week
+					//Steping by a Year
 					currentDate.setFullYear(currentDate.getFullYear() - i);
 
 					//Remove Time and Day portions
@@ -122,7 +145,6 @@ class chartManager
 						logArray.push(this.data.logData[index].amount);
 					}
 				}
-				console.log(dataDates);
 				break;
 		}
 		return {dateArray:dateArray, logArray: logArray, maxYVal: Math.max.apply(null, logArray) + 2};
@@ -134,6 +156,12 @@ class chartManager
 	 * ======================
 	 */
 
+	 /**
+	  * Grabs chart data from the server based on the property 'type'
+	  *
+	  * @param {functio} callback - The callback when the data is recieved from the server
+	  * 
+	  */
 	getData(callback)
 	{
 		$.get($('#ajax-link').attr('data')+'/get_user_log_frequency',
@@ -141,20 +169,28 @@ class chartManager
 		.done(callback.bind(this));
 	}
 
+	/**
+	 * The initialization function for the chart. 
+	 * Gets the data from the server and renders the chart. Use this to create the chart.
+	 */
 	createChart()
 	{
 		this.getData(this.renderChart);
+		return true;
 	}
 
+	/**
+	 * Renders the chart on the canvas
+	 */
 	renderChart()
 	{
-		console.log(this);
 		var chartData = this.generateData();
 		if($('#chart').length)
 		{
 			var canvas =  document.getElementById("chart").getContext("2d");
 			this.chart = new Chart(canvas,
 			{
+				parent : this,
 				type: 'bar',
 				data: 
 				{
@@ -181,34 +217,91 @@ class chartManager
 			                }
 			            }]
 			        },
-			        onClick: function(e) //For loading the graph search
-			        {
-			        	var index = this.getElementAtEvent(e)[0]._index;
-			        	var dateObj = new Date(this.data.labels[index]);
-			        	var elementData = {
-			        		date : dateObj.getFullYear() + "-" + (dateObj.getMonth() + 1) + "-" + dateObj.getDate(),
-			        		//PLUS 1 for the month since js months go from 0-11 shile sql months go from 1-12
-			        		amount : this.data.datasets[0].data[index]
-			        		};
-			        	console.log();
-			        	$('#to_date').val(elementData.date);
-			        	$('#from_date').val(elementData.date);
-			        	$('#search-form').submit();
-			        }
+			        onClick: 
+			        	/**
+			        	 * Processes a user click and then creates and runs a search query for the data that the user clicked on.
+			        	 * @param  {event} e The click event
+			        	 */
+				        function(e) //For loading the graph search
+				        {
+				        	try
+				        	{
+				        		var index = this.getElementAtEvent(e)[0]._index; //Index of the bar that was clicked on
+				        	}
+				        	catch(err) 
+				        	{
+				        		if (err.name == 'TypeError') //Type error usually means that the user did not click on a bar
+				        		{
+				        			return; //Just return if did not click on a bar
+				        		}
+				        		else
+				        		{
+				        			throw err; // Throw the error again if it is not type error
+				        		}
+				        	}
+
+				        	var dateObj = new Date(String(this.data.labels[index])); //Creating a date must use a string
+				        	var toDateObj = new Date(dateObj.getTime());
+
+				        	switch(this.chart.config.parent.type)
+				        	{
+				        		case 'daily':
+				        			break;
+				        		case 'weekly':
+				        			toDateObj.setDate(toDateObj.getDate() + 6); //6 Days, as to not include the 1st day of the next week
+				        			break;
+				        		case 'monthly':
+				        			toDateObj.setMonth(toDateObj.getMonth() + 1, 0); 
+				        			//The zero argument sets the day to the last day of the current month and not the first day of the next month
+				        			// i.e. If the 0 argument was not passed, the date range would be from Jan 01 to Feb 01 rather 
+				        			break;
+				        		case 'yearly':
+				        			toDateObj.setFullYear(toDateObj.getFullYear() + 1);
+				        			break;
+
+				        	}
+
+				        	var elementData = {
+				        		fromDate : dateObj.getFullYear() + "-" + (dateObj.getMonth() + 1) + "-" + dateObj.getDate(),
+				        		toDate : toDateObj.getFullYear() + "-" + (toDateObj.getMonth() + 1) + "-" + toDateObj.getDate(),
+				        		//PLUS 1 for the month since js months go from 0-11 shile sql months go from 1-12
+				        		amount : this.data.datasets[0].data[index]
+				        		};
+
+				        	console.log(elementData);
+				        	$('#to_date').val(elementData.toDate);
+				        	$('#from_date').val(elementData.fromDate);
+				        	$('#search-form').submit();
+				        }
 				}
 			});
 			this.offset = 0;
+
+			//Debug mode
+			if (debugMode)
+			{
+				console.log(this);
+			}
+
+			return true;
 		}
 	}
 
+	/**
+	 * Changes the date interval type of the chart.
+	 * interval type can be: 'daily', 'weekly', monthly', 'yearly'
+	 */
 	changeType(type)
 	{
 		this.type = type;
 		this.offset = 0;
 		console.log('Changing to: '+this.type);
-		this.getData(this.updateChart);
+		return this.getData(this.updateChart);
 	}
 
+	/**
+	 * Updates the chart data and the canvas
+	 */
 	updateChart() //TODO readd the spinner
 	{
 		let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -237,19 +330,78 @@ class chartManager
 		this.chart.data.datasets[0].data = chartData.logArray;
 		this.chart.options.scales.yAxes[0].ticks.max = chartData.maxYVal;
 		this.chart.update();
+		return true;
+	}
+
+	/**
+	 * Sets the offset to a specified number based on the jump date given. Will automatically update the graph
+	 */
+	jumpTo()
+	{
+		var jumpDate = $('#jump-date').val(); 
+		if (jumpDate) //If it was set
+		{
+			var offset = 0;
+			var now = new Date();
+			jumpDate = new Date(jumpDate); //Note, since there is no provided timezone, JavaScript assumes it is UTC. Use getUTC*() below
+
+			//Find the offset of the day - depends on type of date interval
+
+			switch(this.type)
+			{
+				case 'daily':
+					offset = Math.floor((Date.now() - jumpDate) / 86400000); //Divide to go from ms to days
+					break;
+				case 'weekly':
+					offset = Math.floor(Math.floor((Date.now() - jumpDate) / 86400000) / 7); //Get day offset and divide by 7!
+					break;
+				case 'monthly':
+					//offset = Math.floor(Math.floor((Date.now() - jumpDate) / 86400000) / 30.5); //Get day offset and divide by 30.5 (Average days per month)!
+					//The above is not very accurate
+					
+					let monthDiff = now.getMonth() - jumpDate.getUTCMonth();
+					let yearDiff = now.getFullYear() - jumpDate.getUTCFullYear();
+					offset = (monthDiff + yearDiff * 12);
+					break;
+				case 'yearly':
+					offset = now.getFullYear() - jumpDate.getUTCFullYear();
+					break;
+			}
+			console.log(offset);
+			this.offset = offset;
+			console.log(jumpDate);
+			return this.updateChart();
+		}
+		else
+		{
+			return false; // i.e. Do nothing if the date was not set
+		}
+	}
+
+	changeLimit()
+	{
+		if ($('#limit-num').val() > this.limitMax)
+		{
+			this.limit = this.limitMax;
+		}
+		else if($('#limit-num').val() < this.limitMin)
+		{
+			this.limit = this.limitMin;
+		}
+		else
+		{
+			this.limit = $('#limit-num').val();
+		}
+
+		return this.updateChart();
 	}
 
 }
 
 
-
-// Chart Variables
-var manager = new chartManager('daily');
-
 $(function()
 	{
-		manager.createChart('daily');
-
+		var manager = new chartManager($('#interval_type').val());
 		$('#chart-left').click(function() {
 			manager.offset += 1;
 			manager.updateChart();
@@ -263,6 +415,9 @@ $(function()
 		$('#interval_type').change(function() {
 			manager.changeType($('#interval_type').val());
 		})
+
+		$('#jump').click(() => manager.jumpTo());
+		$('#limit').click( () => manager.changeLimit());
 	});
 
 

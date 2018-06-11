@@ -3,6 +3,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Statistics_model extends CI_Model {
 
+	/**
+	 * Loads the necessary resources to run the statistics model. 
+	 * @return [type] [description]
+	 */
 	public function __constructor()
 	{
 		parent:: __construct();
@@ -11,11 +15,16 @@ class Statistics_model extends CI_Model {
 		$this->load->model('search_model');
 	}
 
+	/**
+	 * Gets the statistics for a specific table
+	 * @param  mixed $table A string or an array of tables to query for statistics
+	 * @return array        Associative array of statistics
+	 */
 	public function get_stats($table)
 	{
 		if (is_array($table))
 		{
-			//For arrays
+			//For array of tables
 			$tables = $table;
 			foreach ($tables as $table)
 			{
@@ -25,12 +34,18 @@ class Statistics_model extends CI_Model {
 		else
 		{
 			//Not Array. Single Table
-			$data['num rows'] = $this->db->count_all($table);
+			$data['num_rows'] = $this->db->count_all($table);
 		}
 
 		return $data;
 	}
 
+	/**
+	 * Used for graphing the user logs graph
+	 * @param  string $type    'Daily', 'Weekly', 'Monthly', 'Yearly'. Specifies the time interval of the statistics returned
+	 * @param  mixed $user_id	The user id of the user of which you want to get the logs for.
+	 * @return array            An array of result objects (@see Code ignitors docs) 
+	 */
 	public function get_log_frequency($type, $user_id = NULL)
 	{
 		$user_id = $user_id ?: $this->session->user_id;
