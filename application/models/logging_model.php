@@ -9,6 +9,8 @@ class logging_model extends CI_model {
 		parent:: __construct();
 		$this->load->database(); //load database
 		$this->load->model('search_model');
+
+		
 	}
 	/**
 	 * Logs an action in action log table. Can log what was in a form, or whatever a

@@ -303,6 +303,7 @@ class Search extends CI_Controller {
 			// Retrieve array for query
 		}
 
+		log_message('debug', "Request recieved for action logs from {$query['from_date']} to {$query['to_date']}");
 
 		$match_ids = $this->search_model->filter_search($query);
 

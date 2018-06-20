@@ -1,8 +1,24 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * AJAX Controller
+ * ===============
+ * @author Ryan Sandoval, June 2018
+ *
+ * All AJAX requests should be sent to this controller. Java script can access this controller's adress by 
+ * using the data attribute in the 'ajax-link' hidden input located in the header of every webpage.
+ *
+ * This controller is mostly used for getting descriptions, and updated field values based on user selection.
+ */
 class Ajax extends CI_Controller {
 
+	/**
+	 * Constructor for the AJAX Controller
+	 *
+	 * Loads all necessary resources.
+	 * Also setes the PHP default timezone as per the configuration in config/appconfig.php
+	 */
 	public function __construct()
 	{
 		parent::__construct();
@@ -91,6 +107,12 @@ class Ajax extends CI_Controller {
 	public function get_user_log_frequency()
 	{
 		$data = $this->statistics_model->get_log_frequency($this->input->get('interval_type', TRUE));
+		echo json_encode($data);
+	}
+
+	public function get_user_hours()
+	{
+		$data = $this->statistics_model->get_user_hours($this->input->get('interval_type', TRUE));
 		echo json_encode($data);
 	}
 

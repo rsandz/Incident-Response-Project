@@ -20,7 +20,7 @@
 			<div class="level">
 				<div class="level-item">
 					<div class="control">
-						<?php if ($type == 'graph'):?>
+						<?php if (isset($type) && $type == 'graph'):?>
 							<?php echo anchor('user/mystats', 'Go Back', 'class="button is-info"'); ?>
 						<?php else: ?>
 							<?php echo anchor('Search', 'Go Back', 'class="button is-info"'); ?>

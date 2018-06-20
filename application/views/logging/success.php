@@ -1,9 +1,4 @@
 <body>
-	<div class="hero is-success"> 
-	<div class="hero-body">
-			<h1 class="title">Your Action has been entered into the database!</h1>
-		</div>
-	</div>
 
 	<section class="section">
 	<div class="container is-quarter">

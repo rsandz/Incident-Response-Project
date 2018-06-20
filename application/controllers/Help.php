@@ -1,6 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Help Controller
+ * ===============
+ * @author Ryan Sandoval, June 2018
+ */
 class Help extends CI_Controller {
 
 	public function __construct()

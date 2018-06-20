@@ -44,7 +44,7 @@ $config['user_teams']['headings'] = array(
  */
 
 $config['logs']['select'] = array(
-	'name, action_name, type_name, project_name, team_name, log_desc, log_date, log_time'
+	'name', 'action_name', 'type_name', 'project_name', 'team_name', 'log_desc', 'hours', 'log_date', 'log_time'
 );
 
 $config['logs']['join'] = array(

@@ -61,37 +61,37 @@ class Statistics_model extends CI_Model {
 				//Get Logs per Day
 				$this->db->where('user_id', $user_id)
 					->group_by('log_date')
-					->select('log_date, COUNT(log_id) AS amount')
+					->select('log_date AS date, COUNT(log_id) AS amount')
 					->order_by('log_date', 'DESC');
-				$data['logData'] = $this->db->get('action_log')->result();
+				$data['stats'] = $this->db->get('action_log')->result();
 			break;
 
 			case 'weekly':
 				//Get Logs per Week
 				$this->db->where('user_id', $user_id)
 					->group_by('WEEKOFYEAR(log_date)')
-					->select('DATE_SUB(log_date, INTERVAL (WEEKDAY(log_date) - 1) DAY) AS log_date, COUNT(log_id) AS amount')
+					->select('DATE_SUB(log_date, INTERVAL (WEEKDAY(log_date) - 1) DAY) AS date, COUNT(log_id) AS amount')
 					->order_by('log_date', 'DESC');
-				$data['logData'] = $this->db->get('action_log')->result();
+				$data['stats'] = $this->db->get('action_log')->result();
 				break;
 
 			case 'monthly':
 				//Get Logs per Month
 				$this->db->where('user_id', $user_id)
 					->group_by('MONTH(log_date)')
-					->select('CONCAT(MONTHNAME(log_date), " ", YEAR(log_date)) AS log_date, COUNT(log_id) AS amount')
+					->select('CONCAT(MONTHNAME(log_date), " ", YEAR(log_date)) AS date, COUNT(log_id) AS amount')
 					->order_by('YEAR(log_date)', 'ASC')
 					->order_by('MONTH(log_date)', 'ASC');
-				$data['logData'] = $this->db->get('action_log')->result();
+				$data['stats'] = $this->db->get('action_log')->result();
 				break;
 
 			case 'yearly':
 				//Get Logs per Year
 				$this->db->where('user_id', $user_id)
 					->group_by('YEAR(log_date)')
-					->select('YEAR(log_date) AS log_date, COUNT(log_id) AS amount')
+					->select('YEAR(log_date) AS date, COUNT(log_id) AS amount')
 					->order_by('YEAR(log_date)', 'ASC');
-				$data['logData'] = $this->db->get('action_log')->result();
+				$data['stats'] = $this->db->get('action_log')->result();
 				break;
 
 			default:
@@ -101,6 +101,62 @@ class Statistics_model extends CI_Model {
 
 		return $data;
 
+	}
+
+	public function get_user_hours($type, $user_id = NULL)
+	{
+		$user_id = $user_id ?: $this->session->user_id;
+
+		$this->db->where('user_id', $user_id);
+
+		//Get total hours
+		$data['total'] = $this->db->count_all_results('action_log');
+
+		switch ($type)
+		{
+			case 'daily':
+				//Get Logs per Day
+				$this->db->where('user_id', $user_id)
+					->group_by('log_date')
+					->select('log_date AS date, SUM(hours) AS amount')
+					->order_by('log_date', 'DESC');
+				$data['stats'] = $this->db->get('action_log')->result();
+			break;
+
+			case 'weekly':
+				//Get Logs per Week
+				$this->db->where('user_id', $user_id)
+					->group_by('WEEKOFYEAR(log_date)')
+					->select('DATE_SUB(log_date, INTERVAL (WEEKDAY(log_date) - 1) DAY) AS date, SUM(hours) AS amount')
+					->order_by('log_date', 'DESC');
+				$data['stats'] = $this->db->get('action_log')->result();
+				break;
+
+			case 'monthly':
+				//Get Logs per Month
+				$this->db->where('user_id', $user_id)
+					->group_by('MONTH(log_date)')
+					->select('CONCAT(MONTHNAME(log_date), " ", YEAR(log_date)) AS date, SUM(hours) AS amount')
+					->order_by('YEAR(log_date)', 'ASC')
+					->order_by('MONTH(log_date)', 'ASC');
+				$data['stats'] = $this->db->get('action_log')->result();
+				break;
+
+			case 'yearly':
+				//Get Logs per Year
+				$this->db->where('user_id', $user_id)
+					->group_by('YEAR(log_date)')
+					->select('YEAR(log_date) AS date, SUM(hours) AS amount')
+					->order_by('YEAR(log_date)', 'ASC');
+				$data['stats'] = $this->db->get('action_log')->result();
+				break;
+
+			default:
+				show_error('Incorrect date interval');
+				break;
+		}
+
+		return $data;
 	}
 
 

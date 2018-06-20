@@ -3,6 +3,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Search_model extends CI_Model {
 
+	/**
+	 * Constructs the Search model.
+	 * Loads the necessary models needed to run the controller
+	 */
 	public function __construct()
 	{
 		parent:: __construct();
@@ -13,6 +17,11 @@ class Search_model extends CI_Model {
 		$this->load->model('logging_model');
 	}
 
+	/**
+	 * Searches for querries matching filters
+	 * @param  array $query Contains the filters passed in the query
+	 * @return array        The array of log ids that match the filters.
+	 */
 	public function filter_search($query) 
 	{
 		// Join statements
@@ -116,8 +125,8 @@ class Search_model extends CI_Model {
 	}
 
 	/**
-	 * [keyword_search description]
-	 * @param  [type] $keywords [description]
+	 * Searches for rows in the log table that matches the filters provided
+	 * @param  array $keywords [description]
 	 * @param  [type] $columns  [description]
 	 * @return [type]           [description]
 	 */
@@ -185,10 +194,13 @@ class Search_model extends CI_Model {
 	}
 	
 	/**
-	 * [get_logs description]
-	 * @param  [type]  $log_ids [description]
-	 * @param  integer $offset  [description]
-	 * @return [type]           [description]
+	 * Creates a logs table based on the provied log ids
+	 * @param  array  $log_ids An array of log ids
+	 * @param  integer $offset  The pagination offset
+	 * @return array           Array containing table data
+	 *                          - ['table'] for the table html
+	 *                          - ['num_rows'] The nynber of rows in the table (Useful in pagination)
+	 *                          - ['heading'] - Array containing tahble headings
 	 */
 	public function get_logs_table($log_ids, $offset = 0)
 	{
@@ -238,7 +250,7 @@ class Search_model extends CI_Model {
 		}
 
 		$data['table_data'] = array_slice($matches->result_array(), $offset, $per_page); //Offset for pagination
-		$data['heading'] = array('Name', 'Action Name', 'Action Type', 'Project', 'Team', 'Log Description', 'Log Date', 'Log Time');
+		$data['heading'] = $this->get_table_headings('logs');
 
 		$data['table'] = generate_table($data);
 		
@@ -466,7 +478,6 @@ class Search_model extends CI_Model {
 		 *	@return object Field data object as per Code Ignitor's structure. Also includes enum values for enum type columns.
 		 *	               False if failed.
 		 */
-
 		public function get_field_data($table, $keep_ids = FALSE)
 		{
 			if ($this->db->table_exists($table))
@@ -519,6 +530,18 @@ class Search_model extends CI_Model {
 			return $results[0];
 		}
 
+		/**
+		 * Automatically gets table headings.
+		 * Attempt to get the hadings from the following sources (in this order):
+		 * 	1. The 'view_tables' config file (['headings'] index)
+		 * 	2. The 'view_tables' config file (['select'] index)
+		 * 	3. fet_field_data() in search model
+		 *
+		 * If the above fails, thros an error
+		 * 
+		 * @param  string $table The table name of which to get the headers for.
+		 * @return array         The array containing the headers.
+		 */		
 	public function get_table_headings($table)
 	{
 		if ($this->config->load('view_tables'))
@@ -527,6 +550,10 @@ class Search_model extends CI_Model {
 		if (isset($this->config->item($table, 'view_tables')['headings']))
 		{
 			$column_headings = $this->config->item($table, 'view_tables')['headings'];
+		}
+		elseif (isset($this->config->item($table, 'view_tables')['select']))
+		{
+			$column_headings = $this->config->item($table, 'view_tables')['select'];
 		}
 		elseif ($this->get_field_data($table) !== FALSE)
 		{
@@ -537,13 +564,9 @@ class Search_model extends CI_Model {
 			},
 			$this->get_field_data($table, TRUE));	
 		}
-		elseif (isset($this->config->item($table, 'view_tables')['select']))
-		{
-			$column_headings = $this->config->item($table, 'view_tables')['select'];
-		}
 		else
 		{
-			show_error('No table heading can be created.');
+			show_error('No table heading can be created. (Search_Model/get_table_headings)');
 		}
 
 		foreach ($column_headings as $heading) 

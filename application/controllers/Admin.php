@@ -14,6 +14,10 @@
 
  */
 class Admin extends CI_Controller {
+
+	/**
+	 * Construcor Method fo Admin Controller
+	 */
 	public function __construct() 
 	{
 		parent::__construct();
@@ -47,7 +51,6 @@ class Admin extends CI_Controller {
 	/**
 	 *	Creates a new item in database.
 	 */
-
 	public function create() 
 	{
 		$this->load->library('form_validation');

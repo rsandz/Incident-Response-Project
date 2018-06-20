@@ -1,5 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/*
+	Table Helper
+	===========
+	@author Ryan Sandoval, June 2018
+
+	This is a helper for table creation and pagination.
+ */
+
 if (!function_exists('get_pagelinks')) 
 {
 	/**
@@ -86,6 +94,16 @@ if (!function_exists('generate_table'))
 
 	    'table_close'           => '</table>'
 		);
+
+		if (!isset($data['heading']) && isset($data['table'])) //If heading is not set, tries to get it automatically
+		{
+			$CI->load->model('search_model');
+			$data['heading'] = $this->search_model->get_table_headings($data['table']);
+		}
+		elseif (!isset($data['heading']))
+		{
+			show_error('No Table headings provided (in table_helper): <br> '.json_encode($data['table_data']));
+		}
 
 		$CI->table->set_heading($data['heading']);
 
