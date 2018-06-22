@@ -21,7 +21,7 @@
 				<div class="level-item">
 					<div class="control">
 						<?php if (isset($type) && $type == 'graph'):?>
-							<?php echo anchor('user/mystats', 'Go Back', 'class="button is-info"'); ?>
+							<?php echo anchor('stats/my_stats', 'Go Back', 'class="button is-info"'); ?>
 						<?php else: ?>
 							<?php echo anchor('Search', 'Go Back', 'class="button is-info"'); ?>
 						<?php endif;?>

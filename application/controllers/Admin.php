@@ -9,10 +9,6 @@
  * @Depreciated
  * 
  */
-/**
- * Class for administrative database changes
-
- */
 class Admin extends CI_Controller {
 
 	/**

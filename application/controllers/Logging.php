@@ -50,8 +50,6 @@ class Logging extends CI_controller {
 		$this->load->library('form_validation');
 		$this->load->helper('url');
 
-		$data['title'] = 'Logging Form';
-
         $data['projects'] = $this->search_model->get_items('projects');
         $data['types'] = $this->search_model->get_items('action_types', array('is_active !=' => 0)); // Only displays active action types
         $data['teams'] = $this->search_model->get_items('teams');
@@ -67,6 +65,7 @@ class Logging extends CI_controller {
 			$data['header'] = array(
 				'text' => 'Logging form',
 				'colour' => 'is-success');
+			$data['title'] = 'Success';
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
@@ -96,6 +95,7 @@ class Logging extends CI_controller {
 					'text' => 'Log Sucessfuly entered into database!',
 					'colour' => 'is-success'
 				);
+				$data['title'] = 'Logging Form';
 				$this->load->view('templates/header', $data);
 				$this->load->view('templates/hero-head', $data);
 				$this->load->view('templates/navbar', $data);

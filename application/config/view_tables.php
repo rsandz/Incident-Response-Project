@@ -47,6 +47,12 @@ $config['logs']['select'] = array(
 	'name', 'action_name', 'type_name', 'project_name', 'team_name', 'log_desc', 'hours', 'log_date', 'log_time'
 );
 
+/**
+ * Action logs table in Modify
+ */
+
+$config['action_logs']['headings'] = $config['logs']['select'];
+
 $config['logs']['join'] = array(
 	'actions' => 'actions.action_id = action_log.action_id',
 	'users' => array('users.user_id = action_log.user_id', 'left'),

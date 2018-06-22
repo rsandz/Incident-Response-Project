@@ -465,7 +465,23 @@ class Search_model extends CI_Model {
 		 */
 		public function get_items($table, $where = NULL, $select = NULL, array $join = NULL) 
 		{
-				return $this->get_items_raw($table, $where, $select, $join)->result();
+			return $this->get_items_raw($table, $where, $select, $join)->result();
+		}
+
+		/**
+		 * Gets a single row from the database given some parameters.
+		 * 
+		 * @param  string $table Table string
+		 * @param  Mixed  $where Associative array of column-value pairs or string
+		 * query
+		 * @param  Mixed  $select Array or String of columns to select
+		 * @param  array  $join Associative array of table as key and join conditios
+		 * as value
+		 * @return array             result_array of results
+		 */
+		public function get_row($table, $where = NULL, $select = NULL, array $join = NULL)
+		{
+			return $this->get_items_raw($table, $where, $select, $join)->result()[0];
 		}
 
 
@@ -577,7 +593,56 @@ class Search_model extends CI_Model {
 		return $headings;
 	}
 
+	/**
+	 * Get the teams that the provided user id is in
+	 * @param  string $user_id Used Id of the user in question
+	 * @return array           Code Igniter db results array that contains the teams
+	 *                         that the user is in.
+	 */
+	public function get_user_teams($user_id)
+	{
+		$query = $this->get_items('user_teams', array('user_id' => $user_id), 'team_id');
+		$team_ids = array_map(function($x){return $x->team_id;}, $query);
 
+		return $this->db->where_in('team_id', $team_ids)->get('teams')->result();
+
+	}
+	
+	/**
+	 * Gets the users in a team
+	 * @param  string|array $team The team(s) name that will be querried for users
+	 * @return array       	Code Igniter db results array that contains the users
+	 *                      in the team. Data taken from users table.
+	 */
+	public function get_team_users($team_id)
+	{
+		if (is_array($team_id))
+		{
+			$user_ids = $this->db->where('team_id', $team_id)->get('user_teams');
+			return $this->db->where_in('user_id', $user_ids)->get('users');
+		}
+		else
+		{
+			$query = $this->db->where('team_id', $team_id)->get('user_teams')->result();
+			$user_ids = array_map(function($x) {return $x->user_id;}, $query);
+			return $this->db->where_in('user_id', $user_ids)->get('users')->result();
+		}
+	}
+
+	public function get_team_info($team_id)
+	{
+		$data = array();
+		$query = $this->get_row('teams', array('team_id', $team_id));
+		$data['team_name'] = $query->team_name;
+		$data['team_id'] = $query->team_id;
+		$data['team_members_raw'] = $this->get_team_users($team_id);
+		foreach($data['team_members_raw'] as $team_member)
+		{
+			$data['team_members'][$team_member->name] = $team_member->user_id;
+		}
+
+		return $data;
+	}
 }
 
 /* End of file Search_model.php */

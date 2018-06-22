@@ -2,7 +2,7 @@
 /**
  * User Controller
  * ===============
- * Written by: Ryan Sandoval, May 2018
+ * @author Ryan Sandoval, May 2018
  *
  * This controller handles user-specific functionality such as displaying the dashboard and user specific statistics.
  * It also handles the login process.
@@ -83,6 +83,19 @@ class User extends CI_Controller {
 		redirect('welcome');
 	}
 
+	/**
+	 * Handles the pre-email password reset process.
+	 * The user will be prompted for their email and this will be checked
+	 * with the database.
+	 *
+	 * If the email is in the database, an email is sent to the user
+	 * with a link that allows them to reset their password.
+	 *  - The link contains a hashed code that allows the user to acess
+	 *  	the reset form.
+	 *
+	 * Setup email configuration in 'config/email'
+	 * @return [type] [description]
+	 */
 	public function recover_password()
 	{
 		$data = array(
@@ -119,8 +132,17 @@ class User extends CI_Controller {
 
 			$this->email->message($message);
 				
-			$this->email->send(FALSE);
-			echo $this->email->print_debugger();
+			if ($this->email->send(TRUE))
+			{
+				//echo $this->email->print_debugger();
+				$this->load->view('templates/header', $data);
+				$this->load->view('login/sent', $data);
+				$this->load->view('templates/error', $data);
+			}
+			else
+			{
+				show_error('Failed to send email. Please contact system admin');
+			}
 		} 
 		else 
 		{
@@ -133,6 +155,15 @@ class User extends CI_Controller {
 		
 	}
 
+	/**
+	 * Callback for form Validation. 
+	 * 
+	 * Checks if the user's email is in the database
+	 * If it is not, also sets the error message
+	 * 
+	 * @param  string $email User's Email
+	 * @return boolean       True if the user's email is in the database.
+	 */
 	public function in_database($email) {
 		$in_database = $this->user_model->email_in_database($email);
 
@@ -147,6 +178,13 @@ class User extends CI_Controller {
 		}
 	}
 
+	/**
+	 * The Password recover/reset form.
+	 *
+	 * Should only be acessible through the link that the user was given.
+	 * @param  string|int $user_id    The user id of the user resetting the password
+	 * @param  string $email_code Hashed code that allows the user to access this page.
+	 */
 	public function recover_form($user_id, $email_code)
 	{
 		$this->load->library('form_validation');
@@ -156,6 +194,7 @@ class User extends CI_Controller {
 
 		if ($this->form_validation->run())
 		{
+			//Validation is good
 			$reset_hash = $this->input->post('reset_hash');
 			if ($this->user_model->validate_reset_hash($user_id, $email_code, $reset_hash))
 			{
@@ -196,28 +235,25 @@ class User extends CI_Controller {
 		
 	}
 
-	public function mystats()
+	/**
+	 * Controller for the page that displays the User's information
+	 */
+	public function my_info() 
 	{
 		check_login(TRUE);
 		
 		$this->load->helper('form');
+		$this->load->model('search_model');
 
-		$data['title'] = 'My Statistics';
-		$data['header']['text'] = "My Statistics";
-
-		$data['interval_options'] = array(
-			'daily' => 'Daily',
-			'weekly' => 'Weekly',
-			'monthly' => 'Monthly',
-			'yearly' => 'Yearly'
-		);
+		$data['user_teams'] = $this->search_model->get_user_teams($this->session->user_id);
+		$data['title'] = 'My Info';
+		$data['header']['text'] = "My Info";
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('stats/mystats', $data);
+		$this->load->view('user/tabs', $data);
+		$this->load->view('user/myinfo', $data);
 		$this->load->view('templates/footer');
 	}
-
-
 }

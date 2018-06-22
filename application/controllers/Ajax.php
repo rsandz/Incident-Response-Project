@@ -28,8 +28,18 @@ class Ajax extends CI_Controller {
 		$this->load->helper('url');
 
 		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
+		if ($_SERVER['REQUEST_METHOD'] !== 'GET') //If not acessed by post, redirect away
+		{
+			redirect('home','refresh');
+			show_error('No access allowed', 403);
+		}
 	}
 
+	/**
+	 * Main page for the Ajax Controller
+	 * This will redirect the user away if it is not acessed by a script's post request.
+	 * @return [type] [description]
+	 */
 	public function index() 
 	{
 		redirect('home','refresh');
@@ -75,7 +85,7 @@ class Ajax extends CI_Controller {
 	}
 
 	/**
-	 * Gets the valud items in the action table to be displayed in a form.
+	 * Gets the value items in the action table to be displayed in a form.
 	 * For use with $.ajax(). Uses $_Get array to get information
 	 *
 	 * @param  $_Get string type_id
@@ -104,12 +114,26 @@ class Ajax extends CI_Controller {
 		echo json_encode(form_dropdown('action', $options, NULL, 'id = "action-selector"'));
 	}
 
+	/**
+	 * Gets the data for user log frequency.
+	 * Used in the mystats charts
+	 *
+	 * @param $_Get string interval_type The interval type of the data ('daily', 'weekly', monthly', 'yearly')
+	 *                     				 @see $this->statistics_model->get_log_frequency() for more info
+	 */
 	public function get_user_log_frequency()
 	{
 		$data = $this->statistics_model->get_log_frequency($this->input->get('interval_type', TRUE));
 		echo json_encode($data);
 	}
 
+	/**
+	 * Gets the data for user hours.
+	 * Used in the mystats charts
+	 *
+	 * @param $_Get string interval_type The interval type of the data ('daily', 'weekly', monthly', 'yearly')
+	 *                     				 @see $this->statistics_model->get_user_hours() for more info
+	 */
 	public function get_user_hours()
 	{
 		$data = $this->statistics_model->get_user_hours($this->input->get('interval_type', TRUE));

@@ -43,10 +43,10 @@ class Modify_model extends CI_Model {
 		//In order to modify the selected row, the primary key must be acquired. 
 		$data['primary_key'] = $this->get_primary_key_name($table);
 
-		//Push an edit button onto each row
+		//Push an edit and delete button onto each row
 		foreach ($data['table_data'] as &$row)
 		{
-			$row = array_merge($row, array('Edit' => anchor("Modify/{$table}/{$row[$data['primary_key']]}", 'Edit')));
+			$row = array_merge($row, array('Edit' => anchor("modify/{$table}/{$row[$data['primary_key']]}", 'Edit')));
 		}
 
 		//Create The table
@@ -74,10 +74,16 @@ class Modify_model extends CI_Model {
 
 	public function update($table, $data, $key)
 	{
-		$primary_key = $this->get_primary_key_name();
+		$primary_key = $this->get_primary_key_name($table);
 		//Update the Table
 		return $this->db->where($primary_key, $key)
-			->update($able, $data);
+			->update($table, $data);
+	}
+
+	public function add_to_team($team_id, $user_id)
+	{
+		//Create log
+		//Add to team
 	}
 }
 

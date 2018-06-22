@@ -244,6 +244,10 @@ class Create extends CI_Controller {
 
 	}
 
+	/**
+	 * Controller for the team form
+	 * @param  array $data Data Array from index method
+	 */
 	public function team_form($data) 
 	{
 

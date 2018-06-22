@@ -82,6 +82,84 @@ class logging_model extends CI_model {
 	}
 
 	/**
+	 * Inserts into action log a team modifying action. i.e. User added/Removed to team
+	 *
+	 * @param string $team_name The team that was modified
+	 * @param string $user_name The name of the user that had their team modified
+	 * @param string $type Type of modification. Use 'add' or 'remove'
+	 */
+	public function log_team_action($team_name, $user_name, $type)
+	{
+		//Check if the 'modify' action type exists
+		$action_type_id = $this->make_log_action_type('modify');
+
+		//Check if the user added/removed actions exists
+		if ($type == 'add' )
+		{
+			$action_id = $this->make_log_action('User Added to Team', $action_type_id);
+		}
+		elseif ($type == 'remove')
+		{
+			$action_id = $this->make_log_action('User Removed from Team', $action_type_id);
+		}
+		else
+		{
+			log_message('error', 'Invalid log_team_action() type.');
+			return FALSE;
+		}
+		//Create the log
+		$log_data = array(
+			'action_id' => $action_id,
+			'log_date' => date('Y-m-d'),
+			'log_time' => date('H:i'),
+			'log_desc' => "$user_name added to (Team) $team_name",
+			'team_id' => NULL,
+			'user_id' => $this->session->user_id
+		);
+	}
+
+
+	public function make_log_action_type($type_name)
+	{
+		if(!$this->search_model->data_exists('action_types', array('type_name' => $type_name)))
+		{
+			$insert_data = array(
+				'type_name' => $type_name,
+				'is_active' => 0
+			);
+
+			$this->log_item('action_types', $insert_data);
+		}
+
+		return $this->search_model->get_row('action_types', array('type_name' => $type_name))->type_id;
+	}
+
+	/**
+	 * Creates an action for use with logging. (i.e. create and modify logs)
+	 * If the action already exsists, will instead return that action's id
+	 * @param  string $action_name The name of the action
+	 * @param  string|int $type_id    The ID of the action's action_type
+	 * @return string             The ID of the action
+	 */
+	public function make_log_action($action_name, $type_id)
+	{
+		if (!$this->search_model->data_exists('actions', array('action_name' => $action)))
+		{
+			$insert_data = array(
+				'action_name' => $action,
+				'type_id' => $type_id,
+				'action_desc' => 'Created '.$data.' using the create page.',
+				'project_id' => NULL,
+				'is_active' => FALSE
+			);
+
+			$this->log_item('actions', $insert_data);
+		}
+
+		return $this->search_model->get_row('actions', array('action_name' => $action_name))->action_id;
+	}
+
+	/**
 	 * Logs an item into the database
 	 * 
 	 * @param  string $table      Table name

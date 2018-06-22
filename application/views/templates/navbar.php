@@ -12,6 +12,7 @@
 			<?php echo anchor('logging', 'Logging Form', 'class="navbar-item"'); ?>
 			<?php echo anchor('create', 'Create', 'class="navbar-item"'); ?>
 			<?php echo anchor('modify', 'Modify', 'class="navbar-item"'); ?>
+			<?php echo anchor('stats', 'Statistics', 'class="navbar-item"'); ?>
 			
 		</div>
 		<div class="navbar-end">

@@ -55,26 +55,80 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 //////////////////////////
 $route['setup'] = 'Setup/index';
 
+//=================================
+
+/*
+	Home, User and Visitor Routes
+ */
+$route['welcome'] = 'Welcome/index';
 $route['home'] = 'User/index';
-$route['help/markups'] = 'Help/markups';
+$route['Home'] = 'User/index';
 $route['login'] = 'User/loginUI';
+$route['logout'] = 'User/logout';
+$route['User/my_info'] = 'User/my_info';
+
+/*
+	Help Routes
+ */
+$route['help/markups'] = 'Help/markups';
+
+/*
+	Password Recovery Routes
+ */
 $route['recover'] = 'User/recover_password';
 $route['recover-form/(:any)/(:any)'] = 'User/recover_form/$1/$2';
-$route['logout'] = 'User/logout';
+
+/*
+	Admin Routes
+ */
 $route['admin'] = 'Admin/index';
 $route['admin/view-logs'] = 'Admin/view_logs/0';
 $route['admin/view-logs/(:any)'] = 'Admin/view_logs/$1';
+
+/*
+	Logging Routes
+ */
 $route['logging'] = 'Logging/log';
 $route['logging/(:any)'] = 'Logging/log';
+
+/*
+	Create Routes
+ */
 $route['create'] = 'Create/index/action';
 $route['create/index'] = 'Create/index/action';
 $route['create/index/(:any)'] = 'Create/index/$1';
-$route['User/mystats'] = 'User/mystats';
+
+/*
+	Stats Routes
+ */
+$route['stats/my_stats'] = 'Stats/my_stats';
+
+/*
+	Search Routes
+ */
 $route['search'] = 'Search/index';
 $route['search/(:any)/(:any)'] = 'Search/$1/$2';
-$route['welcome'] = 'Welcome/index';
-$route['Modify/view_tables'] = 'Modify/index';
-$route['Modify/table/(:any)'] = 'Modify/modify_selection/$1';
-$route['Modify/(:any)/(:any)'] = 'Modify/modify_form/$1/$2';
+
+/*
+	Modify Routes
+ */
+$route['manage_teams'] = 'Modify/manage_teams';
+$route['manage_teams/(:any)'] = 'Modify/manage_teams/$1';
+$route['manage_teams/add_users/(:any)'] = 'Modify/add_users/$1';
+$route['manage_teams/remove_users/(:any)'] = 'Modify/remove_users/$1';
+
+$route['modify/view_tables'] = 'Modify/index';
+$route['modify/table/(:any)'] = 'Modify/modify_selection/$1'; //For table selection
+$route['modify/table/(:any)/(:any)'] = 'Modify/modify_selection/$1/$2'; //For pagination
+$route['modify/(:any)/(:any)'] = 'Modify/modify_form/$1/$2'; //For the modify form
+
+
+/*
+	Ajax Routes
+ */
 $route['Ajax/(:any)'] = 'Ajax/$1';
+
+/*
+	Default Route
+ */
 $route['default_controller'] = 'Welcome/index';

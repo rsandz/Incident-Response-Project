@@ -2,7 +2,7 @@
 /**
  * Welcome Controller
  * ==================
- * Written by: Ryan Sandoval, May 2018
+ * @author Ryan Sandoval, May 2018
  *
  * This controller handles the content displayed when a visitor (User that is not logged in) visits the site.
  */

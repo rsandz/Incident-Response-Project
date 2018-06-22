@@ -264,6 +264,10 @@ class Search extends CI_Controller {
 		}
 	}
 
+	/**
+	 * Runs a search querry. For use with the javascript graph system only.
+	 * @param  integer $offset Pagination Offset
+	 */
 	public function graph_search($offset = 0)
 	{
 		$user_lock = ($this->input->post('user_lock', TRUE)) ?: TRUE;

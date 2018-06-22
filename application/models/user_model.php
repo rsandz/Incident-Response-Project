@@ -41,6 +41,11 @@ class User_model extends CI_Model {
 		}
 	}
 
+	/**
+	 * Method that checks if an email is in the database
+	 * @param  string $email The user's email
+	 * @return boolean        True if in the database
+	 */
 	public function email_in_database($email)
 	{
 		$this->db->where('email', $email);

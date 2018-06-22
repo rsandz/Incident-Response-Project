@@ -159,9 +159,6 @@ class Statistics_model extends CI_Model {
 		return $data;
 	}
 
-
-
 }
-
 /* End of file Statistics_model.php */
 /* Location: ./application/models/Statistics_model.php */
