@@ -23,13 +23,9 @@ class User extends CI_Controller {
 		check_login(TRUE); //Ensures that the user is logged in.
 
 		$data['title']='Dashboard';
-		$data['name'] = $this->session->name;
-
 		$data['header'] = array(
-			'text' => 'Hello '.$data['name'].', Welcome to your Dashboard',
+			'text' => 'Hello '.$this->session->name.', Welcome to your Dashboard',
 			'colour' => 'is-info');
-
-		$data['privileges'] = $this->session->privileges;
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head');
@@ -37,8 +33,8 @@ class User extends CI_Controller {
 		$this->load->view('user/tabs', $data);
 
 		//Loads table for previous entries
-		$this->load->model('logging_model');
-		$data['entries_table'] = $this->logging_model->get_my_entries_table()['table'];
+		$this->load->model('statistics_model');
+		$data['entries_table'] = $this->statistics_model->get_my_entries_table();
 		$this->load->view('logging/user-entries', $data); 
 
 		$this->load->view('templates/footer');
@@ -58,7 +54,7 @@ class User extends CI_Controller {
 
 		if ($this->form_validation->run() === FALSE) {
 			$this->load->view('templates/header', $data);
-			$this->load->view('login/login');
+			$this->load->view('user/login/login');
 			$this->load->view('templates/footer');
 		} else {
 			$result = $this->user_model->login_user();
@@ -67,7 +63,7 @@ class User extends CI_Controller {
 				$data['errors'] = $result;
 
 				$this->load->view('templates/header', $data);
-				$this->load->view('login/login', $data);
+				$this->load->view('user/login/login', $data);
 				$this->load->view('templates/footer');
 			} else {
 				redirect('home');
@@ -136,7 +132,7 @@ class User extends CI_Controller {
 			{
 				//echo $this->email->print_debugger();
 				$this->load->view('templates/header', $data);
-				$this->load->view('login/sent', $data);
+				$this->load->view('user/login/sent', $data);
 				$this->load->view('templates/error', $data);
 			}
 			else
@@ -148,7 +144,7 @@ class User extends CI_Controller {
 		{
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('login/recover', $data);
+			$this->load->view('user/login/recover', $data);
 			$this->load->view('templates/error', $data);
 		}
 
@@ -245,7 +241,7 @@ class User extends CI_Controller {
 		$this->load->helper('form');
 		$this->load->model('search_model');
 
-		$data['user_teams'] = $this->search_model->get_user_teams($this->session->user_id);
+		$data['user_teams'] = $this->search_model->get_user_teams($this->session->user_id, FALSE);
 		$data['title'] = 'My Info';
 		$data['header']['text'] = "My Info";
 

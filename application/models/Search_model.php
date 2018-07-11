@@ -11,7 +11,6 @@ class Search_model extends CI_Model {
 	{
 		parent:: __construct();
 		$this->load->database(); //load database
-		$this->load->helper('inflector');
 		$this->load->library('table');
 
 		$this->load->model('logging_model');
@@ -24,139 +23,36 @@ class Search_model extends CI_Model {
 	 */
 	public function filter_search($query) 
 	{
-		// Join statements
-		$this->db
-			->join('actions','actions.action_id = action_log.action_id', 'left')
-			->join('action_types','actions.type_id = action_types.type_id', 'left')
-			->order_by( 'log_date', 'DESC')
-			->order_by( 'log_time', 'DESC')
-			->select('action_log.log_id');
-
-		// Date Filter - Uses from_date and to_date
-		if ($query['from_date'] !== "")
-		{
-			$this->db->where('log_date >=',$query['from_date']);
-		}
-
-		if (($query['to_date']) !== "")
-		{
-			$this->db->where('log_date <=',$query['to_date']);
-		}
-
-		// Type Filter - Based on type
-		if (is_array($query['action_types']))
-		{
-			$this->db->group_start();
-			foreach ($query['action_types'] as $action_type) 
-			{
-				$this->db->or_where('actions.type_id', $action_type);
-			}
-			$this->db->group_end();
-		}
-		
-		// Team Filter
-		if (is_array($query['teams']))
-		{
-			$this->db->group_start();
-			foreach ($query['teams'] as $team) 
-			{
-				$this->db->or_where('action_log.team_id', $team);
-			}
-
-			if ($query['null_teams'])
-			{
-				$this->db->or_where('action_log.team_id IS NULL');
-			}
-
-			$this->db->group_end();	
-		}
-		else
-		{
-			if ($query['null_teams'])
-			{
-				$this->db->where('action_log.team_id IS NULL');
-			}
-		}
-
-		// Project Filter
-		if (is_array($query['projects']))
-		{
-			$this->db->group_start();
-			foreach ($query['projects'] as $project) 
-			{
-				$this->db->or_where('action_log.project_id', $project);
-			}
-
-			if ($query['null_projects'])
-			{
-				$this->db->or_where('action_log.project_id IS NULL');
-			}
-
-			$this->db->group_end();
-		}
-		else
-		{
-			if ($query['null_projects'])
-			{
-				$this->db->or_where('action_log.project_id IS NULL');
-			}
-		}
-		
-		//User Filter
-		if (is_array($query['users']))
-		{
-			$this->db->group_start();
-			foreach ($query['users'] as $user_id) 
-			{
-				$this->db->or_where('action_log.user_id', $user_id);
-			}
-			$this->db->group_end();
-		}
-		
-		$this->db->select('log_id');
-
-		$filter_ids  = array();
+		$this->join_tables();
+		$this->apply_query_filters($query);
+		$this->db->select('action_log.log_id');
+		$filter_ids = array();
 		foreach ($this->db->get('action_log')->result() as $result)
 		{
-			array_push($filter_ids, $result->log_id);
+			$filter_ids[] = $result->log_id;
 		}
 		
 		return $filter_ids;
 	}
 
 	/**
-	 * Searches for rows in the log table that matches the filters provided
-	 * @param  array $keywords [description]
-	 * @param  [type] $columns  [description]
-	 * @return [type]           [description]
+	 * Applies the keywords filters in $query
+	 * @param  array $keywords Array containing the search query conditions @see search_helper->query_from_post()
 	 */
-	public function keyword_search($keywords, $columns, $ksearch_type) 
+	public function apply_query_keywords($query)
 	{
-		if (!isset($columns))
+		if (empty($query['keywords']))
 		{
 			return FALSE;
 		}
 
-		//NOTICE! I didn't check if $keywords is empty because codeigniter still puts into the query a wild card if the like condition is null. So what ends up happening is that we get all the results if $keyword is empty, WHICH is EXACTLY what we want!
-
-		//Join all tables so that we can query information all at the same time.
-		$this->db
-			->join('actions','actions.action_id = action_log.action_id')
-			->join('action_types','actions.type_id = action_types.type_id', 'left')
-			->join('projects','projects.project_id = action_log.project_id', 'left')
-			->join('teams','teams.team_id = action_log.team_id', 'left')
-			->join('users','users.user_id = action_log.user_id', 'left')
-			->order_by( 'log_date', 'DESC')
-			->order_by( 'log_time', 'DESC')
-			->select('action_log.log_id');
-
-		switch ($ksearch_type) {
+		switch ($query['ksearch_type']) {
 			case 'any':
-				foreach ($keywords as $keyword) 
+				foreach ($query['keywords'] as $keyword) 
 				{
 					//Will be using 'OR' between keywords		
 					$this->db->or_group_start();
-					foreach ($columns as $column) 
+					foreach ($query['keyword_filters'] as $column) 
 					{
 						$this->db->or_like($column, $keyword);
 					}
@@ -166,11 +62,11 @@ class Search_model extends CI_Model {
 				break;
 			
 			case 'all':
-				foreach ($keywords as $keyword) 
+				foreach ($query['keywords'] as $keyword) 
 				{
 					//Will be using 'AND' between keywords		
 					$this->db->group_start();
-					foreach ($columns as $column) 
+					foreach ($query['keyword_filters'] as $column) 
 					{
 						$this->db->or_like($column, $keyword);
 					}
@@ -183,14 +79,166 @@ class Search_model extends CI_Model {
 				show_error('Invalid Search Type');
 				break;
 		}
-			
-		$data = array();
-		foreach ($this->db->get('action_log')->result() as $result)
+	}
+
+	/**
+	 * Applies the search filters in $query to the db driver.
+	 * @param  array $query The $query array. @see filter_search()
+	 * @return boolean      True if Sucesssful
+	 */
+	public function apply_query_filters($query)
+	{
+		// Date Filter - Uses from_date and to_date
+		if (!empty($query['from_date']))
 		{
-			array_push($data, $result->log_id);
+			$this->db->where('log_date >=',$query['from_date']);
 		}
 
-		return $data;
+		if (!empty($query['to_date']))
+		{
+			$this->db->where('log_date <=',$query['to_date']);
+		}
+
+		// Type Filter - Based on type
+		if (!empty($query['action_types']))
+		{
+			$this->db->group_start();
+			foreach ($query['action_types'] as $action_type) 
+			{
+				$this->db->or_where('actions.type_id', $action_type);
+			}
+			$this->db->group_end();
+		}
+		
+		// Team Filter
+		if (!empty($query['teams']))
+		{
+			$this->db->group_start();
+
+			if (is_array($query['teams']))
+			{
+				foreach ($query['teams'] as $team) 
+				{
+					$this->db->or_where('action_log.team_id', $team);
+				}
+			}
+			else
+			{
+				//Support for 1 number and not array
+				$this->db->where('action_log.team_id', $query['teams']);
+			}
+
+			if (isset($query['null_teams']) && $query['null_teams']) //Checks if isset and TRUE
+			{
+				$this->db->or_where('action_log.team_id IS NULL');
+			}
+
+			$this->db->group_end();	
+		}
+		else
+		{
+			if (isset($query['null_teams']) && $query['null_teams'])
+			{
+				$this->db->where('action_log.team_id IS NULL');
+			}
+		}
+
+		// Project Filter
+		if (!empty($query['projects']))
+		{
+			$this->db->group_start();
+			if (is_array($query['projects']))
+			{
+				foreach ($query['projects'] as $project) 
+				{
+					$this->db->or_where('action_log.project_id', $project);
+				}
+			}
+			else
+			{
+				//Support if we just get 1 num and not a string
+				$this->db->where('action_log.project_id', $query['projects']);
+			}
+
+			if (isset($query['null_projects']) && $query['null_projects']) //Checks if isset and TRUE
+			{
+				$this->db->or_where('action_log.project_id IS NULL');
+			}
+
+			$this->db->group_end();
+		}
+		else
+		{
+			if (isset($query['null_projects']) && $query['null_projects'])
+			{
+				$this->db->or_where('action_log.project_id IS NULL');
+			}
+		}
+		
+		//User Filter
+		if (isset($query['users']))
+		{
+			$this->db->group_start();
+
+			if (is_array($query['users']))
+			{
+				foreach ($query['users'] as $user_id) 
+				{
+					$this->db->or_where('action_log.user_id', $user_id);
+				}
+			}
+			else
+			{
+				//Support for just a string too
+				$this->db->where('action_log.user_id', $query['users']);
+			}
+			$this->db->group_end();
+		}
+
+		return TRUE;
+	}
+
+	/**
+	 * Calls a bunch of join commands, so its easier to search through all the tables.
+	 * 
+	 * @return boolean Returns TRUE if successful
+	 */
+	public function join_tables()
+	{
+		//Join all tables so that we can query information all at the same time.
+		$this->db
+			->join('actions','actions.action_id = action_log.action_id')
+			->join('action_types','actions.type_id = action_types.type_id', 'left')
+			->join('projects','projects.project_id = action_log.project_id', 'left')
+			->join('teams','teams.team_id = action_log.team_id', 'left')
+			->join('users','users.user_id = action_log.user_id', 'left')
+			->order_by( 'log_date', 'DESC')
+			->order_by( 'log_time', 'DESC');
+
+		return TRUE;
+	}
+
+	/**
+	 * Searches for rows in the log table that matches the filters provided
+	 * @param  array $keywords An array of the keywords
+	 * @param  array $columns  The column to search the keyword in
+	 * @return array           Array of log ids that match the filter
+	 */
+	public function keyword_search($query) 
+	{
+		if (isset($query['keyword_filters']) && isset($query['keywords']))
+		{
+			$this->join_tables();
+			$this->apply_query_keywords($query);	
+		}
+		
+		$this->db->select('action_log.log_id');
+		foreach ($this->db->get('action_log')->result() as $result)
+		{
+			$filter_ids[] = $result->log_id;
+		}
+
+		return $filter_ids;
 	}
 	
 	/**
@@ -204,7 +252,7 @@ class Search_model extends CI_Model {
 	 */
 	public function get_logs_table($log_ids, $offset = 0)
 	{
-		$this->load->helper('table_helper');
+		$this->load->library('table');
 		$per_page  =$this->config->item('per_page');
 
 		//Join and select
@@ -212,14 +260,17 @@ class Search_model extends CI_Model {
 			->order_by( 'log_date', 'DESC')
 			->order_by( 'log_time', 'DESC');
 
-		$this->execute_table_filters('logs');
+		$this->sql_commands_for_table('logs');
 
 		if (!is_array($log_ids) OR count($log_ids) < 1)
 		{
 				$data['table'] = 'No Results';
 				return $data;
 		}
-		$this->db->where_in('log_id', $log_ids);
+		else
+		{
+			$this->db->where_in('log_id', $log_ids);
+		}
 
 		// Privilege Filter
 		// Editable in appconfig
@@ -249,10 +300,11 @@ class Search_model extends CI_Model {
 			return $data;
 		}
 
-		$data['table_data'] = array_slice($matches->result_array(), $offset, $per_page); //Offset for pagination
-		$data['heading'] = $this->get_table_headings('logs');
+		//Make the Table
+		$table_data = array_slice($matches->result_array(), $offset, $per_page); //Offset for pagination
 
-		$data['table'] = generate_table($data);
+		$this->table->heading_from_config('logs');
+		$data['table'] = $this->table->my_generate($table_data);
 		
 		return $data;
 
@@ -264,33 +316,29 @@ class Search_model extends CI_Model {
 	 * @param  offset $offset Offset for pagination
 	 * @return string         HTML string for the table
 	 */
-	public function get_table_data($table, $offset)
+	public function tabulate_table($table, $offset)
 	{
-		$this->load->helper('inflector');
-		$this->load->helper('table_helper');
 		$per_page  =$this->config->item('per_page');
 
 		//Conditions and data formatting for certain tables
 		
 		//Format the table
-		$this->execute_table_filters($table); //Applies table filters as stated in view_tables.php
-		$data['heading'] = $this->get_table_headings($table);
+		$this->sql_commands_for_table($table); //Applies table filters as stated in view_tables.php
 
 		//Get Table DATA
-		$query = $this->get_items_raw($table);
-		$data['table_data'] = array_slice($query->result_array(), $offset, $per_page); //Offset for pagination
+		$query = $this->db->get($table);
+		$table_data = array_slice($query->result_array(), $offset, $per_page); //Offset for pagination
 
 		//Censoring Password Hashes - See configuration for disabling this
-		if (in_array('Password', $data['heading']) && !$this->config->item('show_hashes')) 
+		if ($this->config->item('show_hashes') && $this->db->field_exists('password', $table)) 
 		{
-			foreach ($data['table_data'] as &$row)
+			foreach ($table_data as &$row)
 			{
 				$row['password'] = '***********';
 			}
 		}
-
 		//Create The table
-		$data['table'] = generate_table($data);
+		$data['table'] = $this->table->my_generate($table_data, $query->list_fields());
 		$data['num_rows'] = $query->num_rows();
 		$data['table_name'] = $table;
 
@@ -404,7 +452,7 @@ class Search_model extends CI_Model {
 		 * 
 		 * @return boolean True if successful or no filters were found
 		 */
-		public function execute_table_filters($table) 
+		public function sql_commands_for_table($table) 
 		{
 			//Load Config
 			if (!$this->load->config('view_tables', TRUE)) //loads config too
@@ -469,23 +517,6 @@ class Search_model extends CI_Model {
 		}
 
 		/**
-		 * Gets a single row from the database given some parameters.
-		 * 
-		 * @param  string $table Table string
-		 * @param  Mixed  $where Associative array of column-value pairs or string
-		 * query
-		 * @param  Mixed  $select Array or String of columns to select
-		 * @param  array  $join Associative array of table as key and join conditios
-		 * as value
-		 * @return array             result_array of results
-		 */
-		public function get_row($table, $where = NULL, $select = NULL, array $join = NULL)
-		{
-			return $this->get_items_raw($table, $where, $select, $join)->result()[0];
-		}
-
-
-		/**
 		 *	Gets and Returns Table Fields Data
 		 *
 		 *	@param $table Table name to get field data.
@@ -522,90 +553,75 @@ class Search_model extends CI_Model {
 			}
 		}
 
-		
-		/**
-		 * Gets the Enumeartion Values for a given field in a table
-		 * 
-		 * @param  string $table Table name in database
-		 * @param  string $field Field name in Database
-		 * @return array         Returns all enum values as array of strings
-		 */
-		public function get_enum_vals($table, $field) 
-		{
-			$query = $this->db->query('SHOW COLUMNS FROM '.$table.' WHERE Field = "'.$field.'"')->row()->Type;
-			preg_match_all("/'.*?'/", $query, $results); //Reg match to get quoted enum values
-
-			//Stripping Quotes
-			$this->load->helper('string');
-			
-			foreach ($results[0] as &$result)//[0] is for array of full matches;
-			{
-				$result = strip_quotes($result);
-			} 
-
-			return $results[0];
-		}
-
-		/**
-		 * Automatically gets table headings.
-		 * Attempt to get the hadings from the following sources (in this order):
-		 * 	1. The 'view_tables' config file (['headings'] index)
-		 * 	2. The 'view_tables' config file (['select'] index)
-		 * 	3. fet_field_data() in search model
-		 *
-		 * If the above fails, thros an error
-		 * 
-		 * @param  string $table The table name of which to get the headers for.
-		 * @return array         The array containing the headers.
-		 */		
-	public function get_table_headings($table)
+	
+	/**
+	 * Gets the Enumeartion Values for a given field in a table
+	 * 
+	 * @param  string $table Table name in database
+	 * @param  string $field Field name in Database
+	 * @return array         Returns all enum values as array of strings
+	 */
+	public function get_enum_vals($table, $field) 
 	{
-		if ($this->config->load('view_tables'))
+		$query = $this->db->query('SHOW COLUMNS FROM '.$table.' WHERE Field = "'.$field.'"')->row()->Type;
+		preg_match_all("/'.*?'/", $query, $results); //Reg match to get quoted enum values
 
-		$headings = array();
-		if (isset($this->config->item($table, 'view_tables')['headings']))
+		//Stripping Quotes
+		$this->load->helper('string');
+		
+		foreach ($results[0] as &$result)//[0] is for array of full matches;
 		{
-			$column_headings = $this->config->item($table, 'view_tables')['headings'];
-		}
-		elseif (isset($this->config->item($table, 'view_tables')['select']))
-		{
-			$column_headings = $this->config->item($table, 'view_tables')['select'];
-		}
-		elseif ($this->get_field_data($table) !== FALSE)
-		{
-			$column_headings = array_map(
-			function($item) 
-			{
-				return humanize($item->name);
-			},
-			$this->get_field_data($table, TRUE));	
-		}
-		else
-		{
-			show_error('No table heading can be created. (Search_Model/get_table_headings)');
-		}
+			$result = strip_quotes($result);
+		} 
 
-		foreach ($column_headings as $heading) 
+		return $results[0];
+	}
+
+	/**
+	 * Gets the projects available to the user
+	 * @param boolean $admin_mode If TRUE, will also get inactive projects
+	 * @return array             Code Igniter db results that contains the projects
+	 */
+	public function get_projects($admin_mode = FALSE)
+	{
+		if (!$admin_mode)
 		{
-			array_push($headings, humanize($heading));
+			//Only get active projects
+			$this->db->where('is_active', 1);
 		}
 
-		return $headings;
+		//Get the projects
+		return $this->db->join('users', 'users.user_id = projects.project_leader', 'left')
+			->select('project_name, project_id, users.name as project_leader_name, project_desc')
+			->get('projects')->result();
 	}
 
 	/**
 	 * Get the teams that the provided user id is in
-	 * @param  string $user_id Used Id of the user in question
+	 * @param boolean $admin_mode If true, will ignore the user_id and get all the teams
+	 * @param  string $user_id User Id of the user in question. 
 	 * @return array           Code Igniter db results array that contains the teams
 	 *                         that the user is in.
 	 */
-	public function get_user_teams($user_id)
+	public function get_user_teams($user_id, $admin_mode = FALSE)
 	{
-		$query = $this->get_items('user_teams', array('user_id' => $user_id), 'team_id');
-		$team_ids = array_map(function($x){return $x->team_id;}, $query);
+		if (!$admin_mode)
+		{
+			$query = $this->get_items('user_teams', array('user_id' => $user_id), 'team_id');
+			$team_ids = array_map(function($x){return $x->team_id;}, $query);
+			$this->db->where_in('team_id', $team_ids);
+		}
+		else
+		{
+			//User id can't be null!
+			if (!$user_id) return NULL;
+		}
 
-		return $this->db->where_in('team_id', $team_ids)->get('teams')->result();
-
+		return $this->db
+					->join('users', 'users.user_id = teams.team_leader', 'left')
+					->select('team_name, team_id, team_desc, users.name as team_leader_name')
+					->get('teams')
+					->result();
 	}
 	
 	/**
@@ -619,29 +635,157 @@ class Search_model extends CI_Model {
 		if (is_array($team_id))
 		{
 			$user_ids = $this->db->where('team_id', $team_id)->get('user_teams');
-			return $this->db->where_in('user_id', $user_ids)->get('users');
+			if (count($user_ids) > 0)
+			{
+				return $this->db->where_in('user_id', $user_ids)->get('users');
+			}
+			else
+			{
+				return NULL;
+			}
+
 		}
 		else
 		{
 			$query = $this->db->where('team_id', $team_id)->get('user_teams')->result();
 			$user_ids = array_map(function($x) {return $x->user_id;}, $query);
-			return $this->db->where_in('user_id', $user_ids)->get('users')->result();
+			if (count($user_ids) > 0)
+			{
+				return $this->db->where_in('user_id', $user_ids)->get('users')->result();
+			}
+			else
+			{
+				return NULL;
+			}
 		}
 	}
 
 	public function get_team_info($team_id)
 	{
-		$data = array();
-		$query = $this->get_row('teams', array('team_id', $team_id));
-		$data['team_name'] = $query->team_name;
-		$data['team_id'] = $query->team_id;
-		$data['team_members_raw'] = $this->get_team_users($team_id);
-		foreach($data['team_members_raw'] as $team_member)
+		$query = $this->db->where('team_id', $team_id)->get('teams')->row(); 
+		$data['team_name'] = $query->team_name; //Get team name
+		$data['team_id'] = $query->team_id; //Get Team ID
+
+		$data['team_members_raw'] = $this->get_team_users($team_id); //CI result array of obj
+
+		//Get amount of members
+		if (isset($data['team_members_raw']))
 		{
-			$data['team_members'][$team_member->name] = $team_member->user_id;
+			$data['num_members'] = count($data['team_members_raw']);
+		}
+		else
+		{
+			$data['num_members'] = 0; //team_members_raw is NULL, so no users
+		}
+
+		//Get team logs total
+		$data['team_logs'] = $this->db->select('COUNT(*) as count')
+									->where('team_id', $team_id)
+									->get('action_log')
+									->row()
+									->count;
+
+		//Get Team leader
+		$query2 = $this->db->where('user_id', $query->team_leader)->get('users')->row();
+		if (isset($query2))
+		{
+			$data['team_leader_name'] = $query2->name;
+		}
+		else
+		{
+			$data['team_leader_name'] = NULL;
+		}
+
+		if (isset($data['team_members_raw']))
+		{
+			foreach($data['team_members_raw'] as $team_member)
+			{
+				$data['team_members'][$team_member->name] = $team_member->user_id;
+			}
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Gets the users not in the twam
+	 * @param  int $team_id The id of the team to test
+	 * @return array          A CI db results array of objects containing the users not in the team.
+	 */
+	public function get_users_not_in_team($team_id)
+	{
+		$users_in_team = array_map(
+			function ($user) {return $user->user_id;},
+			$this->db->where('team_id', $team_id)->get('user_teams')->result());
+
+		if (count($users_in_team) > 0)
+		{
+			return $this->db->where_not_in('user_id', $users_in_team)->get('users')->result();
+		}
+		else
+		{
+			return $this->db->get('users')->result();
+		}
+	}
+
+	/**
+	 * Gets the user's name from id
+	 * @param  int $user_id Id of the user
+	 * @return string          User's name
+	 */
+	public function get_user_name($user_id)
+	{
+		return $this->db
+			->select('name')
+			->where('user_id', $user_id)
+			->get('users')
+			->row()
+			->name;
+	}
+
+	/**
+	 * Gets the team name from the team id
+	 * @param  int $team_id The ID of the team
+	 * @return string          THe team Name
+	 */
+	public function get_team_name($team_id)
+	{
+		return $this->db
+			->select('team_name')
+			->where('team_id', $team_id)
+			->get('teams')
+			->row()
+			->team_name;
+	}
+
+	/**
+	 * Get project name from project ID
+	 * @param  int $project_id The ID of the project
+	 * @return string             THe project name
+	 */
+	public function get_project_name($project_id)
+	{
+		return $this->db
+			->select('project_name')
+			->where('project_id', $project_id)
+			->get('projects')
+			->row()
+			->project_name;
+	}
+
+	/**
+	 * Get the action type name from the action type ID
+	 * @param  int $type_id The action ype ID
+	 * @return string          The action type name
+	 */
+	public function get_type_name($type_id)
+	{
+		return $this->db
+			->select('type_name')
+			->where('type_id', $type_id)
+			->get('action_types')
+			->row()
+			->type_name;
 	}
 }
 

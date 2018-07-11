@@ -61,11 +61,10 @@ class Logging extends CI_controller {
 
 		if ($this->form_validation->run() === FALSE) 
 		{	
-			//Show Sucess page
 			$data['header'] = array(
 				'text' => 'Logging form',
 				'colour' => 'is-success');
-			$data['title'] = 'Success';
+			$data['title'] = 'Logging Form';
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
@@ -92,7 +91,7 @@ class Logging extends CI_controller {
 				$this->logging_model->log_action('form', $insert_data);
 
 				$data['header'] = array(
-					'text' => 'Log Sucessfuly entered into database!',
+					'text' => 'Success!',
 					'colour' => 'is-success'
 				);
 				$data['title'] = 'Logging Form';

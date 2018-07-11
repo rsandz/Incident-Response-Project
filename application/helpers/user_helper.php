@@ -1,5 +1,5 @@
 <?php
-
+defined('BASEPATH') OR exit('No direct script access allowed');
 if (!function_exists('check_login'))
 {
 	/**
@@ -37,7 +37,7 @@ if (!function_exists('check_admin'))
 	function check_admin($redirect = FALSE)
 	{
 		$CI =& get_instance();
-		if ($CI->session->user_id !== NULL && $CI->session->privilege == 'admin')
+		if ($CI->session->user_id !== NULL && $CI->session->privileges == 'admin')
 		{
 			return TRUE;
 		}
@@ -67,7 +67,7 @@ if (!function_exists('check_privileges'))
 		else
 		{
 			//Not authorized
-			log_message('info', 'Insufficient Privileges for User '.$this->session->user_id.' to access '.current_url());
+			log_message('info', 'Insufficient Privileges for User '.$CI->session->user_id.' to access '.current_url());
 			if ($redirect)
 			{
 				redirect('home','refresh'); 

@@ -1,5 +1,7 @@
 <div class="content section">
 	<div class="container">
+		<h1>User Creation Form</h1>
+		<hr>
 		<?php echo form_open('Create/index/user', 'class="form"'); ?>
 			<div class="field">
 				<label class="label">Name</label>

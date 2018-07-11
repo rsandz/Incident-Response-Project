@@ -1,10 +1,11 @@
 <body>
 
 	<section class="section">
-	<div class="container is-quarter">
-		<div class="box has-text-centered">
-			<?php echo anchor('home', 'Dashboard', 'class="button is-success"');?>
+	<div class="container">
+		<div class="column">
+			<div class="box">Your Item has been sucessfully logged!</div>
 		</div>
+		<div class="level level-item"><?php echo anchor('home', 'Dashboard', 'class="button is-success"');?></div>
 	</div>
 	<section>
 

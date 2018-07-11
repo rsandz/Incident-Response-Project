@@ -1,17 +1,32 @@
 /**
  * The class that hadles chart creation and modification
  * Contains the chart object
+ *
+ * The chart can be modified by the user by calling the following methods:
+ *  - 
+ * 
  */
 class chartManager
 {
-	/**
-	 * Creates the chart manager
-	 * @param {string} type - The date interval type i.e. 'Daily', 'Weekly', 'Monthly', 'Yearly'
-	 * @param {number} limit - The number of bars to display
-	 */
-	constructor(chartType, intervalType, canvas, limit = 10) 
-	{
 
+	/**
+	 * Constucts the chartManager class
+	 *
+	 * Provide a configuration such that
+	 * @param {object} config = {
+	 * 		chartType, //'hours' or 'logs'
+	 * 		intervalType, //'daily', 'weekly', 'monthly', 'yearly' (Default Daily)
+	 * 		ajaxURL, //The Ajax URL to get data from
+	 * 		canvas, //Selector for the canvas
+	 *
+	 * 		//Optional
+	 * 		limit, //Amount of Bars to show (Default 10). Can be changed by the user
+	 * 		limitMax, //Maximum amount of bars to show. Ceiling of limit if limit was changed by the user (Default 365)
+	 * 		limitMin, //Minimum amount of bars to show. Floor of limit if limit was changed by the user (Default 1)
+	 * }
+	 */
+	constructor(config) 
+	{
 		/*
 		 *	Configuration 
 		 */
@@ -31,30 +46,37 @@ class chartManager
 			}
 		};
 
-		this.limit = limit;
-		this.type = intervalType;
-		this.chart = "";
-		this.canvas = canvas;
-		this.chartType = chartType;
+		this.chartType = config.chartType;
+		this.canvas = config.canvas;
+		this.ajaxURLs = config.ajaxURLs;
 
-		this.limitMax = 365;
-		this.limitMin = 1;
+		this.limit = config.limit || 10;
+		this.type = config.intervalType || 'daily';
+		this.limitMax = config.limitMax || 365;
+		this.limitMin = config.limitMin || 1;
+		this.maxY = 0;
+		this.dataList = [];
+
 		this.offset = 0;
-
+		this.chart = "";
 		this.createChart(this.type);
+
+		
 	}
 
 	/**
 	 * Generates the data to graph
 	 *
+	 * Provide a data object with the following:
+	 * 	{property} stats (Must contain 'x' property and 'y' property. X and Y axes respectively)
+	 *
 	 * @return {object} An object containing the arrays of data to plot and misc data
 	 */
-	generateData()
+	generateData(data)
 	{
-		var dateArray = [];
-		var dataArray = [];
-		var dataDates = this.data.stats.map(x => new Date(x.date));
-
+		var dateArray = []; //Array of all the sates (X-axis)
+		var dataArray = []; //Array of the data points (Y-axis)
+		var dataDates = data.stats.map(dataItem => new Date(dataItem.x)); //Dates from Ajax call
 		//Correct for timezone, since the above puts the date in UTC
 		for (var i = dataDates.length - 1; i >= 0; i--) {
 			dataDates[i].setMinutes(dataDates[i].getMinutes() + dataDates[i].getTimezoneOffset());
@@ -76,7 +98,7 @@ class chartManager
 					}
 					else
 					{
-						dataArray.push(this.data.stats[index].amount);
+						dataArray.push(data.stats[index].y);
 					}
 				}
 				break;
@@ -102,7 +124,7 @@ class chartManager
 					}
 					else
 					{
-						dataArray.push(this.data.stats[index].amount);
+						dataArray.push(data.stats[index].y);
 					}
 				}
 				break;
@@ -130,7 +152,7 @@ class chartManager
 					}
 					else
 					{
-						dataArray.push(String(this.data.stats[index].amount));
+						dataArray.push(String(data.stats[index].y));
 					}
 				}
 				break;
@@ -158,12 +180,123 @@ class chartManager
 					}
 					else
 					{
-						dataArray.push(this.data.stats[index].amount);
+						dataArray.push(data.stats[index].y);
 					}
 				}
 				break;
 		}
-		return {dateArray:dateArray, dataArray: dataArray, maxYVal: Math.max.apply(null, dataArray) + 2};
+
+		//Remove any 'null's from dataArray and turn them into zeros
+		for(let data in dataArray)
+		{
+			if (dataArray[data] == null)
+			{
+				dataArray[data] = 0;
+			}
+		}
+
+		return {dateArray:dateArray, dataArray: dataArray, label: data.name};
+	}
+
+	/**
+	 * Generates the chart data from the dataList in the chart manager
+	 * 
+	 * data is the array in the chart config that contains all the data sets
+	 * and x-axis labels
+	 *
+	 * @return {object} The data object
+	 */
+	generateChartData()
+	{
+		var chartData = [];
+		for(let data of this.dataList)
+		{
+			chartData.push(this.generateData(data));
+		}
+		//Get Background Colours
+		var backgroundColours = this.getBackgroundColours();
+		//Create DataSets
+		var dataSets = [];
+		for(let [index, data] of chartData.entries())
+		{
+			dataSets.push({
+				label:  data.label || this.config[this.chartType].dataName,
+				data: data.dataArray,
+				backgroundColor: backgroundColours[index],
+				borderColor: backgroundColours[index],
+				pointHoverBackgroundColor: 'rgba(0, 0, 200, 0.5)',
+				hoverBackgroundColor: 'rgba(0, 0, 200, 0.5)',
+				hoverBorderColor: 'rgba(0, 0, 200, 0.5)',
+				borderWidth: 1,
+				lineTension: this.config[this.chartType].lineTension
+			})
+		}
+
+		this.refreshMaxY(chartData);
+
+		//Labels (The x-axis values)
+		let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+		switch (this.type)
+		{
+			case 'daily':
+			case 'weekly':
+				var label_array = chartData[0].dateArray.map(x => x.toDateString());
+				break;
+			case 'monthly':
+				var label_array = chartData[0].dateArray.map(x => (months[x.getMonth()]+ " " + x.getFullYear()));
+				break;
+			case 'yearly':
+				var label_array = chartData[0].dateArray.map(x => x.getFullYear());
+				break;
+			default:
+				console.log('Interval Error');
+				break;
+		}
+		return {labels : label_array, datasets : dataSets};
+	}
+
+	/**
+	 * Gets or sets background colours based on whether
+	 * they exist or not.
+	 *
+	 * @return {array} The array of background colours.
+	 * 
+	 */
+	getBackgroundColours()
+	{
+		if (!this.backgroundColours)
+		{
+			this.backgroundColours = [];
+			//Make background colours
+			for(let index in this.ajaxURLs)
+			{
+				this.backgroundColours.push('hsla(' + Math.random() * 360 +', 100%, 77%, 0.8)');
+			}
+		}
+
+		return this.backgroundColours;
+	}
+
+	/**
+	 * Refreshes the maximum Y-axis value.
+	 *
+	 * Use when Data displayed is changing
+	 *
+	 * @return {boolean} TRUE if successful
+	 */
+	refreshMaxY(chartData)
+	{
+		//First must combine all chart data
+		var allData = [];
+		for (let data of chartData)
+		{
+			allData.push(...data.dataArray.map(x => parseInt(x, 10)));
+		}
+		this.maxY = allData.reduce(function(acc, curr) 
+			{
+				return Math.max(acc, curr);
+			}) + 2;
+		return true;
 	}
 
 	/**
@@ -175,22 +308,32 @@ class chartManager
 	 /**
 	  * Grabs chart data from the server based on the property 'type'
 	  *
-	  * @param {functio} callback - The callback when the data is recieved from the server
+	  * @param {function} callback - The callback when the data is recieved from the server
 	  * 
 	  */
 	getData(callback)
 	{
-		if (this.chartType == 'logs')
+		if (Array.isArray(this.ajaxURLs))
 		{
-			$.get($('#ajax-link').attr('data')+'/get_user_log_frequency',
-			{'interval_type' : this.type}, (data) => {this.data = $.parseJSON(data);})
-			.done(callback.bind(this));
+			var requests = [];
+			for (let url of this.ajaxURLs)
+				{
+					requests.push($.get
+					(
+						url,
+						{'interval_type' : this.type},
+						(data) => this.dataList.push(JSON.parse(data))
+					));
+				}
+			$.when(...requests).then(callback.bind(this));
 		}
-		else if (this.chartType == 'hours')
+		else
 		{
-			$.get($('#ajax-link').attr('data')+'/get_user_hours',
-			{'interval_type' : this.type}, (data) => {this.data = $.parseJSON(data);})
-			.done(callback.bind(this));
+			$.get
+			(
+				this.ajaxURLs,
+				{'interval_type' : this.type}, (data) => this.dataList.push(JSON.parse(data))
+			).done(callback.bind(this));
 		}
 	}
 
@@ -208,27 +351,16 @@ class chartManager
 	 * Renders the chart on the canvas
 	 */
 	renderChart()
-	{
-		var chartData = this.generateData();
+	{	
+		var chartData = this.generateChartData();
+		
 		if(this.canvas.length)
 		{
 			this.chart = new Chart(this.canvas,
 			{
 				parent : this,
 				type: this.config[this.chartType].chartFormat,
-				data: 
-				{
-					labels: chartData.dateArray.map(x => x.toDateString()),
-					datasets: [
-					{
-						label: this.config[this.chartType].dataName,
-						data: chartData.dataArray,
-						backgroundColor: 'rgba(255, 99, 132, 0.2)',
-						borderColor: 'rgba(255,99,132,1)',
-						borderWidth: 1,
-						lineTension: this.config[this.chartType].lineTension
-					}]
-				},
+				data: chartData,
 				options: 
 				{
 			        scales: 
@@ -238,66 +370,11 @@ class chartManager
 			                ticks: {
 			                    beginAtZero:true,
 			                    min: 0,
-			                    max: chartData.maxYVal,
+			                    max: this.maxY,
 			                }
 			            }]
 			        },
-			        onClick: 
-			        	/**
-			        	 * Processes a user click and then creates and runs a search query for the data that the user clicked on.
-			        	 * @param  {event} e The click event
-			        	 */
-				        function(e) //For loading the graph search
-				        {
-				        	try
-				        	{
-				        		var index = this.getElementAtEvent(e)[0]._index; //Index of the bar that was clicked on
-				        	}
-				        	catch(err) 
-				        	{
-				        		if (err.name == 'TypeError') //Type error usually means that the user did not click on a bar
-				        		{
-				        			return; //Just return if did not click on a bar
-				        		}
-				        		else
-				        		{
-				        			throw err; // Throw the error again if it is not type error
-				        		}
-				        	}
-
-				        	var dateObj = new Date(String(this.data.labels[index])); //Creating a date must use a string
-				        	var toDateObj = new Date(dateObj.getTime());
-
-				        	switch(this.chart.config.parent.type)
-				        	{
-				        		case 'daily':
-				        			break;
-				        		case 'weekly':
-				        			toDateObj.setDate(toDateObj.getDate() + 6); //6 Days, as to not include the 1st day of the next week
-				        			break;
-				        		case 'monthly':
-				        			toDateObj.setMonth(toDateObj.getMonth() + 1, 0); 
-				        			//The zero argument sets the day to the last day of the current month and not the first day of the next month
-				        			// i.e. If the 0 argument was not passed, the date range would be from Jan 01 to Feb 01 rather 
-				        			break;
-				        		case 'yearly':
-				        			toDateObj.setFullYear(toDateObj.getFullYear() + 1);
-				        			break;
-
-				        	}
-
-				        	var elementData = {
-				        		fromDate : dateObj.getFullYear() + "-" + (dateObj.getMonth() + 1) + "-" + dateObj.getDate(),
-				        		toDate : toDateObj.getFullYear() + "-" + (toDateObj.getMonth() + 1) + "-" + toDateObj.getDate(),
-				        		//PLUS 1 for the month since js months go from 0-11 shile sql months go from 1-12
-				        		amount : this.data.datasets[0].data[index]
-				        		};
-
-				        	console.log(elementData);
-				        	$('#to_date').val(elementData.toDate);
-				        	$('#from_date').val(elementData.fromDate);
-				        	$('#search-form').submit();
-				        }
+			        onClick: this.searchForData
 				}
 			});
 			this.offset = 0;
@@ -313,6 +390,65 @@ class chartManager
 	}
 
 	/**
+	 * Processes a user click and then creates and runs a search query for the data that the user clicked on.
+	 * The search data will come from the query array returned by the get data AJAX
+	 * @param  {event} e The click event
+	 */
+    searchForData(e) //For loading the graph search
+    {
+    	try
+    	{
+    		var index = this.getElementAtEvent(e)[0]._index; //Index of the bar that was clicked on
+    		var dataSetIndex = this.getElementAtEvent(e)[0]._datasetIndex;
+    	}
+    	catch(err) 
+    	{
+    		console.log(err);
+    		if (err.name == 'TypeError') //Type error usually means that the user did not click on a bar
+    		{
+    			return; //Just return if did not click on a bar
+    		}
+    		else
+    		{
+    			throw err; // Throw the error again if it is not type error
+    		}
+    	}
+
+    	var dateObj = new Date(String(this.data.labels[index])); //Creating a date must use a string
+    	var toDateObj = new Date(dateObj.getTime());
+
+    	switch(this.chart.config.parent.type)
+    	{
+    		case 'daily':
+    			break;
+    		case 'weekly':
+    			toDateObj.setDate(toDateObj.getDate() + 6); //6 Days, as to not include the 1st day of the next week
+    			break;
+    		case 'monthly':
+    			toDateObj.setMonth(toDateObj.getMonth() + 1, 0); 
+    			//The zero argument sets the day to the last day of the current month and not the first day of the next month
+    			// i.e. If the 0 argument was not passed, the date range would be from Jan 01 to Feb 01 rather 
+    			break;
+    		case 'yearly':
+    			toDateObj.setFullYear(toDateObj.getFullYear() + 1);
+    			break;
+
+    	}
+
+    	var elementData = {
+    		fromDate : dateObj.getFullYear() + "-" + (dateObj.getMonth() + 1) + "-" + dateObj.getDate(),
+    		toDate : toDateObj.getFullYear() + "-" + (toDateObj.getMonth() + 1) + "-" + toDateObj.getDate(),
+    		//PLUS 1 for the month since js months go from 0-11 shile sql months go from 1-12
+    		query : this.config.parent.dataList[dataSetIndex].query, // The search query
+    		amount : this.data.datasets[dataSetIndex].data[index]
+    		};
+    	$('#to_date').val(elementData.toDate);
+    	$('#from_date').val(elementData.fromDate);
+    	$('#query').val(JSON.stringify(elementData.query));
+    	$('#search-form').submit();
+    }
+
+	/**
 	 * Changes the date interval type of the chart.
 	 * interval type can be: 'daily', 'weekly', monthly', 'yearly'
 	 */
@@ -321,6 +457,8 @@ class chartManager
 		this.type = type;
 		this.offset = 0;
 		console.log('Changing to: '+this.type);
+		//Clear Data List
+		this.dataList = [];
 		return this.getData(this.updateChart);
 	}
 
@@ -329,33 +467,42 @@ class chartManager
 	 */
 	updateChart() //TODO readd the spinner
 	{
-		let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-		switch (this.type)
-		{
-			case 'daily':
-			case 'weekly':
-				var chartData = this.generateData();
-				var label_array = chartData.dateArray.map(x => x.toDateString());
-				break;
-			case 'monthly':
-				var chartData = this.generateData();
-				var label_array = chartData.dateArray.map(x => (months[x.getMonth()]+ " " + x.getFullYear()));
-				break;
-			case 'yearly':
-				var chartData = this.generateData();
-				var label_array = chartData.dateArray.map(x => x.getFullYear());
-				console.log(chartData);
-				break;
-			default:
-				console.log('Interval Error');
-				break;
-		}
+		var chartData = this.generateChartData();
 
-		this.chart.data.labels = label_array;
-		this.chart.data.datasets[0].data = chartData.dataArray;
-		this.chart.options.scales.yAxes[0].ticks.max = chartData.maxYVal;
+		//Remove previous data
+		this.chart.config.data.labels = [];
+		this.chart.config.data.datasets = []; 
+		this.chart.update();
+
+		//Insert new Data
+		this.chart.data = chartData;
+		this.chart.options.scales.yAxes[0].ticks.max = this.maxY;
 		this.chart.update();
 		return true;
+	}
+
+	/**
+	 * Moves all the datapoints to the left
+	 * For use with arrow buttons that can shift the graph
+	 * 
+	 * @Number {amount} The amount of x units to shift the graph by
+	 */
+	scrollLeft(amount = 1)
+	{
+		this.offset += 1;
+		this.updateChart();
+	}
+
+	/**
+	 * Moves all the datapoints to the right
+	 * For use with arrow buttons that can shift the graph
+	 * 
+	 * @Number {amount} The amount of x units to shift the graph by
+	 */
+	scrollRight(amount = 1)
+	{
+		this.offset -= 1;
+		this.updateChart();
 	}
 
 	/**
@@ -393,9 +540,7 @@ class chartManager
 					offset = now.getFullYear() - jumpDate.getUTCFullYear();
 					break;
 			}
-			console.log(offset);
 			this.offset = offset;
-			console.log(jumpDate);
 			return this.updateChart();
 		}
 		else

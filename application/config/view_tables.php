@@ -1,4 +1,29 @@
 <?php
+/*
+	Configuration for Tables
+ */
+
+$config['default_template'] = array(
+    'table_open'            => '<div style="overflow-x : auto"><table class="table is-striped is-fullwidth">',
+
+    'thead_open'            => '<thead class="thead">',
+    'thead_close'           => '</thead>',
+
+    'heading_row_start'     => '<tr class="tr">',
+    'heading_row_end'       => '</tr>',
+    'heading_cell_start'    => '<th class="th">',
+    'heading_cell_end'      => '</th>',
+
+    'tbody_open'            => '<tbody class="tbody">',
+	'tbody_close'		 	=> '</tbody>',
+
+    'row_start'             => '<tr class="tr">',
+    'row_end'               => '</tr>',
+    'cell_start'            => '<td class="td">',
+    'cell_end'              => '</td>',
+
+    'table_close'           => '</table></div>'
+	);
 
 /**
  * Configures the formatting and displayed data for Tables

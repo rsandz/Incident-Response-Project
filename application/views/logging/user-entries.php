@@ -1,5 +1,5 @@
 <!-- Previous Entries Table -->
-<div class="section hero">
+<div class="section">
 
 <div class="container">
 	<div class="box">

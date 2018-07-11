@@ -1,7 +1,3 @@
-<?php
-	$this->load->helper('inflector');
-?>
-
 <div class="section">
 	<div class="container">
 		<?php foreach ($tables as $table):?>

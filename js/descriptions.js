@@ -13,21 +13,13 @@ function setActionInfo()
 		$.get(
 				$('#ajax-link').attr('data')+"/get_info",
 				{	
-					action_id : $('#action-selector').val(),  
+					id : $('#action-selector').val(),  
 					table : 'actions'
 				},
 				function(data) 
 				{
 					data = $.parseJSON(data);
-					if (!data.error) 
-					{
-						$('#action-desc').html("<strong>Action Description</strong>: </br>"+data.action_desc);
-					}
-					else
-					{
-						$('#action-desc').html("<strong>"+ data.error +"</strong>");
-						$('#action-type').html("");
-					}
+					$('#action-desc').html("<strong>Action Description</strong>: </br>"+data.desc);
 				})
 			.fail(promptError);
 	}
@@ -41,19 +33,13 @@ function setProjectInfo()
 {
 	$.get(
 			$('#ajax-link').attr('data')+"/get_info",
-			{project_id : $('#project-selector').val(), table : 'projects'},
+			{id : $('#project-selector').val(), table : 'projects'},
 			function(data) 
 			{
 				data = $.parseJSON(data);
-				if (!data.error) 
-				{
-					$('#project-desc').html("<strong>Project Description</strong>: </br>"+data.project_desc);
-				}
-				else
-				{
-					$('#project-desc').html("<strong>"+ data.error +"</strong>");
-				}
-			});
+				$('#project-desc').html("<strong>Project Description</strong>: </br>"+data.desc);
+			})
+	.fail(promptError);
 }
 
 function getActions()
@@ -68,6 +54,7 @@ function getActions()
 		 function(data)
 		 {
 		 	data = $.parseJSON(data);
+		 	console.log('items' + data);
 		 	$('#action-div').html(data);
 
 		 	$('#action-selector').change(setActionInfo); //Re-add the even listener

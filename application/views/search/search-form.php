@@ -8,7 +8,7 @@
 	</div>
 	<!-- End of Form Errors-->
 
-	<?php echo form_open('Search/index'); ?>
+	<?php echo form_open('search/result'); ?>
 		<div class="columns is-centered">
 			<div class="column is-three-quarters ">
 				<div class="columns">
@@ -150,6 +150,7 @@
 								</div>
 							</div>
 						</div>
+						<!--User Selection--> 
 						<div class="column">
 							<h3>Users:</h3>
 							<div class="control">

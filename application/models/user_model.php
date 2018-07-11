@@ -1,10 +1,13 @@
 <?php 
 class User_model extends CI_Model {
+
+	/**
+	 * Constructor for this class
+	 * Loads Resources
+	 */
 	public function __construct() {
 		parent:: __construct();
 		$this->load->database(); //load database
-
-		$this->load->model('search_model');
 	}
 	/**
 	 * Database interaction for logging in the user. Also sets session data on logon.
@@ -93,12 +96,12 @@ class User_model extends CI_Model {
 
 	public function user_email($user_id)
 	{
-		return $this->search_model->get_items_raw('users', array('user_id' => $user_id))->row()->email;
+		return $this->db->where('user_id', $user_id)->get('users')->row()->email;
 	}
 
 	public function get_reset_hash($user_id, $email_code)
 	{
-		$query = $this->search_model->get_items_raw('users', array('user_id' => $user_id));
+		$query = $this->db->where('user_id', $user_id)->get('users');
 		if ($query->num_rows() !== 1)
 		{
 			return FALSE;
@@ -111,7 +114,7 @@ class User_model extends CI_Model {
 	public function validate_reset_hash($user_id, $email_code, $reset_hash)
 	{
 		$email = $this->user_email($user_id);
-		$query = $this->search_model->get_items_raw('users', array('user_id' => $user_id))->row();
+		$query = $this->db->where('user_id', $user_id)->get('users')->row();
 		if (password_verify($email_code.$query->password.$email, $reset_hash))
 		{
 			return TRUE;

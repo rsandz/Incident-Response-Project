@@ -102,20 +102,27 @@ $route['create/index/(:any)'] = 'Create/index/$1';
 	Stats Routes
  */
 $route['stats/my_stats'] = 'Stats/my_stats';
+$route['stats/project_stats'] = 'Stats/project_stats';
+$route['stats/project_stats/(:any)'] = 'Stats/project_stats/$1';
+$route['stats/team_stats'] = 'Stats/team_stats';
+$route['stats/team_stats/(:any)'] = 'Stats/team_stats/$1';
+$route['stats/custom/create/(:any)'] = 'Stats/create_custom/$1';
+$route['stats/custom/(:any)'] = 'Stats/custom_stats/$1';
 
 /*
 	Search Routes
  */
+$route['search/result/(:any)'] = 'Search/search/$1';
+$route['search/result'] = 'Search/search';
 $route['search'] = 'Search/index';
-$route['search/(:any)/(:any)'] = 'Search/$1/$2';
 
 /*
-	Modify Routes
+	Manage Routes
  */
-$route['manage_teams'] = 'Modify/manage_teams';
-$route['manage_teams/(:any)'] = 'Modify/manage_teams/$1';
-$route['manage_teams/add_users/(:any)'] = 'Modify/add_users/$1';
-$route['manage_teams/remove_users/(:any)'] = 'Modify/remove_users/$1';
+$route['manage_teams'] = 'Manage/manage_teams';
+$route['manage_teams/(:any)'] = 'Manage/manage_teams/$1';
+$route['manage_teams/add_users/(:any)'] = 'Manage/add_users/$1';
+$route['manage_teams/remove_users/(:any)'] = 'Manage/remove_users/$1';
 
 $route['modify/view_tables'] = 'Modify/index';
 $route['modify/table/(:any)'] = 'Modify/modify_selection/$1'; //For table selection
@@ -126,7 +133,13 @@ $route['modify/(:any)/(:any)'] = 'Modify/modify_form/$1/$2'; //For the modify fo
 /*
 	Ajax Routes
  */
+$route['Ajax/(:any)/(:any)'] = 'Ajax/$1/$2';
 $route['Ajax/(:any)'] = 'Ajax/$1';
+
+/*
+	Test Controller Route
+ */
+$route['test'] = 'Test/test';
 
 /*
 	Default Route

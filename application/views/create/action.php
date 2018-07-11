@@ -2,6 +2,8 @@
 
 <div class="content section">
 	<div class="container">
+		<h1>Action Creation Form</h1>
+		<hr>
 		<?php echo form_open('Create/index/action', 'class="form"'); ?>
 			<div class="field">
 				<div class="columns">
@@ -41,6 +43,7 @@
 				<label class="label">Action Description</label>
 				<div class="control">
 					<textarea name="action_desc" class="textarea" value="<?=set_value('action_desc')?>"></textarea>
+					<p class="has-text-right">Supports some HTML Markups. Click <?php echo anchor('Help/markups', 'here');?> to learn more.</p>
 				</div>
 			</div>
 			<div class="label field">

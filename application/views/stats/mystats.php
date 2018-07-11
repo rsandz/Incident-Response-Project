@@ -1,5 +1,5 @@
 <script type="text/javascript" src="<?php echo base_url('js/Chart.js')?>"></script>
-<script type="text/javascript" src="<?php echo base_url('js/chart-controller.js')?>"></script>
+<script type="text/javascript" src="<?php echo base_url('js/chart-controllers/chart-controller-mystats.js')?>"></script>
 <script type="text/javascript" src="<?php echo base_url('js/chart-manager.js')?>"></script>
 
 <div class="section">
@@ -120,8 +120,3 @@
 			</div>
 	</div>
 </div>
-
-<?php echo form_open(site_url('Search/graph_search'), 'id="search-form"');?> <!-- The -1 is used to tell the method that this is a new query-->
-<input id="from_date" name="from_date" hidden>
-<input id="to_date" name="to_date" hidden>
-</form>

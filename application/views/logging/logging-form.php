@@ -2,8 +2,8 @@
 <body>
 	<div class="section">
 	<div class="container">
-		<div class="">
-			<span class="has-text-danger"><?php echo validation_errors(); ?></span>
+		<div class="column">
+			<span class=""><?php echo validation_errors('<div class="notification is-danger">', '</div>'); ?></span>
 			<span class="has-text-danger" id="errors"></span>
 		</div>
 		<?php echo form_open('logging/log'); ?>

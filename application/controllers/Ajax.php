@@ -23,7 +23,8 @@ class Ajax extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->model('statistics_model');
-		$this->load->model('Search_model');
+		$this->load->model('Form_get_model');
+		$this->load->model('search_model');
 		$this->load->helper('form');
 		$this->load->helper('url');
 
@@ -47,7 +48,7 @@ class Ajax extends CI_Controller {
 	}
 
 	/**
-	 * Gets the Description and/or type for fields in certain Tables.
+	 * Gets the Description and/or action_type for fields in certain Tables.
 	 * 		i.e. action table and project table both have descriptions and these will grab them
 	 * For use with $.ajax(). Uses $_Get Array to get information
 	 * @param $_Get string table
@@ -56,30 +57,10 @@ class Ajax extends CI_Controller {
 	 */
 	public function get_info()
 	{
-		$this->load->helper('inflector');
-		$table = $this->input->get('table');
-		$item_id = $this->input->get(singular($table).'_id');
+		$table = $this->input->get('table', TRUE);
+		$id = $this->input->get('id', TRUE);
 
-		$attributes = array(
-				singular($table).'_id' => $item_id
-		);
-
-		$query = $this->search_model->get_items($table, $attributes); 
-
-		$db_names = array(
-			'desc' => singular($table).'_desc',
-			'type' => singular($table).'_type'
-		);
-
-		if (sizeof($query) > 0)
-		{
-			$data[$db_names['desc']] = isset($query[0]->{$db_names['desc']}) ? $query[0]->{$db_names['desc']} : 'No Descsription';
-			$data[$db_names['type']] = isset($query[0]->{$db_names['type']}) ? $query[0]->{$db_names['type']} : 'No Type';
-		}
-		else
-		{
-			$data['error'] = 'No Descsription or Type';
-		}
+		$data = $this->Form_get_model->get_item_info($table, $id);
 
 		echo json_encode($data);
 	}
@@ -94,24 +75,10 @@ class Ajax extends CI_Controller {
 	 */
 	public function get_action_items()
 	{
-		$attributes =
-			'type_id = '.$this->input->get('type_id').
-			' AND is_active = 1'.
-			' AND (project_id = '.$this->input->get('project_id').
-			' OR is_global = 1)';
-		$select = array(
-			'action_name', 'action_id'
-		);
+		$type_id = $this->input->get('type_id', TRUE);
+		$project_id = $this->input->get('project_id', TRUE);
 
-		$query = $this->search_model->get_items('actions', $attributes, $select);
-		$options = array();
-		foreach ($query as $row) {
-			$options[$row->action_id] = $row->action_name;
-		}
-		
-		if (empty($options)) $options['NULL'] = 'No Actions';
-
-		echo json_encode(form_dropdown('action', $options, NULL, 'id = "action-selector"'));
+		echo json_encode($this->Form_get_model->active_actions_form($type_id, $project_id));
 	}
 
 	/**
@@ -119,11 +86,16 @@ class Ajax extends CI_Controller {
 	 * Used in the mystats charts
 	 *
 	 * @param $_Get string interval_type The interval type of the data ('daily', 'weekly', monthly', 'yearly')
-	 *                     				 @see $this->statistics_model->get_log_frequency() for more info
 	 */
 	public function get_user_log_frequency()
 	{
-		$data = $this->statistics_model->get_log_frequency($this->input->get('interval_type', TRUE));
+		$data = $this->statistics_model->get_log_frequency(
+			$this->input->get('interval_type', TRUE),
+			array('users' => $this->session->user_id)
+		);
+
+		//Give the data a name. Used for the graph legend
+		$data['name'] = 'User Log Frequency';
 		echo json_encode($data);
 	}
 
@@ -132,11 +104,128 @@ class Ajax extends CI_Controller {
 	 * Used in the mystats charts
 	 *
 	 * @param $_Get string interval_type The interval type of the data ('daily', 'weekly', monthly', 'yearly')
-	 *                     				 @see $this->statistics_model->get_user_hours() for more info
 	 */
 	public function get_user_hours()
 	{
-		$data = $this->statistics_model->get_user_hours($this->input->get('interval_type', TRUE));
+		$data = $this->statistics_model->get_hours(
+			$this->input->get('interval_type'),
+			array('users' => $this->session->user_id)
+		);
+
+		//Give the data a name. Used for the graph legend
+		$data['name'] = 'User Hours';
+		echo json_encode($data);
+	}
+
+	/**
+	 * Gets the data for project log frequency.
+	 * Used in the projectstats charts
+	 *
+	 * @param $_Get string interval_type The interval type of the data ('daily', 'weekly', monthly', 'yearly')
+	 *                     				 @see $this->statistics_model->get_project_log_frequency() for more info
+	 */
+	public function get_project_log_frequency($project_id)
+	{
+		$data = $this->statistics_model->get_log_frequency(
+			$this->input->get('interval_type', TRUE), 
+			array('projects' => $project_id)
+		);
+
+		//Give the data a name. Used for the graph legend
+		$data['name'] = 'Project Log Frequency';
+		echo json_encode($data);
+	}
+
+	/**
+	 * Gets the data for project hours.
+	 * Used in the projectstats charts
+	 *
+	 * @param $_Get string interval_type The interval type of the data ('daily', 'weekly', monthly', 'yearly')
+	 *                     				 @see $this->statistics_model->get_project_hours() for more info
+	 */
+	public function get_project_hours($project_id)
+	{
+		$data = $this->statistics_model->get_hours(
+			$this->input->get('interval_type', TRUE), 
+			array('projects' => $project_id)
+		);
+
+		//Give the data a name. Used for the graph legend
+		$data['name'] = 'Project Log Hours';
+		echo json_encode($data);
+	}
+
+	/**
+	 * Gets the data for team log frequency.
+	 * Used in the projectstats charts
+	 *
+	 * @param $_Get string interval_type The interval type of the data ('daily', 'weekly', monthly', 'yearly')
+	 *                     				 @see $this->statistics_model->get_team_log_frequency() for more info
+	 */
+	public function get_team_log_frequency($team_id)
+	{
+		$data = $this->statistics_model->get_log_frequency(
+			$this->input->get('interval_type', TRUE), 
+			array('teams' => $team_id)
+		);
+
+		//Give the data a name. Used for the graph legend
+		$data['name'] = 'Team Log Frequency';
+		echo json_encode($data);
+	}
+
+	/**
+	 * Gets the data for team hours.
+	 * Used in the projectstats charts
+	 *
+	 * @param $_Get string interval_type The interval type of the data ('daily', 'weekly', monthly', 'yearly')
+	 *                     				 @see $this->statistics_model->get_team_hours() for more info
+	 */
+	public function get_team_hours($team_id)
+	{
+		$data = $this->statistics_model->get_hours(
+			$this->input->get('interval_type', TRUE), 
+			array('teams' => $team_id)
+		);
+
+		//Give the data a name. Used for the graph legend
+		$data['name'] = 'Team Hours';
+		echo json_encode($data);
+	}
+
+	/**
+	 * Gets the data for custom log frequency.
+	 *
+	 * @param $_Get string interval_type The interval type of the data ('daily', 'weekly', monthly', 'yearly')
+	 *                     				 @see $this->statistics_model->get_custom_log_frequency() for more info
+	 */
+	public function get_custom_log_frequency($index)
+	{
+		$data = $this->statistics_model->get_log_frequency(
+			$this->input->get('interval_type', TRUE),
+			$this->session->{'query_'.$index}
+		);
+
+		//Give the data a name. Used for the graph legend
+		$data['name'] = "Custom Stats {$index} Log Freq";
+		echo json_encode($data);
+	}
+
+	/**
+	 * Gets the data for custom hours.
+	 *
+	 * @param $_Get string interval_type The interval type of the data ('daily', 'weekly', monthly', 'yearly')
+	 *                     				 @see $this->statistics_model->get_custom_hours() for more info
+	 */
+	public function get_custom_hours($index)
+	{
+		$data = $this->statistics_model->get_hours(
+			$this->input->get('interval_type', TRUE), 
+			$this->session->{'query_'.$index}
+		);
+
+		//Give the data a name. Used for the graph legend
+		$data['name'] = "Custom Stats {$index} Hours";
 		echo json_encode($data);
 	}
 

@@ -1,6 +1,16 @@
 <div class="section">
 	<div class="container">
-		<h1 class="title">My Information</h1>
+		<div class="level">
+			<div class="level-left">
+				<div class="level-item">
+					<h1 class="title">My Information</h1>
+				</div>
+			</div>
+			<div class="level-right">
+				<div class="level-item"><i>Today is: <?php echo date('D, d \of M Y')?></i></div>
+			</div>
+		</div>
+		<hr>
 		<div class="columns">
 			<div class="column">
 				<div class="box">

@@ -9,8 +9,6 @@ class logging_model extends CI_model {
 		parent:: __construct();
 		$this->load->database(); //load database
 		$this->load->model('search_model');
-
-		
 	}
 	/**
 	 * Logs an action in action log table. Can log what was in a form, or whatever a
@@ -48,7 +46,7 @@ class logging_model extends CI_model {
 				$this->log_item('action_types', $insert_data);
 			}
 
-			$type_id = $this->search_model->get_items('action_types', array('type_name' => 'create'))[0]->type_id;
+			$type_id = $this->db->where('type_name', 'create')->get('action_types')->row()->type_id;
 
 			//See if create action is in the actions table in the first place (Action name = Create ****)
 			if (!$this->search_model->data_exists('actions', array('action_name' => 'Created '.$data)))
@@ -65,7 +63,7 @@ class logging_model extends CI_model {
 			}
 
 			$insert_data = array(
-				'action_id' => $this->search_model->get_items('actions', array('action_name' => 'Created '.$data))[0]->action_id,
+				'action_id' => $this->db->where('action_name', 'Created '.$data)->get('actions')->row()->action_id,
 				'log_date' => date('Y-m-d'),
 				'log_time' => date('H:i'),
 				'log_desc' => 'Inserted '.$name.' into '.$data.' table.',
@@ -97,25 +95,38 @@ class logging_model extends CI_model {
 		if ($type == 'add' )
 		{
 			$action_id = $this->make_log_action('User Added to Team', $action_type_id);
+			//Create the log
+			$log_data = array(
+				'action_id' => $action_id,
+				'log_date' => date('Y-m-d'),
+				'log_time' => date('H:i'),
+				'log_desc' => "$user_name added to (Team) $team_name",
+				'team_id' => NULL,
+				'user_id' => $this->session->user_id
+			);
+
+			$this->log_action('form', $log_data);
 		}
 		elseif ($type == 'remove')
 		{
 			$action_id = $this->make_log_action('User Removed from Team', $action_type_id);
+			//Create the log
+			$log_data = array(
+				'action_id' => $action_id,
+				'log_date' => date('Y-m-d'),
+				'log_time' => date('H:i'),
+				'log_desc' => "$user_name removed from (Team) $team_name",
+				'team_id' => NULL,
+				'user_id' => $this->session->user_id
+			);
+
+			$this->log_action('form', $log_data);
 		}
 		else
 		{
 			log_message('error', 'Invalid log_team_action() type.');
 			return FALSE;
 		}
-		//Create the log
-		$log_data = array(
-			'action_id' => $action_id,
-			'log_date' => date('Y-m-d'),
-			'log_time' => date('H:i'),
-			'log_desc' => "$user_name added to (Team) $team_name",
-			'team_id' => NULL,
-			'user_id' => $this->session->user_id
-		);
 	}
 
 
@@ -131,7 +142,7 @@ class logging_model extends CI_model {
 			$this->log_item('action_types', $insert_data);
 		}
 
-		return $this->search_model->get_row('action_types', array('type_name' => $type_name))->type_id;
+		return $this->db->where('type_name', $type_name)->get('action_types')->row()->type_id;
 	}
 
 	/**
@@ -143,20 +154,19 @@ class logging_model extends CI_model {
 	 */
 	public function make_log_action($action_name, $type_id)
 	{
-		if (!$this->search_model->data_exists('actions', array('action_name' => $action)))
+		if (!$this->search_model->data_exists('actions', array('action_name' => $action_name)))
 		{
 			$insert_data = array(
-				'action_name' => $action,
+				'action_name' => $action_name,
 				'type_id' => $type_id,
-				'action_desc' => 'Created '.$data.' using the create page.',
+				'action_desc' => NULL,
 				'project_id' => NULL,
 				'is_active' => FALSE
 			);
 
 			$this->log_item('actions', $insert_data);
 		}
-
-		return $this->search_model->get_row('actions', array('action_name' => $action_name))->action_id;
+		return $this->db->where('action_name', $action_name)->get('actions')->row()->action_id;
 	}
 
 	/**
@@ -194,36 +204,4 @@ class logging_model extends CI_model {
 			return $this->db->insert($table, $data);
 		}
 	}
-
-
-	/**
-	 * Get entries from the action log
-	 * @param  int  $offset 		 Offset for pagination
-	 * @return array 				 Contains Table and Number of Rows                
-	 */	
-	public function get_my_entries_table(int $offset = 0) {
-		//load required libraries
-		if ($this->load->is_loaded('table') == FALSE) $this->load->library('table');
-		$this->load->helper('table_helper');
-		$this->load->config('appconfig');
-
-		$this->db
-			->order_by( 'log_date', 'DESC')
-			->order_by( 'log_time', 'DESC')
-			->where('user_id', $this->session->user_id);
-
-		$this->search_model->execute_table_filters('prev_entries'); 
-		//Prev Entries is a config field. The search model will try to find it in the table config.
-
-		$query = $this->db->get('action_log');
-		$data['table_data'] = array_slice($query->result_array(), $offset, $this->config->item('per_page'));
-
-		$data['num_rows'] = $query->num_rows();
-		$data['heading'] = $this->search_model->get_table_headings('prev_entries');
-
-		$data['table'] = generate_table($data);
-		return $data;
-	}
-
-
 }

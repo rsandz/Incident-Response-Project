@@ -2,10 +2,28 @@ $(function()
 	{
 		var managers = 
 			[
-				new chartManager('logs', $('#interval_type1').val(), $('#logs-chart')),
-			 	new chartManager('hours', $('#interval_type2').val(), $('#hours-chart'))
+				new chartManager({
+					chartType: 'logs',
+					intervalType: $('#interval_type1').val(),
+					ajaxURLs: [
+						$('#ajax-link').attr('data') + '/get_custom_log_frequency/1',
+						$('#ajax-link').attr('data') + '/get_custom_log_frequency/2'
+						],
+					canvas: $('#logs-chart'),
+					labels: ['Custom Stats 1', 'Custom Stats 2']
+				}),
+			 	new chartManager(
+			 	{
+					chartType: 'hours',
+					intervalType: $('#interval_type2').val(),
+					ajaxURLs: [
+						$('#ajax-link').attr('data') + '/get_custom_hours/1',
+						$('#ajax-link').attr('data') + '/get_custom_hours/2'
+						],
+					canvas: $('#hours-chart'),
+					labels: ['Custom Stats 1', 'Custom Stats 2']
+				})
 			];
-		console.log('#chart-left'+1);
 		//Events for charts
 		for (var i = 1; i <= managers.length; i++)
 		{
@@ -13,8 +31,7 @@ $(function()
 				{
 					return function()
 					{
-						managers[i - 1].offset += 1;
-						managers[i - 1].updateChart();
+						managers[i - 1].scrollLeft();
 					}
 				}(i)
 			);
@@ -22,8 +39,7 @@ $(function()
 			$('#chart-right'+i).click(function(i) {
 					return function()
 					{
-						managers[i - 1].offset -= 1;
-						managers[i - 1].updateChart();
+						managers[i - 1].scrollRight();
 					}
 				}(i)
 			);

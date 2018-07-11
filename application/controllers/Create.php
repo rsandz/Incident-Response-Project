@@ -25,11 +25,11 @@ class Create extends CI_Controller {
 		parent::__construct();
 		$this->load->library('form_validation');
 		$this->load->helper('form');
-		$this->load->helper('inflector');
 		$this->load->helper('user');
 		
 		$this->load->model('Logging_model');
 		$this->load->model('search_model');
+		$this->load->model('Form_get_model');
 
 		date_default_timezone_set($this->config->item('timezone'));
 
@@ -45,7 +45,6 @@ class Create extends CI_Controller {
 	 */
 	public function index($type) 
 	{
-		$data['privileges'] = $this->session->privileges;
 		$data['type']       = $type;
 		$data['title']      = 'Create '.$type;
 		$data['header'] = array(
@@ -57,15 +56,19 @@ class Create extends CI_Controller {
 		{
 			$this->action_form($data);
 		}
-		elseif ($data['type'] === 'project' && $data['privileges'] !== 'user') 
+		elseif($data['type'] === 'action_type' && !check_privileges('user'))
+		{
+			$this->action_type_form($data);
+		}
+		elseif ($data['type'] === 'project' && !check_privileges('user')) 
 		{
 			$this->project_form($data);
 		}
-		elseif ($data['type'] === 'user' && $data['privileges'] !== 'user') 
+		elseif ($data['type'] === 'user' && !check_privileges('user')) 
 		{
 			$this->user_form($data);
 		}
-		elseif ($data['type'] === 'team' && $data['privileges'] !== 'user')
+		elseif ($data['type'] === 'team' && !check_privileges('user'))
 		{
 			$this->team_form($data);
 		}
@@ -125,6 +128,7 @@ class Create extends CI_Controller {
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		} else {
+			
 			$data['types'] = $this->search_model->get_items('action_types', array('is_active !=' => '0'));
 
 			// Make the Form
@@ -287,11 +291,73 @@ class Create extends CI_Controller {
 		} 
 		else 
 		{
+			//Get Team Leaders
+			if(check_admin())
+			{
+				$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select();
+			}
+			else
+			{
+				$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select();
+			}
+
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/tabs');
 			$this->load->view('create/team', $data);
+			$this->load->view('create/errors', $data);
+			$this->load->view('templates/footer');
+		}
+	}
+
+	/**
+	 * Controller for the action type form
+	 * @param  array $data Data from index method above
+	 */
+	public function action_type_form($data) 
+	{
+		//Form Validation Rules
+		$this->form_validation->set_rules('action_type_name', 'Action Type Name', 'trim|required');
+		$this->form_validation->set_rules('action_type_desc', 'Action Description', 'trim');
+
+		if ($this->form_validation->run()) {
+			//Logging action
+			$this->Logging_model->log_action('create', 'action type', $this->input->post('action_type_name', TRUE));			
+
+			//Enter into Database
+			$insert_data = array
+				(
+					'type_name' => $this->input->post('action_type_name', TRUE),
+					'type_desc' => $this->input->post('action_type_desc', TRUE),
+					'is_active' => $this->input->post('is_active') ?: 0
+				);
+
+			$this->Logging_model->log_item('action_types', $insert_data);
+			//Success
+
+			$data['title'] = 'Created '.$data['type'];
+			$data['header'] = array(
+				'text'   => 'Success',
+				'colour' => 'is-success'
+			);
+
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar');
+			$this->load->view('create/tabs');
+			$this->load->view('create/success', $data);
+			$this->load->view('create/errors', $data);
+			$this->load->view('templates/footer');
+		} else {
+			$data['types'] = $this->search_model->get_items('action_types', array('is_active !=' => '0'));
+
+			// Make the Form
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar');
+			$this->load->view('create/tabs');
+			$this->load->view('create/action_type', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		}
