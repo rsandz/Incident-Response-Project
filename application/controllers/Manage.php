@@ -24,13 +24,12 @@ class Manage extends CI_Controller {
 		$this->load->library('form_validation');
 
 		$this->load->helper('form');
-		$this->load->helper('user_helper');
 		
 		$this->load->model('search_model');
 		$this->load->model('modify_model');
 		$this->load->model('statistics_model');
 
-		check_admin();
+		$this->authentication->check_login();
 	}
 
 	/**
@@ -54,7 +53,10 @@ class Manage extends CI_Controller {
 			$data['title'] = 'Manage Teams';
 
 			//Get data for team selection
-			$data['teams'] = $this->search_model->get_user_teams($this->session->user_id, check_admin());
+			$data['teams'] = $this->search_model->get_user_teams(
+				$this->session->user_id, 
+				$this->authentication->check_admin()
+			);
 			$data['team_modify_links'] = array_map(function($x)
 				{
 					return anchor("manage_teams/{$x->team_id}", "Manage", 'class="button is-info"');

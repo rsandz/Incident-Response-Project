@@ -22,9 +22,8 @@ class Help extends CI_Controller {
 		parent::__construct();
 
 		$this->load->helper('url');
-		$this->load->helper('user');
 
-		check_login(TRUE);
+		$this->authentication->check_login(TRUE);
 	}
 
 	/**

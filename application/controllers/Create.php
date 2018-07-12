@@ -25,15 +25,13 @@ class Create extends CI_Controller {
 		parent::__construct();
 		$this->load->library('form_validation');
 		$this->load->helper('form');
-		$this->load->helper('user');
-		
 		$this->load->model('Logging_model');
 		$this->load->model('search_model');
 		$this->load->model('Form_get_model');
 
 		date_default_timezone_set($this->config->item('timezone'));
 
-		check_login(TRUE);
+		$this->authentication->check_login(TRUE);
 
 	}
 

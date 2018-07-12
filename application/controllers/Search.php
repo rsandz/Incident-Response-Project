@@ -35,13 +35,11 @@ class Search extends CI_Controller {
 		parent::__construct();
 		$this->load->library('form_validation');
 		$this->load->helper('form');
-		$this->load->helper('url');
 		
 		$this->load->model('statistics_model');
 		$this->load->model('search_model');
 
-		$this->load->helper('user');
-		check_login(TRUE);
+		$this->authentication->check_login(TRUE);
 	}
 
 	/**

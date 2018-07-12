@@ -46,12 +46,12 @@
 								</div>
 							</div>
 						</div>
-				
-						<!-- Displays Errors -->
-						<?php echo validation_errors('<span class="has-text-danger">', '</span><br>')?>
-						<span class="has-text-danger"><?php if (isset($errors)) echo $errors;?></span>
-				
 					</div>
+
+					<!--Errors-->
+					<?php echo validation_errors('<span class="has-text-danger">', '</span><br>')?>
+					<span class="has-text-danger"><?php if (isset($errors)) echo $errors;?></span>
+
 					</form>
 				</div>
 			</div>

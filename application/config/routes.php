@@ -58,6 +58,12 @@ $route['setup'] = 'Setup/index';
 //=================================
 
 /*
+	Incidents Routing
+ */
+
+$route['incidents'] = 'Incidents/Pages';
+
+/*
 	Home, User and Visitor Routes
  */
 $route['welcome'] = 'Welcome/index';

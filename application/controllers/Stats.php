@@ -29,8 +29,7 @@ class Stats extends CI_Controller {
 		$this->config->load('stats_config');
 		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
 
-		$this->load->helper('user');
-		check_login(TRUE); //Redirect if not logged in.
+		$this->authentication->check_login(TRUE); //Redirect if not logged in.
 	}
 
 	/**
@@ -87,12 +86,10 @@ class Stats extends CI_Controller {
 	public function project_stats($project_id = NULL)
 	{
 		$data['project_id'] = $project_id;
+		$data['projects'] = $this->search_model->get_projects($this->authentication->check_admin());
 
 		if (isset($project_id))
 		{
-
-			$data['projects'] = $this->search_model->get_projects(check_admin());
-			
 			$data['title'] = 'Project Statistics';
 			$data['header']['text'] = "Project Statistics";
 
@@ -108,8 +105,6 @@ class Stats extends CI_Controller {
 		}
 		else
 		{
-			$data['projects'] = $this->search_model->get_projects(check_admin());
-
 			$data['title'] = 'Project Statistics';
 			$data['header']['text'] = "Project Statistics";
 
@@ -138,7 +133,9 @@ class Stats extends CI_Controller {
 				'colour' => 'is-info');
 			$data['title'] = 'Teams Statistics';
 
-			$data['teams'] = $this->search_model->get_user_teams($this->session->user_id, check_admin());
+			$data['teams'] = $this->search_model->get_user_teams(
+				$this->session->user_id, 
+				$this->authentication->check_admin());
 
 			$data['team_modify_links'] = array_map(function($x)
 				{

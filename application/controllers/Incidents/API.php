@@ -21,7 +21,6 @@ class API extends CI_Controller {
 		$this->load->model('Form_get_model');
 		$this->load->model('search_model');
 		$this->load->helper('form');
-		$this->load->helper('url');
 
 		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
 		if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'POST') 

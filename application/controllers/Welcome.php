@@ -18,9 +18,7 @@ class Welcome extends CI_Controller {
 	{
 		$this->load->helper('url');
 
-		$logged_in = $this->session->logged_in;
-
-		if ($logged_in) {
+		if ($this->authentication->check_login(FALSE)) {
 
 			redirect('Home','refresh');
 

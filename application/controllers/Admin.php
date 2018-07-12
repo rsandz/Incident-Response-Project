@@ -4,7 +4,7 @@
  * ================
  * Written by: Ryan Sandoval, May 2018
  *
- * Handles Administrative things.
+ * Handles Administrative functionality and routing.
  *
  * @Depreciated
  * 
@@ -18,16 +18,11 @@ class Admin extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->library('form_validation');
-		$this->load->helper('url');
 		$this->load->helper('form');
 		
 		$this->load->model('logging_model');
 
-		if ($this->session->privileges !== 'admin')
-		{
-			redirect('home','refresh');
-			show_error('401 - Not Authorized', 401);
-		} 
+		$this->authentication->check_admin();
 	}
 	/**
 	 * Loads the main administration Dashboard

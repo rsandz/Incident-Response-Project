@@ -17,7 +17,3 @@ $config['charset']    = 'utf-8';
 $config['newline']    = "\r\n";
 $config['mailtype'] = 'html'; // Leave as is.
 $config['validation'] = TRUE; // bool whether to validate email or not
-
-//=====================================================================
-
-$config['recovery_name']  = 'Password Manager'; // Name to associate with when email is sent

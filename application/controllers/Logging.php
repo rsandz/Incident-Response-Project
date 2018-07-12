@@ -31,8 +31,7 @@ class Logging extends CI_controller {
 
 		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
 
-		$this->load->helper('user');
-		check_login(TRUE); //Redirect if not logged in.
+		$this->authentication->check_login(TRUE); //Redirect if not logged in.
 	}
 
 	/**

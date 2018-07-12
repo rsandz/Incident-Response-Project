@@ -37,12 +37,10 @@ class Modify extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->helper('form');
 
-		$this->load->helper('user_helper');
-		
 		$this->load->model('search_model');
 		$this->load->model('modify_model');
 
-		check_admin(); //Must be admin to acess admin modify tables
+		$this->authentication->check_admin(); //Must be admin to acess admin modify tables
 	}
 
 	/**

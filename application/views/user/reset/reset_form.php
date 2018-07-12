@@ -6,12 +6,7 @@
 					<div class="box has-background-info">
 						<h1 class="Title has-text-white">Reset Your Password</h1>
 					</div>
-					<?php echo form_open('recover-form/'.$user_id.'/'.$email_code);?>
-
-					<div hidden>
-						<input type="text" name="reset_hash" hidden value="<?php echo $reset_hash?>">
-					</div>
-				
+					<?php echo form_open('recover-form/'.$user_id.'/'.$temp_pass);?>
 					<div class="field">
 						<label for="" class="label">Password</label>
 						<div class="control">

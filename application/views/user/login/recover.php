@@ -28,6 +28,9 @@
 						<div class="control">
 							<?php echo anchor('login', 'Cancel', 'class="button is-danger"');?>
 						</div>
+						<!--Errors-->
+						<?php echo validation_errors('<span class="has-text-danger">', '</span><br>')?>
+						<span class="has-text-danger"><?php if (isset($errors)) echo $errors;?></span>
 					</div>
 				</form>
 			</div>
