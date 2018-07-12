@@ -8,16 +8,16 @@
 	</div>
 	<div class="navbar-menu">
 		<div class="navbar-start">
-			<?php echo anchor('home', 'Dashboard', 'class="navbar-item"'); ?>
-			<?php echo anchor('logging', 'Log an Activity', 'class="navbar-item"'); ?>
-			<?php echo anchor('create', 'Create', 'class="navbar-item"'); ?>
+			<?php echo anchor('Dashboard', 'Dashboard', 'class="navbar-item"'); ?>
+			<?php echo anchor('Logging', 'Log an Activity', 'class="navbar-item"'); ?>
+			<?php echo anchor('Create', 'Create', 'class="navbar-item"'); ?>
 			<?php echo anchor('manage_teams', 'Manage', 'class="navbar-item"'); ?>
-			<?php echo anchor('stats', 'Statistics', 'class="navbar-item"'); ?>
+			<?php echo anchor('Stats', 'Statistics', 'class="navbar-item"'); ?>
 			
 		</div>
 		<div class="navbar-end">
-			<?php if ($this->session->privileges == 'admin') echo anchor('admin', 'Admin', 'class="navbar-item"'); ?>
-			<?php echo anchor('search', 'Search', 'class="navbar-item"'); ?>
+			<?php if ($this->session->privileges == 'admin') echo anchor('Admin', 'Admin', 'class="navbar-item"'); ?>
+			<?php echo anchor('Search', 'Search', 'class="navbar-item"'); ?>
 			<?php echo anchor('logout', 'Logout', 'class="navbar-item"'); ?>
 		</div>
 	</div>

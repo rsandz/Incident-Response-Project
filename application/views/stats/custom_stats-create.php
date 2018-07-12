@@ -8,7 +8,7 @@
 	</div>
 	<!-- End of Form Errors-->
 
-	<?php echo form_open('stats/custom/'.$index); ?>
+	<?php echo form_open('Stats/custom/'.$index); ?>
 		<div class="columns is-centered">
 			<div class="column is-three-quarters ">
 				<div class="columns">

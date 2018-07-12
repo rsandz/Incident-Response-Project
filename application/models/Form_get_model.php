@@ -128,7 +128,7 @@ class Form_get_model extends CI_Model {
 	{
 		if(!isset($admin)) //Check if admin is not overwritten
 		{
-			$is_admin = check_admin();
+			$is_admin = $this->authentication->check_admin();
 		}
 
 		if (!$is_admin)

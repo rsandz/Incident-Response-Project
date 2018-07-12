@@ -199,7 +199,7 @@ class Stats extends CI_Controller {
 			//No previous query? Then make the user make one
 			if (empty($query))
 			{
-				redirect('stats/create_custom/'.$index,'refresh');
+				redirect('Stats/create_custom/'.$index,'refresh');
 			}
 		}
 		//Display the stats

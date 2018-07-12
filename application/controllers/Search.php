@@ -143,7 +143,7 @@ class Search extends CI_Controller {
 		if ($data['table'] !== 'No Results') 
 		{
 			$this->load->library('pagination');
-			$data['page_links'] = $this->pagination->my_create_links($data['num_rows'], 'search/result/');
+			$data['page_links'] = $this->pagination->my_create_links($data['num_rows'], 'Search/result/');
 		}
 		
 		$data['back_url'] = $query['back_url'];

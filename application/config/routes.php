@@ -50,10 +50,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |		my-controller/my-method	-> my_controller/my_method
 */
 
+/*
+| -------------------------------
+| URI typography for this project
+| -------------------------------
+|
+| Please try to follow this format:
+| siteurl.com/Controller/method/param/param2/...
+|
+| Note: Controller is capitalized and method is not.
+*/
+
 //////////////////////////
 //REMOVE BEFORE DEPLOY! //
 //////////////////////////
-$route['setup'] = 'Setup/index';
+$route['Setup'] = 'Setup/index';
 
 //=================================
 
@@ -61,22 +72,19 @@ $route['setup'] = 'Setup/index';
 	Incidents Routing
  */
 
-$route['incidents'] = 'Incidents/Pages';
+$route['Incidents'] = 'Incidents/Pages';
 
 /*
 	Home, User and Visitor Routes
  */
-$route['welcome'] = 'Welcome/index';
-$route['home'] = 'User/index';
-$route['Home'] = 'User/index';
-$route['login'] = 'User/loginUI';
+$route['Welcome'] = 'Welcome/index';
+$route['login'] = 'User/login';
 $route['logout'] = 'User/logout';
-$route['User/my_info'] = 'User/my_info';
 
 /*
 	Help Routes
  */
-$route['help/markups'] = 'Help/markups';
+$route['Help/markups'] = 'Help/markups';
 
 /*
 	Password Recovery Routes
@@ -87,40 +95,37 @@ $route['recover-form/(:any)/(:any)'] = 'User/recover_form/$1/$2';
 /*
 	Admin Routes
  */
-$route['admin'] = 'Admin/index';
-$route['admin/view-logs'] = 'Admin/view_logs/0';
-$route['admin/view-logs/(:any)'] = 'Admin/view_logs/$1';
+$route['Admin'] = 'Admin/index';
+$route['Admin/view-logs'] = 'Admin/view_logs/0';
+$route['Admin/view-logs/(:any)'] = 'Admin/view_logs/$1';
 
 /*
 	Logging Routes
  */
-$route['logging'] = 'Logging/log';
-$route['logging/(:any)'] = 'Logging/log';
+$route['Logging'] = 'Logging/log';
+$route['Logging/(:any)'] = 'Logging/log';
 
 /*
 	Create Routes
  */
-$route['create'] = 'Create/index/action';
-$route['create/index'] = 'Create/index/action';
-$route['create/index/(:any)'] = 'Create/index/$1';
+$route['Create'] = 'Create/index/action';
+$route['Create/(:any)'] = 'Create/index/$1';
 
 /*
 	Stats Routes
  */
-$route['stats/my_stats'] = 'Stats/my_stats';
-$route['stats/project_stats'] = 'Stats/project_stats';
-$route['stats/project_stats/(:any)'] = 'Stats/project_stats/$1';
-$route['stats/team_stats'] = 'Stats/team_stats';
-$route['stats/team_stats/(:any)'] = 'Stats/team_stats/$1';
-$route['stats/custom/create/(:any)'] = 'Stats/create_custom/$1';
-$route['stats/custom/(:any)'] = 'Stats/custom_stats/$1';
+$route['Stats/my_stats'] = 'Stats/my_stats';
+$route['Stats/project_stats/(:any)'] = 'Stats/project_stats/$1';
+$route['Stats/team_stats/(:any)'] = 'Stats/team_stats/$1';
+$route['Stats/custom/create/(:any)'] = 'Stats/create_custom/$1';
+$route['Stats/custom/(:any)'] = 'Stats/custom_stats/$1';
 
 /*
 	Search Routes
  */
-$route['search/result/(:any)'] = 'Search/search/$1';
-$route['search/result'] = 'Search/search';
-$route['search'] = 'Search/index';
+$route['Search/result/(:any)'] = 'Search/search/$1';
+$route['Search/result'] = 'Search/search';
+$route['Search'] = 'Search/index';
 
 /*
 	Manage Routes

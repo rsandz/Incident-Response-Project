@@ -3,16 +3,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Authentication Library
- * ======================
+ * =============================================================
  * @author Ryan Sandoval
+ * @package Authentication
+ * @version 1.0
  *
  * This library is used to authenticate the user and to handle any
- * methods regarding whether the user is logged in or not.
+ * querries regarding whether the user is logged in or not.
  *
+ * It also handles password recovery functionality, including:
+ * 	- Email Sending
+ * 	- Password Reseting and Hashing
+ *
+ * Please note, upon sending the email, the user's password would
+ * have been set to a temporary password. 
+ * 	i.e. If the user remembers their old password after asking 
+ * 		for a password reset, it will no longer work.
+ *
+ * --------------------------------------------------------------
+ *
+ * Please Refer to the authentication configuration to alter the
+ * more important functionality of this library
+ * 	{@link ./application/config/authentication.php)
  */
 class Authentication
 {
-	
 	/**
 	 * Code Igniter Instance
 	 * @var object
@@ -63,7 +78,10 @@ class Authentication
 
         $this->specific_errors = $this->CI->config->item('specific_errors', 'authentication');
         $this->messages = $this->CI->config->item('messages', 'authentication');
-        $this->salt = $this->CI->config->item('salt');
+        
+        //Take the salt defined in the global config (i.e from appconfig) first. If not set, use default in
+        //authentication config.
+        $this->salt = $this->CI->config->item('salt') ?: $this->CI->config('default_salt', 'authentication');
 
 	}
 

@@ -1,47 +1,31 @@
 <?php 
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 /**
  * User Controller
  * ===============
  * @author Ryan Sandoval, May 2018
+ * @version 1.1
  *
- * This controller handles user-specific functionality such as displaying the dashboard and user specific statistics.
- * It also handles the login process.
+ * This controller handles the login process and password recovery 
+ * 
  */
-if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
 class User extends CI_Controller {
+
+	/**
+	 * Constructor for User Controller
+	 * Loads the necessary resources
+	 */
 	public function __construct() {
 		parent::__construct();
 		$this->load->helper('form');
 		$this->load->library('form_validation');
 	}
 
-	public function index()
-	{
-		$this->authentication->check_login(TRUE); //Ensures that the user is logged in.
-
-		$data['title']='Dashboard';
-		$data['header'] = array(
-			'text' => 'Hello '.$this->session->name.', Welcome to your Dashboard',
-			'colour' => 'is-info');
-
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head');
-		$this->load->view('templates/navbar');
-		$this->load->view('user/tabs', $data);
-
-		//Loads table for previous entries
-		$this->load->model('statistics_model');
-		$data['entries_table'] = $this->statistics_model->get_my_entries_table();
-		$this->load->view('logging/user-entries', $data); 
-
-		$this->load->view('templates/footer');
-	}
-
 	/**
 	 * Controller for login page
 	 */
-	public function loginUI() {
+	public function login() {
 		$data['title'] = 'login';
 
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
@@ -56,8 +40,7 @@ class User extends CI_Controller {
 
 			if ($result) 
 			{
-				redirect('home');
-				
+				redirect('Dashboard');
 			} 
 			else 
 			{
@@ -145,28 +128,5 @@ class User extends CI_Controller {
 			$this->load->view('templates/errors', $data);
 		}
 		
-	}
-
-	/**
-	 * Controller for the page that displays the User's information
-	 */
-	public function my_info() 
-	{
-		$this->authentication->check_login(TRUE);
-		
-		$this->load->helper('form');
-		$this->load->model('search_model');
-
-		$data['user_teams'] = $this->search_model->get_user_teams($this->session->user_id, FALSE);
-		$data['title'] = 'My Info';
-		$data['header']['text'] = "My Info";
-
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
-		$this->load->view('templates/navbar', $data);
-		$this->load->view('user/tabs', $data);
-		$this->load->view('user/myinfo', $data);
-
-		$this->load->view('templates/footer');
 	}
 }

@@ -20,7 +20,7 @@ class Welcome extends CI_Controller {
 
 		if ($this->authentication->check_login(FALSE)) {
 
-			redirect('Home','refresh');
+			redirect('Dashboard','refresh');
 
 		} else {
 			//Not logged in

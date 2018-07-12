@@ -23,7 +23,7 @@
 						<?php if (isset($back_url)):?>
 							<?php echo anchor($back_url, 'Go Back', 'class="button is-info"'); ?>
 						<?php else: ?>
-							<?php echo anchor('search', 'Go Back', 'class="button is-info"'); ?>
+							<?php echo anchor('Search', 'Go Back', 'class="button is-info"'); ?>
 						<?php endif;?>
 					</div>
 				</div>

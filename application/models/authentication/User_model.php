@@ -1,8 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * User Model for the Authentication Library
+ * =========================================
+ * @author Ryan Sandoval
+ * @package Authentication
+ * @version 1.0
+ *
+ * Allows for Database access for the authentication library.
+ * 
+ */
 class User_model extends CI_Model {
 
+	/**
+	 * Construcor for the Authentication User Model
+	 * Loads the necessary resources
+	 */
 	public function __construct()
 	{
 		parent::__construct();

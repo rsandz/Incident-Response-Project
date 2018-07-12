@@ -54,19 +54,19 @@ class Create extends CI_Controller {
 		{
 			$this->action_form($data);
 		}
-		elseif($data['type'] === 'action_type' && !check_privileges('user'))
+		elseif($data['type'] === 'action_type' && !$this->authentication->check_privileges('user'))
 		{
 			$this->action_type_form($data);
 		}
-		elseif ($data['type'] === 'project' && !check_privileges('user')) 
+		elseif ($data['type'] === 'project' && !$this->authentication->check_privileges('user')) 
 		{
 			$this->project_form($data);
 		}
-		elseif ($data['type'] === 'user' && !check_privileges('user')) 
+		elseif ($data['type'] === 'user' && !$this->authentication->check_privileges('user')) 
 		{
 			$this->user_form($data);
 		}
-		elseif ($data['type'] === 'team' && !check_privileges('user'))
+		elseif ($data['type'] === 'team' && !$this->authentication->check_privileges('user'))
 		{
 			$this->team_form($data);
 		}
@@ -290,7 +290,7 @@ class Create extends CI_Controller {
 		else 
 		{
 			//Get Team Leaders
-			if(check_admin())
+			if($this->authentication->check_admin())
 			{
 				$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select();
 			}

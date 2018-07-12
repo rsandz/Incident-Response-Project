@@ -8,7 +8,7 @@
 	</div>
 	<!-- End of Form Errors-->
 
-	<?php echo form_open('search/result'); ?>
+	<?php echo form_open('Search/result'); ?>
 		<div class="columns is-centered">
 			<div class="column is-three-quarters ">
 				<div class="columns">

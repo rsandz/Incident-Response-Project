@@ -2,7 +2,7 @@
 		- Runs when a graph element is clicked
 	Contains hidden 'back_url' field, which is used for the back button on the search page
 -->
-<?php echo form_open(site_url('search/result'), 'id="search-form"', array('back_url' => current_url()));?> 
+<?php echo form_open(site_url('Search/result'), 'id="search-form"', array('back_url' => current_url()));?> 
 	<input id="from_date" name="from_date" hidden>
 	<input id="to_date" name="to_date" hidden>
 	<!-- Project and Team ID for AJAX-->
