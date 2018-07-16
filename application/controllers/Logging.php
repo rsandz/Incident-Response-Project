@@ -26,7 +26,7 @@ class Logging extends CI_controller {
 	{
 		parent::__construct();
 		$this->load->model('logging_model');
-		$this->load->model('search_model');
+		$this->load->model('get_model');
 		$this->load->helper('form');
 
 		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
@@ -49,9 +49,9 @@ class Logging extends CI_controller {
 		$this->load->library('form_validation');
 		$this->load->helper('url');
 
-        $data['projects'] = $this->search_model->get_items('projects');
-        $data['types'] = $this->search_model->get_items('action_types', array('is_active !=' => 0)); // Only displays active action types
-        $data['teams'] = $this->search_model->get_items('teams');
+        $data['projects'] = $this->get_model->get_projects();
+        $data['types'] = $this->get_model->get_action_types(); // Only displays active action types
+        $data['teams'] = $this->get_model->get_teams();
 
 		//Validation Rules
 		$this->form_validation->set_rules('date', 'Date', 'required');
@@ -60,9 +60,6 @@ class Logging extends CI_controller {
 
 		if ($this->form_validation->run() === FALSE) 
 		{	
-			$data['header'] = array(
-				'text' => 'Logging form',
-				'colour' => 'is-success');
 			$data['title'] = 'Logging Form';
 
 			$this->load->view('templates/header', $data);
@@ -72,40 +69,33 @@ class Logging extends CI_controller {
 		}
 		else 
 		{
-			if ($this->session->user_id !== NULL) 
-			{
-				//Show the logging form
-				$data['title'] = 'Success';
-				$insert_data = array(
-					'action_id'  => $this->input->post('action', TRUE),
-					'log_desc'   => $this->input->post('desc', TRUE),
-					'log_date'   => $this->input->post('date', TRUE),
-					'log_time'   => $this->input->post('time', TRUE),
-					'team_id'    => $this->input->post('team', TRUE),
-					'project_id' => $this->input->post('project', TRUE),
-					'hours'      => $this->input->post('hours', TRUE),
-					'user_id'    => $this->session->user_id,
-					);
-
-				$this->logging_model->log_action('form', $insert_data);
-
-				$data['header'] = array(
-					'text' => 'Success!',
-					'colour' => 'is-success'
+			//Show the logging form
+			$data['title'] = 'Success';
+			$insert_data = array(
+				'action_id'  => $this->input->post('action', TRUE),
+				'log_desc'   => $this->input->post('desc', TRUE),
+				'log_date'   => $this->input->post('date', TRUE),
+				'log_time'   => $this->input->post('time', TRUE),
+				'team_id'    => $this->input->post('team', TRUE),
+				'project_id' => $this->input->post('project', TRUE),
+				'hours'      => $this->input->post('hours', TRUE),
+				'user_id'    => $this->session->user_id,
 				);
-				$data['title'] = 'Logging Form';
-				$this->load->view('templates/header', $data);
-				$this->load->view('templates/hero-head', $data);
-				$this->load->view('templates/navbar', $data);
-				$this->load->view('logging/success');
-			}
-			else
-			{
-				// User was not login, so die.
-				show_error('User is not logged in', 401);
-			}
 
-		}	
+			$this->logging_model->log_action('form', $insert_data);
+
+			$data['header'] = array(
+				'text' => 'Success!',
+				'colour' => 'is-success'
+			);
+			$data['title'] = 'Logging Form';
+			$data['success_msg'] = 'Your Activity has been inserted into the log table';
+			$data['success_back_url'] = site_url('Logging');
+
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar', $data);
+			$this->load->view('templates/success');
+		}
 	}
-
 }

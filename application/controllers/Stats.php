@@ -23,7 +23,7 @@ class Stats extends CI_Controller {
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->load->model('search_model');
+		$this->load->model('get_model');
 		$this->load->model('statistics_model');
 		$this->load->helper('form');
 		$this->config->load('stats_config');
@@ -86,7 +86,7 @@ class Stats extends CI_Controller {
 	public function project_stats($project_id = NULL)
 	{
 		$data['project_id'] = $project_id;
-		$data['projects'] = $this->search_model->get_projects($this->authentication->check_admin());
+		$data['projects'] = $this->get_model->get_projects($this->authentication->check_admin());
 
 		if (isset($project_id))
 		{
@@ -133,7 +133,7 @@ class Stats extends CI_Controller {
 				'colour' => 'is-info');
 			$data['title'] = 'Teams Statistics';
 
-			$data['teams'] = $this->search_model->get_user_teams(
+			$data['teams'] = $this->get_model->get_user_teams(
 				$this->session->user_id, 
 				$this->authentication->check_admin());
 
@@ -233,10 +233,10 @@ class Stats extends CI_Controller {
 		$data['index'] = $index; //The custom stat id number.
 
 		//Get things to populate the form
-		$data['action_types'] = $this->search_model->get_items('action_types');
-		$data['teams'] = $this->search_model->get_items('teams');
-		$data['projects'] = $this->search_model->get_items('projects');
-		$data['users'] = $this->search_model->get_items('users');
+		$data['action_types'] = $this->get_model->get_action_types();
+		$data['teams'] = $this->get_model->get_teams();
+		$data['projects'] = $this->get_model->get_projects();
+		$data['users'] = $this->get_model->get_users();
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);

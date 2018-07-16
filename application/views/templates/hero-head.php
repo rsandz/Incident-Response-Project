@@ -1,7 +1,7 @@
 <?php
 	// Setting Defaults
 	$header['colour'] = isset($header['colour']) ? $header['colour'] : 'is-info';
-	$header['text'] = isset($header['text']) ? $header['text'] : 'Title';
+	$header['text'] = isset($header['text']) ? $header['text'] : $title;
 ?>
 
 <body>
@@ -12,7 +12,7 @@
 				<div class="level-right">
 					<div class="level-item">
 						<p>
-							Need Help? <a href="help" class="">Click Here</a>
+							Need Help? <a href="" class="">Click Here</a>
 						</p>
 					</div>
 				</div>

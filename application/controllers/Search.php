@@ -38,6 +38,7 @@ class Search extends CI_Controller {
 		
 		$this->load->model('statistics_model');
 		$this->load->model('search_model');
+		$this->load->model('get_model');
 
 		$this->authentication->check_login(TRUE);
 	}
@@ -63,12 +64,12 @@ class Search extends CI_Controller {
 		if ($this->form_validation->run()) {
 			$this->search(); //Show search Matches
 		} else {
-			//Get the action types
+			//Get form Data
 			
-			$data['action_types'] = $this->search_model->get_items('action_types');
-			$data['teams'] = $this->search_model->get_items('teams');
-			$data['projects'] = $this->search_model->get_items('projects');
-			$data['users'] = $this->search_model->get_items('users');
+			$data['action_types'] = $this->get_model->get_action_types();
+			$data['teams'] = $this->get_model->get_teams();
+			$data['projects'] = $this->get_model->get_projects();
+			$data['users'] = $this->get_model->get_users();
 
 			//Load the form
 			$this->load->view('templates/header', $data);
@@ -121,15 +122,25 @@ class Search extends CI_Controller {
 		$filter_ids = $this->search_model->filter_search($query);
 
 		//Intersect ids
-		if (!empty($keyword_ids) && !empty($filter_ids))
-		{
-			$match_ids = array_intersect($keyword_ids, $filter_ids);
-			$data = $this->search_model->get_logs_table($match_ids, $offset); //Gets Tables for logs
+		$match_ids = array_intersect($keyword_ids, $filter_ids);
 
+		//Get Entries
+		$log_entries = $this->search_model->get_log_entries($match_ids, $offset);
+
+		if (empty($log_entries))
+		{
+			//No Results
+			$data['table'] = 'No Results Found';
+			$data['num_rows'] = 0;
 		}
 		else
 		{
-			$data = $this->search_model->get_logs_table($filter_ids OR $keyword_ids, $offset); //One of the ids will be chosen
+			//Turn Entries into Table
+			$data['table'] = $this->table->my_generate($log_entries);
+			$data['num_rows'] = $this->search_model->total_rows;
+
+			$this->load->library('pagination');
+			$data['page_links'] = $this->pagination->my_create_links($data['num_rows'], 'Search/result/');
 		}
 
 		$data['title'] = 'Search Results';
@@ -138,13 +149,6 @@ class Search extends CI_Controller {
 			'text'   => 'Results'
 		);
 		$data['query'] = $query;
-
-		//No pagination needed if there are no results! Otherwise, will cause error if pagination is called.
-		if ($data['table'] !== 'No Results') 
-		{
-			$this->load->library('pagination');
-			$data['page_links'] = $this->pagination->my_create_links($data['num_rows'], 'Search/result/');
-		}
 		
 		$data['back_url'] = $query['back_url'];
 		$this->load->view('templates/header', $data);
@@ -175,10 +179,6 @@ class Search extends CI_Controller {
 					),
 				'tables' => array('actions', 'action_types', 'teams', 'projects', 'users', 'user_teams')
 			);
-			
-			//Get Statistics
-			
-			$data['stats'] = $this->statistics_model->get_table_stats($data['tables']);
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
@@ -188,7 +188,11 @@ class Search extends CI_Controller {
 		}
 		else
 		{
-			$data = $this->search_model->tabulate_table($table, $offset);
+			$data['table_data'] = $this->search_model->get_all_entries($table, $offset);
+			$data['num_rows'] = $this->search_model->total_rows;
+			$data['table_name'] = humanize($table);
+			$data['table'] = $this->table->my_generate($data['table_data']);
+
 			$data['page_links'] = $this->pagination->my_create_links($data['num_rows'], 'Search/view_tables/'.$table);
 
 			$data['title'] = 'View Tables';

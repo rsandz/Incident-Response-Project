@@ -2,7 +2,7 @@
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * User Controller
+ * Login Controller
  * ===============
  * @author Ryan Sandoval, May 2018
  * @version 1.1
@@ -10,7 +10,7 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  * This controller handles the login process and password recovery 
  * 
  */
-class User extends CI_Controller {
+class Login extends CI_Controller {
 
 	/**
 	 * Constructor for User Controller
@@ -82,8 +82,10 @@ class User extends CI_Controller {
 
 			if ($result !== FALSE)
 			{
+				$data['success_msg'] = 'The Password Recovery Email has been sent. Please see your email for further instructions';
+				$data['success_back_url'] = site_url('login');
 				$this->load->view('templates/header', $data);
-				$this->load->view('user/login/sent', $data);
+				$this->load->view('templates/success', $data);
 				return;
 			}
 
@@ -110,10 +112,12 @@ class User extends CI_Controller {
 		{
 			//Validation is good
 			$data['title'] = 'Reset Successful';
+			$data['success_msg'] = 'Your Password has been changed';
+			$data['success_back_url'] = site_url('login');
 
 			$this->authentication->reset_pass($user_id, $this->input->post('password'));
 			$this->load->view('templates/header', $data);
-			$this->load->view('user/reset/success', $data);
+			$this->load->view('templates/success', $data);
 		}
 		else
 		{
@@ -122,10 +126,10 @@ class User extends CI_Controller {
 			$data['user_id'] = $user_id;
 		
 			$data['title'] = 'Reset Password';
+			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
 		
 			$this->load->view('templates/header', $data);
-			$this->load->view('user/reset/reset_form', $data);
-			$this->load->view('templates/errors', $data);
+			$this->load->view('user/reset_form', $data);
 		}
 		
 	}

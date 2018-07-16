@@ -11,7 +11,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 	- Direct Table modification via the admin modify table
  * 	- Team Addition/Removal
  */
-class Modify_model extends CI_Model {
+class Modify_model extends MY_Model {
 
 	/**
 	 * Constructor for the modify model.
@@ -25,6 +25,7 @@ class Modify_model extends CI_Model {
 		$this->load->library('table');
 
 		$this->load->model('logging_model');
+		$this->load->model('get_model');
 		
 		
 	}
@@ -243,8 +244,8 @@ class Modify_model extends CI_Model {
 		$query = $this->db->where('team_id', $team_id)->get('teams');
 		$team_name = $query->row()->team_name;
 
-		$query = $this->db->where('user_id', $user_id)->get('users');
-		$user_name = $query->row()->name;
+		$query = $this->get_model->get_users($user_id);
+		$user_name = $query[0]->name;
 
 		//Insert to log that current user is adding a user to team
 		$this->logging_model->log_team_action($team_name, $user_name, 'add');

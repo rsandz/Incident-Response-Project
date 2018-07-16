@@ -1,42 +1,25 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Statistics_model extends CI_Model {
+/**
+ * Statistics Model
+ * ================
+ * @author Ryan Sandoval
+ *
+ * This handles database interation pertaining to 
+ * statistics. i.e. Count(*) for a specific time
+ * interval.
+ */
+class Statistics_model extends MY_Model {
 
 	/**
 	 * Loads the necessary resources to run the statistics model. 
-	 * @return [type] [description]
 	 */
 	public function __construct()
 	{
 		parent:: __construct();
-		$this->load->database(); //load database
-		$this->load->model('search_model');
-	}
 
-	/**
-	 * Gets the statistics for a specific table
-	 * @param  mixed $table A string or an array of tables to query for statistics
-	 * @return array        Associative array of statistics
-	 */
-	public function get_table_stats($table)
-	{
-		if (is_array($table))
-		{
-			//For array of tables
-			$tables = $table;
-			foreach ($tables as $table)
-			{
-				$data[$table]['num_rows'] = $this->db->count_all($table);
-			}
-		}
-		else
-		{
-			//Not Array. Single Table
-			$data['num_rows'] = $this->db->count_all($table);
-		}
-		//Name
-		return $data;
+		$this->load->model('search_model');
 	}
 
 	public function get_log_frequency($type, $query)

@@ -10,10 +10,6 @@
 						<?=anchor('Search/view_tables/'.$table, 'View Table', 'class="button is-light"');?>
 					</div>
 				</div>
-				<p>
-					<strong>Statistics:</strong> <br>
-					Number of Rows/Entries: <?php echo $stats[$table]['num_rows'] ?>
-				</p>
 			</div>
 		<?php endforeach;?>
 	</div>

@@ -4,7 +4,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * API Controller
  * ==============
- *
+ * @author Ryan Sandoval
+ * @version 1.0
+ * @api
+ * 
  * This contains all the methods for outside interfacing with the app
  */
 class API extends CI_Controller {
@@ -43,7 +46,7 @@ class API extends CI_Controller {
 
 	/**
 	 * API endpoint for new incidents and existing incident queries
-	 *
+	 * 
 	 * For new incidents:
 	 * 	- The following must be provided within the incident json file.
 	 * 		{
@@ -53,6 +56,8 @@ class API extends CI_Controller {
 	 * 			type
 	 * 			desc
 	 * 		}
+	 * 
+	 * @api
 	 * 
 	 */
 	public function incidents()

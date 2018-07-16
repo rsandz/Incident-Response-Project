@@ -64,7 +64,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 //////////////////////////
 //REMOVE BEFORE DEPLOY! //
 //////////////////////////
-$route['Setup'] = 'Setup/index';
+$route['Setup'] = 'Setup';
 
 //=================================
 
@@ -73,13 +73,14 @@ $route['Setup'] = 'Setup/index';
  */
 
 $route['Incidents'] = 'Incidents/Pages';
+$route['Incidents/create'] = 'Incidents/Pages/create_incident';
 
 /*
-	Home, User and Visitor Routes
+	Login and Visitor Routes
  */
 $route['Welcome'] = 'Welcome/index';
-$route['login'] = 'User/login';
-$route['logout'] = 'User/logout';
+$route['login'] = 'User/Login/login';
+$route['logout'] = 'User/Login/logout';
 
 /*
 	Help Routes

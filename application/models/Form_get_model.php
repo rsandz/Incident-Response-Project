@@ -1,14 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Form_get_model extends CI_Model {
+class Form_get_model extends MY_Model {
 
 	/**
 	 * Form_get Model Initialization
 	 */
 	public function __construct() {
 		parent:: __construct();
-		$this->load->database(); //load database
 	}
 
 	public function get_item_info($table, $id) 
@@ -73,21 +72,6 @@ class Form_get_model extends CI_Model {
 		}
 	}
 
-	public function get_primary_key_name($table)
-	{
-		$query = $this->db->field_data($table, TRUE); //Get all columns
-
-		foreach ($query as $column)
-		{
-			if ($column->primary_key)
-			{
-				return $column->name;
-			}
-		}
-
-		return FALSE; //If not primary key
-	}
-
 	public function get_active_actions($type_id, $project_id)
 	{
 		$this->db->where('type_id', $type_id)
@@ -139,7 +123,7 @@ class Form_get_model extends CI_Model {
 		$users = $this->db
 			->or_where('privileges', 'team_leader')
 			->or_where('privileges', 'admin')
-			->select(array('name', 'user_id'))
+			->select('user_id, CONCAT(first_name, " ", last_name) as name')
 			->get('users')->result();
 
 		if (empty($users))	

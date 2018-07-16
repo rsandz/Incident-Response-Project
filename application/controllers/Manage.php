@@ -25,7 +25,7 @@ class Manage extends CI_Controller {
 
 		$this->load->helper('form');
 		
-		$this->load->model('search_model');
+		$this->load->model('get_model');
 		$this->load->model('modify_model');
 		$this->load->model('statistics_model');
 
@@ -47,13 +47,10 @@ class Manage extends CI_Controller {
 	{
 		if (!isset($team_id)) //Then we are selecting the team first
 		{
-			$data['header'] = array(
-				'text' => 'Manage Teams',
-				'colour' => 'is-info');
 			$data['title'] = 'Manage Teams';
 
 			//Get data for team selection
-			$data['teams'] = $this->search_model->get_user_teams(
+			$data['teams'] = $this->get_model->get_user_teams(
 				$this->session->user_id, 
 				$this->authentication->check_admin()
 			);
@@ -73,11 +70,8 @@ class Manage extends CI_Controller {
 		else
 		{
 			//Display Team management
-			$data = $this->search_model->get_team_info($team_id);
+			$data = $this->get_model->get_team_info($team_id);
 
-			$data['header'] = array(
-				'text' => 'Manage Teams',
-				'colour' => 'is-info');
 			$data['title'] = 'Manage Team';
 
 			$this->load->view('templates/header', $data);
@@ -112,6 +106,7 @@ class Manage extends CI_Controller {
 				'text' => 'Success',
 				'colour' => 'is-info');
 			$data['title'] = 'Manage Team Users';
+			
 			$data['success_msg'] = 'Sucessfully added user(s) to team';
 			$data['success_back_url'] = site_url("manage_teams/$team_id");
 
@@ -127,7 +122,7 @@ class Manage extends CI_Controller {
 			//User needs to fill out form or no user was selected
 
 			//Get users not in team
-			$data['users'] = $this->search_model->get_users_not_in_team($team_id);
+			$data['users'] = $this->get_model->get_users_not_in_team($team_id);
 			$data['team_id'] = $team_id;
 
 			$data['header'] = array(

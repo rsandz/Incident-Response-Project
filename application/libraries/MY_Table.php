@@ -47,6 +47,24 @@ class MY_Table extends CI_Table {
 	}
 
 	/**
+	 * Generates the table html string along with other table data.
+	 * This is useful if you're creating pagination for this data.
+	 * 
+	 * @param  mixed $table_data The table data that will be passed into the normal generate() method
+	 * @param  array $heading    The custom headings that you would like to use.
+	 * @return array 			 An array containing the following:
+	 *                      		'table_html' => The table as an html string
+	 *                      		'num_rows'	 => The amount of rows that the table has
+	 */	
+	public function my_generate_plus($table_data, $heading = NULL)
+	{
+		$data['table'] = $this->my_generate($table_data, $heading);
+		$data['num_rows'] = $this->num_rows();
+
+		return $data;
+	}
+
+	/**
 	 * Automatically gets and sets table headings from the config file.
 	 * Attempt to get the hadings from the following sources (in this order):
 	 * 	1. The 'view_tables' config file (['headings'] index)

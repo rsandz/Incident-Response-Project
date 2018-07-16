@@ -61,7 +61,6 @@ class Dashboard extends CI_Controller {
 
 		$data['user_teams'] = $this->search_model->get_user_teams($this->session->user_id, FALSE);
 		$data['title'] = 'My Info';
-		$data['header']['text'] = "My Info";
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);

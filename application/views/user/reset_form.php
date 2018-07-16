@@ -19,10 +19,12 @@
 							<input class="input" type="password" name="password_confirm">
 						</div>
 					</div>
+					<?php echo $errors?>
 					<div class="field">
 						<div class><input class="button is-primary" type="submit"></div>
 					</div>
 					</form>
+
 				</div>
 			</div>
 		</div>

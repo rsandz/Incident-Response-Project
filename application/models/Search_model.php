@@ -1,7 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Search_model extends CI_Model {
+class Search_model extends MY_Model {
+
+	/** @var int The number of rows if limit was not used. Good for pagination */
+	public $total_rows;
 
 	/**
 	 * Constructs the Search model.
@@ -9,10 +12,9 @@ class Search_model extends CI_Model {
 	 */
 	public function __construct()
 	{
-		parent:: __construct();
-		$this->load->database(); //load database
-		$this->load->library('table');
+		parent::__construct();
 
+		$this->load->library('table');
 		$this->load->model('logging_model');
 	}
 
@@ -26,13 +28,36 @@ class Search_model extends CI_Model {
 		$this->join_tables();
 		$this->apply_query_filters($query);
 		$this->db->select('action_log.log_id');
-		$filter_ids = array();
+
 		foreach ($this->db->get('action_log')->result() as $result)
 		{
 			$filter_ids[] = $result->log_id;
 		}
 		
-		return $filter_ids;
+		return isset($filter_ids) ? $filter_ids : array();
+	}
+
+	/**
+	 * Searches for rows in the log table that matches the filters provided
+	 * @param  array $keywords An array of the keywords
+	 * @param  array $columns  The column to search the keyword in
+	 * @return array           Array of log ids that match the filter
+	 */
+	public function keyword_search($query) 
+	{
+		if (isset($query['keyword_filters']) && isset($query['keywords']))
+		{
+			$this->join_tables();
+			$this->apply_query_keywords($query);	
+		}
+		
+		$this->db->select('action_log.log_id');
+		foreach ($this->db->get('action_log')->result() as $result)
+		{
+			$filter_ids[] = $result->log_id;
+		}
+
+		return isset($filter_ids) ? $filter_ids : array();
 	}
 
 	/**
@@ -217,40 +242,16 @@ class Search_model extends CI_Model {
 
 		return TRUE;
 	}
-
-	/**
-	 * Searches for rows in the log table that matches the filters provided
-	 * @param  array $keywords An array of the keywords
-	 * @param  array $columns  The column to search the keyword in
-	 * @return array           Array of log ids that match the filter
-	 */
-	public function keyword_search($query) 
-	{
-		if (isset($query['keyword_filters']) && isset($query['keywords']))
-		{
-			$this->join_tables();
-			$this->apply_query_keywords($query);	
-		}
-		
-		$this->db->select('action_log.log_id');
-		foreach ($this->db->get('action_log')->result() as $result)
-		{
-			$filter_ids[] = $result->log_id;
-		}
-
-		return $filter_ids;
-	}
 	
 	/**
-	 * Creates a logs table based on the provied log ids
+	 * Gets log entries based on provided log ids
 	 * @param  array  $log_ids An array of log ids
-	 * @param  integer $offset  The pagination offset
-	 * @return array           Array containing table data
-	 *                          - ['table'] for the table html
-	 *                          - ['num_rows'] The nynber of rows in the table (Useful in pagination)
-	 *                          - ['heading'] - Array containing tahble headings
+	 * @param  integer $offset The pagination offset
+	 * @param  string $type Whether to return an array of objects or array of associative arrays
+	 *
+	 * @return array		   An array of objects resulting from db->get()
 	 */
-	public function get_logs_table($log_ids, $offset = 0)
+	public function get_log_entries($log_ids, $offset = 0, $type = 'array')
 	{
 		$this->load->library('table');
 		$per_page  =$this->config->item('per_page');
@@ -264,8 +265,7 @@ class Search_model extends CI_Model {
 
 		if (!is_array($log_ids) OR count($log_ids) < 1)
 		{
-				$data['table'] = 'No Results';
-				return $data;
+				return NULL;
 		}
 		else
 		{
@@ -288,26 +288,22 @@ class Search_model extends CI_Model {
 				show_error('Not Authorized', 403);
 				break;
 		}
+		//Set Table
+		$this->db->from('action_log');
 
 		//Get entries
-		$matches = $this->db->get('action_log');
+		$this->total_rows = $this->db->count_all_results('', FALSE);
 
-		$data['num_rows'] = $matches->num_rows();
+		//Limit and Offset
+		$this->db->limit($per_page, $offset);
+		$query = $this->db->get();
 
-		if ($data['num_rows'] == 0)
+		if ($query->num_rows() == 0)
 		{
-			$data['table'] = 'No Results';
-			return $data;
+			return NULL;
 		}
-
-		//Make the Table
-		$table_data = array_slice($matches->result_array(), $offset, $per_page); //Offset for pagination
-
-		$this->table->heading_from_config('logs');
-		$data['table'] = $this->table->my_generate($table_data);
 		
-		return $data;
-
+		return $query;
 	}
 
 	/**
@@ -316,477 +312,142 @@ class Search_model extends CI_Model {
 	 * @param  offset $offset Offset for pagination
 	 * @return string         HTML string for the table
 	 */
-	public function tabulate_table($table, $offset)
+	public function get_all_entries($table, $offset)
 	{
-		$per_page  =$this->config->item('per_page');
+		$per_page = $this->config->item('per_page');
 
 		//Conditions and data formatting for certain tables
 		
 		//Format the table
 		$this->sql_commands_for_table($table); //Applies table filters as stated in view_tables.php
 
+		//Limits and Offset
+		$this->db->limit($per_page, $offset);
+
 		//Get Table DATA
+		$this->total_rows = $this->db->count_all_results($table, FALSE);
 		$query = $this->db->get($table);
-		$table_data = array_slice($query->result_array(), $offset, $per_page); //Offset for pagination
 
 		//Censoring Password Hashes - See configuration for disabling this
 		if ($this->config->item('show_hashes') && $this->db->field_exists('password', $table)) 
 		{
-			foreach ($table_data as &$row)
+			foreach ($query->result() as &$row)
 			{
-				$row['password'] = '***********';
+				$row->password = '***********';
 			}
 		}
-		//Create The table
-		$data['table'] = $this->table->my_generate($table_data, $query->list_fields());
-		$data['num_rows'] = $query->num_rows();
-		$data['table_name'] = $table;
 
-		return $data;
+		return $query;
 	}
 
 
-		/**
-		 *	Querries if data provided is already in table.
-		 *
-		 *	@param string $table Table to check where data is in
-		 *	@param array  $data  Associative array with column-value pairs
-		 * 
-		 *	@return boolean True if in database. False if not.
-		 */
-		public function data_exists($table, $data) 
+	/**
+	 * Reads through a filter array and executes the contents
+	 * Array must be of the form:
+	 *
+	 * $commands['command'] = array(condition => condition);
+	 * i.e. $commands['join']  = array(
+	 * 			'users' => 'users.user_id = action_log.user_id'
+	 * 			'teams' => 'teams.team_id = action_log.team_id'
+	 * 		)
+	 * 		$commands['where'] = array('team_id' => 2, user_id => 3)
+	 * 		$commands['select'] = ('user_id', 'name')
+	 * 
+	 * @return boolean   True if Sucessful
+	 */
+	public function execute_filters($commands) 
+	{
+		try 
 		{
-			$this->db->where($data);
-		
-			if (!empty($this->db->get($table)->row()))
+			if (is_array($commands['where']))
 			{
-				return $this->db->get($table)->row();
-
+				foreach ($commands['where'] as $key => $value) 
+				{
+					if (strtoupper(strtok($key, ' ')) == 'OR') //Handles OR modifiers too.
+					{
+						$this->db->or_where(strtok(' '), $value);
+					}
+					else
+					{
+						$this->db->where($key, $value);
+					}		
+				}
 			}
-			else
+			elseif (is_string($commands['where']))
 			{
-				return FALSE;
-			}
-		}
-
-		/**
-		 * Reads through a filter array and executes the contents
-		 * Array must be of the form:
-		 *
-		 * $commands['command'] = array(condition => condition);
-		 * i.e. $commands['join']  = array(
-		 * 			'users' => 'users.user_id = action_log.user_id'
-		 * 			'teams' => 'teams.team_id = action_log.team_id'
-		 * 		)
-		 * 		$commands['where'] = array('team_id' => 2, user_id => 3)
-		 * 		$commands['select'] = ('user_id', 'name')
-		 * 
-		 * @return boolean   True if Sucessful
-		 */
-		public function execute_filters($commands) 
-		{
-			try 
-			{
-				if (is_array($commands['where']))
-				{
-					foreach ($commands['where'] as $key => $value) 
-					{
-						if (strtoupper(strtok($key, ' ')) == 'OR') //Handles OR modifiers too.
-						{
-							$this->db->or_where(strtok(' '), $value);
-						}
-						else
-						{
-							$this->db->where($key, $value);
-						}		
-					}
-				}
-				elseif (is_string($commands['where']))
-				{
-					//If string, will feed entire string into Code Igniter's where method
-					$this->db->where($commands['where']);
-				}
-				
-				if (is_array($commands['select']))
-				{
-					foreach($commands['select'] as $select)
-					{
-							$this->db->select($select);
-					}
-				}
-
-				if (is_array($commands['join']))
-				{
-					foreach ($commands['join'] as $table => $condition) 
-					{
-						if (is_array($condition)) //If $condition is an array, we must unpack it
-						{
-							$this->db->join($table, ...$condition);
-							/*
-							This allows us to create LEFT joins and RIGHT joins.
-							syntax is commands['join'] = array('table' => array['condition', join type])
-							*/
-						}
-						else //No need to unpack
-						{
-							$this->db->join($table, $condition);
-						}
-					}
-				}
-
-				log_message('info', 'Filters Executed');
-				return True;
-			} 
-			catch (Exception $e) 
-			{
-				log_message('error', 'Error Excecuting filters. \n'.$e);
-				return FALSE;
+				//If string, will feed entire string into Code Igniter's where method
+				$this->db->where($commands['where']);
 			}
 			
-		}
-
-		/**
-		 * Applies the table filters for a specific table as stated in config/view_tables.php
-		 *
-		 * @param string $table The Table name in config/view_tables.php
-		 * 
-		 * @return boolean True if successful or no filters were found
-		 */
-		public function sql_commands_for_table($table) 
-		{
-			//Load Config
-			if (!$this->load->config('view_tables', TRUE)) //loads config too
+			if (is_array($commands['select']))
 			{
-				log_message('error', 'View Tables configuration was not loaded sucessfully. Table formatting may be unexpected.');
-			}
-
-			$commands['join'] = isset($this->config->item($table, 'view_tables')['join']) ? 
-									$this->config->item($table, 'view_tables')['join'] : NULL;
-			$commands['select'] = isset($this->config->item($table, 'view_tables')['select']) ? 
-									$this->config->item($table, 'view_tables')['select'] : NULL;
-			$commands['where'] = isset($this->config->item($table, 'view_tables')['where']) ? 
-									$this->config->item($table, 'view_tables')['where'] : NULL;
-
-			if ($commands['join'] == NULL && $commands['select'] == NULL && $commands['where'] == NULL)
-			{
-				log_message('info', 'No config for Table: '.$table);
-				return TRUE;
-			}
-
-			return $this->execute_filters($commands);
-		}
-
-		/**
-		 * Gets a Codeignitor query object from a database given parameters, without calling the result() method.
-		 *
-		 * @param  string $table Table string
-	 	 * @param  Mixed  $where Associative array of column-value pairs or string
-	 	 * query
-	 	 * @param  Mixed  $select Array or String of columns to select
-	 	 * @param  array  $join Associative array of table as key and join conditios
-	 	 * as value
-		 * 
-		 * @return object The query object returned by code ignitor's db->get()
-		 */
-		public function get_items_raw($table, $where = NULL, $select = NULL, array $join = NULL)
-		{
-			// Turn into array, so that it can be passed into execute_filters()
-			$commands['where'] = $where;
-			$commands['select'] = $select;
-			$commands['join'] = $join;
-
-			$this->execute_filters($commands);
-
-			return $this->db->get($table);
-		}
-
-		/**
-		 * Gets items from database given some parameters. Unlike raw, returns query->results()
-		 * 
-		 * @param  string $table Table string
-		 * @param  Mixed  $where Associative array of column-value pairs or string
-		 * query
-		 * @param  Mixed  $select Array or String of columns to select
-		 * @param  array  $join Associative array of table as key and join conditios
-		 * as value
-		 * @return array             result_array of results
-		 */
-		public function get_items($table, $where = NULL, $select = NULL, array $join = NULL) 
-		{
-			return $this->get_items_raw($table, $where, $select, $join)->result();
-		}
-
-		/**
-		 *	Gets and Returns Table Fields Data
-		 *
-		 *	@param $table Table name to get field data.
-		 *	@param Boolean $keep_ids Whether to keep or remove the id fields. i.e. if true, user_id will not be in the returned object
-		 * 	
-		 *	@return object Field data object as per Code Ignitor's structure. Also includes enum values for enum type columns.
-		 *	               False if failed.
-		 */
-		public function get_field_data($table, $keep_ids = FALSE)
-		{
-			if ($this->db->table_exists($table))
-			{	
-				$field_data = $this->db->field_data($table);
-
-				foreach ($field_data as $key => &$field) 
+				foreach($commands['select'] as $select)
 				{
-					if ($field->type == 'enum')
-					{
-						$enum_vals = $this->get_enum_vals($table, $field->name);
-						$field->enum_vals = $enum_vals;
-					}
+						$this->db->select($select);
+				}
+			}
 
-					if (stripos($field->name, 'id') && !$keep_ids)
+			if (is_array($commands['join']))
+			{
+				foreach ($commands['join'] as $table => $condition) 
+				{
+					if (is_array($condition)) //If $condition is an array, we must unpack it
 					{
-						unset($field_data[$key]);
+						$this->db->join($table, ...$condition);
+						/*
+						This allows us to create LEFT joins and RIGHT joins.
+						syntax is commands['join'] = array('table' => array['condition', join type])
+						*/
+					}
+					else //No need to unpack
+					{
+						$this->db->join($table, $condition);
 					}
 				}
-
-				return $field_data;
 			}
-			else
-			{
-				return FALSE;
-			}
-		}
 
-	
-	/**
-	 * Gets the Enumeartion Values for a given field in a table
-	 * 
-	 * @param  string $table Table name in database
-	 * @param  string $field Field name in Database
-	 * @return array         Returns all enum values as array of strings
-	 */
-	public function get_enum_vals($table, $field) 
-	{
-		$query = $this->db->query('SHOW COLUMNS FROM '.$table.' WHERE Field = "'.$field.'"')->row()->Type;
-		preg_match_all("/'.*?'/", $query, $results); //Reg match to get quoted enum values
-
-		//Stripping Quotes
-		$this->load->helper('string');
-		
-		foreach ($results[0] as &$result)//[0] is for array of full matches;
-		{
-			$result = strip_quotes($result);
+			log_message('info', 'Filters Executed');
+			return True;
 		} 
-
-		return $results[0];
+		catch (Exception $e) 
+		{
+			log_message('error', 'Error Excecuting filters. \n'.$e);
+			return FALSE;
+		}
+		
 	}
 
 	/**
-	 * Gets the projects available to the user
-	 * @param boolean $admin_mode If TRUE, will also get inactive projects
-	 * @return array             Code Igniter db results that contains the projects
+	 * Applies the table filters for a specific table as stated in config/view_tables.php
+	 *
+	 * @param string $table The Table name in config/view_tables.php
+	 * 
+	 * @return boolean True if successful or no filters were found
 	 */
-	public function get_projects($admin_mode = FALSE)
+	public function sql_commands_for_table($table) 
 	{
-		if (!$admin_mode)
+		//Load Config
+		if (!$this->load->config('view_tables', TRUE)) //loads config too
 		{
-			//Only get active projects
-			$this->db->where('is_active', 1);
+			log_message('error', 'View Tables configuration was not loaded sucessfully. Table formatting may be unexpected.');
 		}
 
-		//Get the projects
-		return $this->db->join('users', 'users.user_id = projects.project_leader', 'left')
-			->select('project_name, project_id, users.name as project_leader_name, project_desc')
-			->get('projects')->result();
-	}
+		$commands['join'] = isset($this->config->item($table, 'view_tables')['join']) ? 
+								$this->config->item($table, 'view_tables')['join'] : NULL;
+		$commands['select'] = isset($this->config->item($table, 'view_tables')['select']) ? 
+								$this->config->item($table, 'view_tables')['select'] : NULL;
+		$commands['where'] = isset($this->config->item($table, 'view_tables')['where']) ? 
+								$this->config->item($table, 'view_tables')['where'] : NULL;
 
-	/**
-	 * Get the teams that the provided user id is in
-	 * @param boolean $admin_mode If true, will ignore the user_id and get all the teams
-	 * @param  string $user_id User Id of the user in question. 
-	 * @return array           Code Igniter db results array that contains the teams
-	 *                         that the user is in.
-	 */
-	public function get_user_teams($user_id, $admin_mode = FALSE)
-	{
-		if (!$admin_mode)
+		if ($commands['join'] == NULL && $commands['select'] == NULL && $commands['where'] == NULL)
 		{
-			$query = $this->get_items('user_teams', array('user_id' => $user_id), 'team_id');
-			$team_ids = array_map(function($x){return $x->team_id;}, $query);
-			$this->db->where_in('team_id', $team_ids);
-		}
-		else
-		{
-			//User id can't be null!
-			if (!$user_id) return NULL;
+			log_message('info', 'No config for Table: '.$table);
+			return TRUE;
 		}
 
-		return $this->db
-					->join('users', 'users.user_id = teams.team_leader', 'left')
-					->select('team_name, team_id, team_desc, users.name as team_leader_name')
-					->get('teams')
-					->result();
+		return $this->execute_filters($commands);
 	}
 	
-	/**
-	 * Gets the users in a team
-	 * @param  string|array $team The team(s) name that will be querried for users
-	 * @return array       	Code Igniter db results array that contains the users
-	 *                      in the team. Data taken from users table.
-	 */
-	public function get_team_users($team_id)
-	{
-		if (is_array($team_id))
-		{
-			$user_ids = $this->db->where('team_id', $team_id)->get('user_teams');
-			if (count($user_ids) > 0)
-			{
-				return $this->db->where_in('user_id', $user_ids)->get('users');
-			}
-			else
-			{
-				return NULL;
-			}
-
-		}
-		else
-		{
-			$query = $this->db->where('team_id', $team_id)->get('user_teams')->result();
-			$user_ids = array_map(function($x) {return $x->user_id;}, $query);
-			if (count($user_ids) > 0)
-			{
-				return $this->db->where_in('user_id', $user_ids)->get('users')->result();
-			}
-			else
-			{
-				return NULL;
-			}
-		}
-	}
-
-	public function get_team_info($team_id)
-	{
-		$query = $this->db->where('team_id', $team_id)->get('teams')->row(); 
-		$data['team_name'] = $query->team_name; //Get team name
-		$data['team_id'] = $query->team_id; //Get Team ID
-
-		$data['team_members_raw'] = $this->get_team_users($team_id); //CI result array of obj
-
-		//Get amount of members
-		if (isset($data['team_members_raw']))
-		{
-			$data['num_members'] = count($data['team_members_raw']);
-		}
-		else
-		{
-			$data['num_members'] = 0; //team_members_raw is NULL, so no users
-		}
-
-		//Get team logs total
-		$data['team_logs'] = $this->db->select('COUNT(*) as count')
-									->where('team_id', $team_id)
-									->get('action_log')
-									->row()
-									->count;
-
-		//Get Team leader
-		$query2 = $this->db->where('user_id', $query->team_leader)->get('users')->row();
-		if (isset($query2))
-		{
-			$data['team_leader_name'] = $query2->name;
-		}
-		else
-		{
-			$data['team_leader_name'] = NULL;
-		}
-
-		if (isset($data['team_members_raw']))
-		{
-			foreach($data['team_members_raw'] as $team_member)
-			{
-				$data['team_members'][$team_member->name] = $team_member->user_id;
-			}
-		}
-
-		return $data;
-	}
-
-	/**
-	 * Gets the users not in the twam
-	 * @param  int $team_id The id of the team to test
-	 * @return array          A CI db results array of objects containing the users not in the team.
-	 */
-	public function get_users_not_in_team($team_id)
-	{
-		$users_in_team = array_map(
-			function ($user) {return $user->user_id;},
-			$this->db->where('team_id', $team_id)->get('user_teams')->result());
-
-		if (count($users_in_team) > 0)
-		{
-			return $this->db->where_not_in('user_id', $users_in_team)->get('users')->result();
-		}
-		else
-		{
-			return $this->db->get('users')->result();
-		}
-	}
-
-	/**
-	 * Gets the user's name from id
-	 * @param  int $user_id Id of the user
-	 * @return string          User's name
-	 */
-	public function get_user_name($user_id)
-	{
-		return $this->db
-			->select('name')
-			->where('user_id', $user_id)
-			->get('users')
-			->row()
-			->name;
-	}
-
-	/**
-	 * Gets the team name from the team id
-	 * @param  int $team_id The ID of the team
-	 * @return string          THe team Name
-	 */
-	public function get_team_name($team_id)
-	{
-		return $this->db
-			->select('team_name')
-			->where('team_id', $team_id)
-			->get('teams')
-			->row()
-			->team_name;
-	}
-
-	/**
-	 * Get project name from project ID
-	 * @param  int $project_id The ID of the project
-	 * @return string             THe project name
-	 */
-	public function get_project_name($project_id)
-	{
-		return $this->db
-			->select('project_name')
-			->where('project_id', $project_id)
-			->get('projects')
-			->row()
-			->project_name;
-	}
-
-	/**
-	 * Get the action type name from the action type ID
-	 * @param  int $type_id The action ype ID
-	 * @return string          The action type name
-	 */
-	public function get_type_name($type_id)
-	{
-		return $this->db
-			->select('type_name')
-			->where('type_id', $type_id)
-			->get('action_types')
-			->row()
-			->type_name;
-	}
 }
 
 /* End of file Search_model.php */

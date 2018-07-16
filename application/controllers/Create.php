@@ -26,7 +26,7 @@ class Create extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->helper('form');
 		$this->load->model('Logging_model');
-		$this->load->model('search_model');
+		$this->load->model('get_model');
 		$this->load->model('Form_get_model');
 
 		date_default_timezone_set($this->config->item('timezone'));
@@ -45,10 +45,6 @@ class Create extends CI_Controller {
 	{
 		$data['type']       = $type;
 		$data['title']      = 'Create '.$type;
-		$data['header'] = array(
-			'text'   => 'Create',
-			'colour' => 'is-primary'
-		);
 
 		if ($data['type'] === 'action') 
 		{
@@ -82,7 +78,7 @@ class Create extends CI_Controller {
 	 */
 	public function action_form($data) 
 	{
-		$projects = $this->search_model->get_items('projects');
+		$projects = $this->get_model->get_projects();
 
 		foreach ($projects as $project) {
 			$data['projects'][$project->project_id] = $project->project_name;
@@ -110,24 +106,20 @@ class Create extends CI_Controller {
 				);
 
 			$this->Logging_model->log_item('actions', $insert_data);
+			
 			//Success
-
-			$data['title'] = 'Created '.$data['type'];
-			$data['header'] = array(
-				'text'   => 'Success',
-				'colour' => 'is-success'
-			);
+			$data = array_merge($data, $this->success_data($data['type']));
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/tabs');
-			$this->load->view('create/success', $data);
+			$this->load->view('templates/success', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		} else {
 			
-			$data['types'] = $this->search_model->get_items('action_types', array('is_active !=' => '0'));
+			$data['types'] = $this->get_model->get_action_types();
 
 			// Make the Form
 			$this->load->view('templates/header', $data);
@@ -166,17 +158,13 @@ class Create extends CI_Controller {
 			$this->Logging_model->log_item('projects', $insert_data);
 			//Success
 
-			$data['title'] = 'Created '.$data['type'];
-			$data['header'] = array(
-				'text'   => 'Success',
-				'colour' => 'is-success'
-			);
+			$data = array_merge($data, $this->success_data($data['type']));
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/tabs');
-			$this->load->view('create/success', $data);
+			$this->load->view('templates/success', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		} 
@@ -220,18 +208,13 @@ class Create extends CI_Controller {
 
 			$this->Logging_model->log_item('users', $insert_data);
 			//Success
-
-			$data['title'] = 'Created '.$data['type'];
-			$data['header'] = array(
-				'text'   => 'Success',
-				'colour' => 'is-success'
-			);
+			$data = array_merge($data, $this->success_data($data['type']));
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/tabs');
-			$this->load->view('create/success', $data);
+			$this->load->view('templates/success', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		} else {
@@ -273,17 +256,13 @@ class Create extends CI_Controller {
 			$this->Logging_model->log_item('teams', $insert_data);
 			//Success
 
-			$data['title'] = 'Created '.$data['type'];
-			$data['header'] = array(
-				'text'   => 'Success',
-				'colour' => 'is-success'
-			);
+			$data = array_merge($data, $this->success_data($data['type']));
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/tabs');
-			$this->load->view('create/success', $data);
+			$this->load->view('templates/success', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		} 
@@ -340,16 +319,18 @@ class Create extends CI_Controller {
 				'colour' => 'is-success'
 			);
 
+			$data = array_merge($data, $this->success_data($data['type']));
+
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/tabs');
-			$this->load->view('create/success', $data);
+			$this->load->view('templates/success', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
-		} else {
-			$data['types'] = $this->search_model->get_items('action_types', array('is_active !=' => '0'));
-
+		} 
+		else 
+		{
 			// Make the Form
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
@@ -359,6 +340,30 @@ class Create extends CI_Controller {
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		}
+	}
+
+	/**
+	 * Creates the success data and returns it.
+	 * @param  type $type The type of item created
+	 * @return array       Array containing data for templates/success
+	 */
+	public function success_data($type)
+	{
+		//URL for back button
+		$data['success_back_url'] = site_url("Create/{$type}");
+
+		//Humanize $type
+		$type = humanize($type);
+		
+		$data['title'] = 'Created '.$type;
+		$data['header'] = array(
+			'text'   => 'Success',
+			'colour' => 'is-success'
+		);
+
+		$data['success_msg'] = "Your {$type} has been created";
+
+		return $data;
 	}
 
 }

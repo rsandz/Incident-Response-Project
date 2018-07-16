@@ -13,11 +13,11 @@
 			<?php echo anchor('Create', 'Create', 'class="navbar-item"'); ?>
 			<?php echo anchor('manage_teams', 'Manage', 'class="navbar-item"'); ?>
 			<?php echo anchor('Stats', 'Statistics', 'class="navbar-item"'); ?>
-			
+			<?php if ($this->session->privileges == 'admin') echo anchor('Admin', 'Admin', 'class="navbar-item"'); ?>
 		</div>
 		<div class="navbar-end">
-			<?php if ($this->session->privileges == 'admin') echo anchor('Admin', 'Admin', 'class="navbar-item"'); ?>
 			<?php echo anchor('Search', 'Search', 'class="navbar-item"'); ?>
+			<?php echo anchor('Account', 'Account', 'class="navbar-item"');?>
 			<?php echo anchor('logout', 'Logout', 'class="navbar-item"'); ?>
 		</div>
 	</div>

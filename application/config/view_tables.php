@@ -57,7 +57,7 @@ $config['user_teams']['join'] = array(
 );
 
 $config['user_teams']['select'] = array(
-	'users.name', 'teams.team_name', 'users.user_id', 'teams.team_id', 'user_team_id'
+	'CONCAT(first_name, " ", last_name) as name', 'teams.team_name', 'users.user_id', 'teams.team_id', 'user_team_id'
 );
 
 $config['user_teams']['headings'] = array(
@@ -69,7 +69,7 @@ $config['user_teams']['headings'] = array(
  */
 
 $config['logs']['select'] = array(
-	'name', 'action_name', 'type_name', 'project_name', 'team_name', 'log_desc', 'hours', 'log_date', 'log_time'
+	'CONCAT(first_name, " ", last_name) as Name', 'action_name as Action Name', 'type_name as Type', 'project_name as Project', 'team_name as Team', 'log_desc as Description', 'hours as Hours', 'log_date as Date', 'log_time as Time'
 );
 
 /**

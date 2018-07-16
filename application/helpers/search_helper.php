@@ -174,7 +174,7 @@ if (!function_exists('query_to_string'))
 			Load Resources
 			==============
 		*/
-		$CI->load->model('search_model');
+		$CI->load->model('get_model');
 
 		$html_string = "<ul>"; //Start Organized List
 
@@ -193,7 +193,7 @@ if (!function_exists('query_to_string'))
 					$filter_string = "";
 					foreach ($filters as $user_id)
 					{
-						$filter_string .= $CI->search_model->get_user_name($user_id) . ', ';
+						$filter_string .= $CI->get_model->get_user_name($user_id) . ', ';
 					}
 				break;
 
@@ -202,7 +202,7 @@ if (!function_exists('query_to_string'))
 					$filter_string = "";
 					foreach ($filters as $team_id)
 					{
-						$filter_string .= $CI->search_model->get_team_name($team_id) . ', ';
+						$filter_string .= $CI->get_model->get_team_name($team_id) . ', ';
 					}
 				break;
 
@@ -211,7 +211,7 @@ if (!function_exists('query_to_string'))
 					$filter_string = "";
 					foreach ($filters as $project_id)
 					{
-						$filter_string .= $CI->search_model->get_project_name($project_id) . ', ';
+						$filter_string .= $CI->get_model->get_project_name($project_id) . ', ';
 					}
 				break;
 
@@ -220,7 +220,7 @@ if (!function_exists('query_to_string'))
 					$filter_string = "";
 					foreach ($filters as $type_id)
 					{
-						$filter_string .= $CI->search_model->get_type_name($type_id) . ', ';
+						$filter_string .= $CI->get_model->get_type_name($type_id) . ', ';
 					}
 				break;
 

@@ -134,13 +134,15 @@
 						<div class="column is-narrow">
 							<h3>Teams:</h3>
 							<div class="field">
-								<?php foreach($teams as $team):?>
-									<div class="control">
-										<label class="label"><?php echo $team->team_name?>
-										<?php echo form_checkbox('teams[]', $team->team_id);?>
-										</label>
-									</div>
-								<?php endforeach;?>
+								<?php if(!empty($teams)): ?>
+									<?php foreach($teams as $team):?>
+										<div class="control">
+											<label class="label"><?php echo $team->team_name?>
+											<?php echo form_checkbox('teams[]', $team->team_id);?>
+											</label>
+										</div>
+									<?php endforeach;?>
+								<?php endif;?>
 								<!-- No Team Condition -->
 								<div class="control">
 									<label class="label checkbox">

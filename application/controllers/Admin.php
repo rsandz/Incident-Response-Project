@@ -30,7 +30,7 @@ class Admin extends CI_Controller {
 	public function index() 
 	{
 			$data['title'] = 'Admin Dashboard';
-			$data['header']['text'] = "Admin Dashboard";
+			
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);

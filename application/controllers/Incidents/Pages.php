@@ -19,27 +19,36 @@ class Pages extends CI_Controller {
 		parent::__construct();
 		$this->load->model('statistics_model');
 		$this->load->model('search_model');
-		$this->load->helper(array(
-			'form', 'user_helper'
-		));
+		$this->load->helper('form');
 
 		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
-		
-		check_login();
+		$this->authentication->check_admin();
 	}
 
 	public function index()
 	{
-		$data = array(
-			'title' => 'Incidents Overview',
-			'header' => array(
-				'text' => 'Incidents Overiew'
-			),
-		);
+		$data = array('title' => 'Incidents Overview');
+
+		//Get Recent Incidents
+		$data['recent_incidents'] = NULL;
+
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
 		$this->load->view('admin/tabs');
+		$this->load->view('incidents/main');
+		$this->load->view('templates/footer');
+	}
+
+	public function create_incident()
+	{
+		$data = array('title' => 'Incidents');
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/hero-head', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('admin/tabs');
+		$this->load->view('incidents/create');
 		$this->load->view('templates/footer');
 	}
 

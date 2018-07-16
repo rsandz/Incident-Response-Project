@@ -11,7 +11,7 @@
  * 		Add "$route['setup'] = 'Setup/index';" to config/routes.php
  *
  * 	# TO EDIT ADMIN CREDENTIALS
- * 		- Edit the fields in the controller properties.
+ * 		- Edit the fields in index
  * 		
  *  # Access this controller by going to:
  * 		`https://yourwebsiteurl.com/Setup`
@@ -26,14 +26,6 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Setup extends CI_Controller {
-
-	//EDIT THESE FIELDS//////////////////////////////////
-
-	public $email = 'User1@foo.com';
-	public $password = 'User1';
-	public $name = 'User1';
-
-	/////////////////////////////////////////////////////
 
 	/**
 	 * Constructor
@@ -51,9 +43,10 @@ class Setup extends CI_Controller {
 
 		$insert_data = array
 			(
-			'name'       => $this->name,
-			'email'      => $this->email,
-			'password'   => crypt($this->password, $this->config->item('salt')),
+			'first_name' => 'User',
+			'last_name'  => '1',
+			'email'      => 'User1@foo.com',
+			'password'   => crypt('User1', $this->config->item('salt')), //Edit the first argument in crypt
 			'privileges' => 'admin',
 			);
 

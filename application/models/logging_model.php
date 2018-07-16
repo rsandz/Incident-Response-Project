@@ -1,6 +1,6 @@
 <?php
 
-class logging_model extends CI_model {
+class logging_model extends MY_Model {
 	
 	/**
 	 * Logging Model Initialization
