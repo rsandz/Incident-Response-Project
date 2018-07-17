@@ -4,7 +4,7 @@
 				<!-- The Recent Incidents Table -->
 			<div class="column recent-incidents-wrapper">
 					<h1 class="title">Recent Incidents</h1>
-					<?php echo $recent_incidents['table'] ?: NULL?>
+					<?php echo $incidents_table ?: NULL?>
 			</div>
 			
 				<!-- Control Panel -->

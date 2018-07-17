@@ -101,3 +101,15 @@ $config['prev_entries']['join'] = array(
 	'teams' => array('teams.team_id = action_log.team_id', 'left')
 
 );
+
+$config['incidents']['join'] = array(
+	'users' => 'users.user_id = incidents.created_by'
+);
+$config['incidents']['select'] = array('
+	incident_name as "Name", 
+	incident_date as "Date", 
+	incident_time as "Time", 
+	incident_desc as "Description", 
+	IF (was_automated,"Yes", "No") as "Automated", 
+	CONCAT(first_name, " ", last_name) as "Created By"'
+);
