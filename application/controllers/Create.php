@@ -44,7 +44,7 @@ class Create extends CI_Controller {
 	public function index($type) 
 	{
 		$data['type']       = $type;
-		$data['title']      = 'Create '.$type;
+		$data['title']      = 'Create '.humanize($type);
 
 		if ($data['type'] === 'action') 
 		{
@@ -113,7 +113,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
-			$this->load->view('create/tabs');
 			$this->load->view('templates/success', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
@@ -125,7 +124,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
-			$this->load->view('create/tabs');
 			$this->load->view('create/action', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
@@ -163,7 +161,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
-			$this->load->view('create/tabs');
 			$this->load->view('templates/success', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
@@ -173,7 +170,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
-			$this->load->view('create/tabs');
 			$this->load->view('create/project', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
@@ -187,41 +183,47 @@ class Create extends CI_Controller {
 	 */
 	public function user_form($data)
 	{
-
-		$insert_data = array
-			(
-			'name'       => $this->input->post('name', TRUE),
-			'email'      => $this->input->post('email', TRUE),
-			'password'   => crypt($this->input->post('password'), $this->config->item('salt')),
-			'privileges' => 'user',
-			);
-
 		//Form Valiation
-		$this->form_validation->set_rules('name', 'Name', 'trim|required');
+		$this->form_validation->set_rules('first_name', 'First Name', 'trim|required');
+		$this->form_validation->set_rules('last_name', 'Last Name', 'trim|required');
 		$this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[5]');
 		$this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
 		$this->form_validation->set_rules('password-confirm', 'Confirm password', 'required|matches[password]');
 
 		if ($this->form_validation->run()) {
-			//Logging action
-			$this->Logging_model->log_action('create', 'user', $this->input->post('name', TRUE));
 
+			$insert_data = array
+				(
+				'first_name' => $this->input->post('first_name', TRUE),
+				'last_name'  => $this->input->post('last_name', TRUE),
+				'email'      => $this->input->post('email', TRUE),
+				'password'   => crypt($this->input->post('password'), $this->config->item('salt')),
+				'privileges' => 'user',
+				);
+
+			$full_name = $insert_data['first_name']." ".$insert_data['last_name'];
+
+			//Logging action
+			$this->Logging_model->log_action('create', 'user', $full_name);
+
+			//Put into Database
 			$this->Logging_model->log_item('users', $insert_data);
+
 			//Success
 			$data = array_merge($data, $this->success_data($data['type']));
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
-			$this->load->view('create/tabs');
 			$this->load->view('templates/success', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
-		} else {
+		} 
+		else 
+		{
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
-			$this->load->view('create/tabs');
 			$this->load->view('create/user', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
@@ -261,7 +263,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
-			$this->load->view('create/tabs');
 			$this->load->view('templates/success', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
@@ -281,7 +282,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
-			$this->load->view('create/tabs');
 			$this->load->view('create/team', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
@@ -324,7 +324,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
-			$this->load->view('create/tabs');
 			$this->load->view('templates/success', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
@@ -335,7 +334,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
-			$this->load->view('create/tabs');
 			$this->load->view('create/action_type', $data);
 			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');

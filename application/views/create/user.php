@@ -5,7 +5,20 @@
 		<?php echo form_open('Create/index/user', 'class="form"'); ?>
 			<div class="field">
 				<label class="label">Name: <span class="has-text-danger">(Required)</span></label>
-				<div class="control"><input name="name" type="text" class="input" value="<?=set_value('name')?>"></div>
+				<div class="field is-horizontal">
+					<div class="field-body">
+						<div class="field">
+							<div class="control">
+								<input name="first_name" type="text" class="input" value="<?=set_value('name')?>" placeholder="First Name">
+							</div>
+						</div>
+						<div class="field">
+							<div class="control">
+								<input name="last_name" type="text" class="input" value="<?=set_value('name')?>" placeholder="Last Name">
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="field">
 				<label class="label">Email - Used for Login: <span class="has-text-danger">(Required)</span></label>

@@ -41,7 +41,7 @@
 			<hr>
 
 			<div class="field">
-				<label class="label">Team: <span class="has-text-danger">(Required)</span></label>
+				<label class="label">Team:</label>
 				<!-- Creates the selection for Teams -->
 				<div class="control">
 					<div class="select"> 

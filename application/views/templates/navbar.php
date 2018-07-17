@@ -10,7 +10,19 @@
 		<div class="navbar-start">
 			<?php echo anchor('Dashboard', 'Dashboard', 'class="navbar-item"'); ?>
 			<?php echo anchor('Logging', 'Log an Activity', 'class="navbar-item"'); ?>
-			<?php echo anchor('Create', 'Create', 'class="navbar-item"'); ?>
+			<div class="navbar-item has-dropdown is-hoverable">
+				<?php echo anchor('Create', 'Create', 'class="navbar-link"'); ?>
+				<div class="navbar-dropdown">
+					<?php echo anchor('Create/action', 'Action', 'class="navbar-item"')?>
+					<!-- Not Available to Normal Users-->
+					<?php if($this->authentication->check_admin()):?>
+						<?php echo anchor('Create/action_type', 'Action Type', 'class="navbar-item"');?>
+						<?php echo anchor('Create/project', 'Project', 'class="navbar-item"');?>
+						<?php echo anchor('Create/team', 'Team', 'class="navbar-item"');?>
+						<?php echo anchor('Create/user', 'User', 'class="navbar-item"');?>
+					<?php endif;?>
+				</div>				
+			</div>
 			<?php echo anchor('manage_teams', 'Manage', 'class="navbar-item"'); ?>
 			<?php echo anchor('Stats', 'Statistics', 'class="navbar-item"'); ?>
 			<?php if ($this->session->privileges == 'admin') echo anchor('Admin', 'Admin', 'class="navbar-item"'); ?>

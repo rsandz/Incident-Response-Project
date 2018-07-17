@@ -41,8 +41,6 @@ class Dashboard extends CI_Controller {
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('user/tabs', $data);
-
 		//Loads table for previous entries
 		$this->load->model('statistics_model');
 		$data['entries_table'] = $this->statistics_model->get_my_entries_table();
