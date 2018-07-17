@@ -127,6 +127,122 @@ class MY_Model extends CI_Model {
 		return $results[0];
 	}
 
+	/**
+	 * Applies the table filters for a specific table as stated in config/view_tables.php
+	 *
+	 * @param string $table The Table name in config/view_tables.php
+	 * 
+	 * @return boolean True if successful or no filters were found
+	 */
+	public function sql_commands_for_table($table) 
+	{
+		//Load Config
+		if (!$this->load->config('view_tables', TRUE)) //loads config too
+		{
+			log_message('error', 'View Tables configuration was not loaded sucessfully. Table formatting may be unexpected.');
+		}
+
+		$commands['join'] = isset($this->config->item($table, 'view_tables')['join']) ? 
+								$this->config->item($table, 'view_tables')['join'] : NULL;
+		$commands['select'] = isset($this->config->item($table, 'view_tables')['select']) ? 
+								$this->config->item($table, 'view_tables')['select'] : NULL;
+		$commands['where'] = isset($this->config->item($table, 'view_tables')['where']) ? 
+								$this->config->item($table, 'view_tables')['where'] : NULL;
+
+		if ($commands['join'] == NULL && $commands['select'] == NULL && $commands['where'] == NULL)
+		{
+			log_message('info', 'No config for Table: '.$table);
+			return TRUE;
+		}
+
+		return $this->execute_filters($commands);
+	}
+
+	/**
+	 * Reads through a filter array and executes the contents
+	 * Array must be of the form:
+	 *
+	 * $commands['command'] = array(condition => condition);
+	 * i.e. $commands['join']  = array(
+	 * 			'users' => 'users.user_id = action_log.user_id'
+	 * 			'teams' => 'teams.team_id = action_log.team_id'
+	 * 		)
+	 * 		$commands['where'] = array('team_id' => 2, user_id => 3)
+	 * 		$commands['select'] = ('user_id', 'name')
+	 * 
+	 * @return boolean   True if Sucessful
+	 */
+	public function execute_filters($commands) 
+	{
+		try 
+		{
+			if (is_array($commands['where']))
+			{
+				foreach ($commands['where'] as $key => $value) 
+				{
+					if (strtoupper(strtok($key, ' ')) == 'OR') //Handles OR modifiers too.
+					{
+						$this->db->or_where(strtok(' '), $value);
+					}
+					else
+					{
+						$this->db->where($key, $value);
+					}		
+				}
+			}
+			elseif (is_string($commands['where']))
+			{
+				//If string, will feed entire string into Code Igniter's where method
+				$this->db->where($commands['where']);
+			}
+			
+			if (is_array($commands['select']))
+			{
+				foreach($commands['select'] as $select)
+				{
+						$this->db->select($select);
+				}
+			}
+
+			if (is_array($commands['join']))
+			{
+				foreach ($commands['join'] as $table => $condition) 
+				{
+					if (is_array($condition)) //If $condition is an array, we must unpack it
+					{
+						$this->db->join($table, ...$condition);
+						/*
+						This allows us to create LEFT joins and RIGHT joins.
+						syntax is commands['join'] = array('table' => array['condition', join type])
+						*/
+					}
+					else //No need to unpack
+					{
+						$this->db->join($table, $condition);
+					}
+				}
+			}
+
+			log_message('info', 'Filters Executed');
+			return True;
+		} 
+		catch (Exception $e) 
+		{
+			log_message('error', 'Error Excecuting filters. \n'.$e);
+			return FALSE;
+		}
+		
+	}
+
+	/**
+	 * Gets the most recent error that has occured.
+	 * @return array Array containing error number and message
+	 */
+	public function get_error()
+	{
+		return $this->db->error();
+	}
+
 }
 
 /* End of file Base_model.php */

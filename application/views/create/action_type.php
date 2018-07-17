@@ -5,7 +5,7 @@
 		<?php echo form_open('Create/index/action_type', 'class="form"'); ?>
 			<div class="field">
 				<div class="control">
-					<label for="" class="label">Action Type Name</label>
+					<label for="" class="label">Action Type Name: <span class="has-text-danger">(Required)</span></label>
 					<input class="input" type="text" name="action_type_name" value="<?php echo set_value('action_type_name')?>">
 				</div>
 			</div>

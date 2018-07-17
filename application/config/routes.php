@@ -69,6 +69,14 @@ $route['Setup'] = 'Setup';
 //=================================
 
 /*
+	Account ROuting
+ */
+
+$route['Account'] = 'User/Account';
+$route['Account/settings'] = 'User/Account/settings';
+$route['Account/admin-settings'] = 'User/Account/admin_settings';
+
+/*
 	Incidents Routing
  */
 

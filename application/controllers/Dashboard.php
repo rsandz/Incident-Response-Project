@@ -50,26 +50,6 @@ class Dashboard extends CI_Controller {
 
 		$this->load->view('templates/footer');
 	}
-
-	/**
-	 * Contains information about the currently logged in user
-	 */
-	public function my_info() 
-	{
-		$this->load->helper('form');
-		$this->load->model('search_model');
-
-		$data['user_teams'] = $this->search_model->get_user_teams($this->session->user_id, FALSE);
-		$data['title'] = 'My Info';
-
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
-		$this->load->view('templates/navbar', $data);
-		$this->load->view('user/tabs', $data);
-		$this->load->view('user/myinfo', $data);
-
-		$this->load->view('templates/footer');
-	}
 }
 
 /* End of file Dashboard.php */

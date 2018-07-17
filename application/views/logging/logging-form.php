@@ -12,7 +12,7 @@
 				
 			<div class="column">
 			<div class="field">
-				<label class="label">Project</label>
+				<label class="label">Project: <span class="has-text-danger">(Required)</span></label>
 				<!-- Creates the selection for Projects -->
 				<div class="control">
 					<div class="select"> 
@@ -41,7 +41,7 @@
 			<hr>
 
 			<div class="field">
-				<label class="label">Team</label>
+				<label class="label">Team: <span class="has-text-danger">(Required)</span></label>
 				<!-- Creates the selection for Teams -->
 				<div class="control">
 					<div class="select"> 
@@ -60,7 +60,7 @@
 		
 			<!-- Action Type -->
 			<div class="column">
-				<label class="label">Action Type</label>
+				<label class="label">Action Type: <span class="has-text-danger">(Required)</span></label>
 				<div class="select">
 					<select name="action_type" class="select" id="type-selector">
 						<?php foreach ($types as $type): ?>
@@ -73,7 +73,7 @@
 			<!-- Action Selection -->
 			<div class="column">
 			<div class="field">
-				<label class="label">Actions</label>
+				<label class="label">Actions: <span class="has-text-danger">(Required)</span></label>
 				<!-- Creates the selection for actions -->
 				<div class="control">
 					<div class="select" id="action-div"> 
@@ -96,7 +96,7 @@
 			<div class="columns">
 				<div class="column">
 					<div class="field">
-						<label class="label "for="date">Date</label>
+						<label class="label "for="date">Date: <span class="has-text-danger">(Required)</span></label>
 						<div class="control"> 
 							<input class="input" type="date" name="date" value="<?php echo date('Y-m-d');?>">
 						</div>
@@ -104,7 +104,7 @@
 				</div>
 				<div class="column">
 					<div class="field">
-						<label class="label "for="date">Time</label>
+						<label class="label "for="date">Time: <span class="has-text-danger">(Required)</span></label>
 						<div class="control">
 							<input class="input" type="time" name="time" value = "<?php echo date('H:i');?>">
 						</div>
@@ -112,7 +112,7 @@
 				</div>
 				<div class="column is-2">
 					<div class="field">
-						<label class="label">Number of Hours</label>
+						<label class="label">Number of Hours: </label>
 						<div class="control">
 							<input type="number" class="input" value="0" name="hours">
 						</div>
@@ -121,7 +121,7 @@
 			</div>
 			
 			<div class="field">
-				<label class="label" ">Description</label>
+				<label class="label" ">Description:</label>
 				<div class="control ">
 					<textarea class="textarea" name="desc"></textarea>
 				</div>

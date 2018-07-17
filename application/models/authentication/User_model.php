@@ -31,6 +31,8 @@ class User_model extends CI_Model {
 	 */
 	public function get_user($identifier, $type = 'email')
 	{
+		$this->db->select('*, CONCAT(first_name, " ", last_name) as name');
+
 		switch ($type)
 		{
 			case 'email': return $this->db->where('email', $identifier)->get('users')->row();

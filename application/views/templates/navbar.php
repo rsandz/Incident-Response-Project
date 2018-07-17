@@ -17,7 +17,13 @@
 		</div>
 		<div class="navbar-end">
 			<?php echo anchor('Search', 'Search', 'class="navbar-item"'); ?>
-			<?php echo anchor('Account', 'Account', 'class="navbar-item"');?>
+			<div class="navbar-item has-dropdown is-hoverable">
+				<?php echo anchor('Account', 'Account', 'class="navbar-link"');?>
+				<div class="navbar-dropdown">
+					<?php echo anchor('Account/settings', 'Settings', 'class="navbar-item"')?>
+					<?php echo anchor('Account/admin-settings', 'Admin Settings', 'class="navbar-item"')?>
+				</div>
+			</div>
 			<?php echo anchor('logout', 'Logout', 'class="navbar-item"'); ?>
 		</div>
 	</div>

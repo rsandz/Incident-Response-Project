@@ -3,7 +3,7 @@
 		<div class="level">
 			<div class="level-left">
 				<div class="level-item">
-					<h1 class="title">My Information</h1>
+					<h1 class="title">My Account Information</h1>
 				</div>
 			</div>
 			<div class="level-right">
@@ -13,7 +13,7 @@
 		<hr>
 		<div class="columns">
 			<div class="column">
-				<div class="box">
+				<div class="box content">
 					<h2 class="subtitle">User Information</h2>
 					<hr>
 					<p><span class="has-text-weight-bold">Name: </span><?php echo $this->session->name?></p>

@@ -4,19 +4,19 @@
 		<hr>
 		<?php echo form_open('Create/index/user', 'class="form"'); ?>
 			<div class="field">
-				<label class="label">Name</label>
+				<label class="label">Name: <span class="has-text-danger">(Required)</span></label>
 				<div class="control"><input name="name" type="text" class="input" value="<?=set_value('name')?>"></div>
 			</div>
 			<div class="field">
-				<label class="label">Email (Used for Login)</label>
+				<label class="label">Email - Used for Login: <span class="has-text-danger">(Required)</span></label>
 				<div class="control"><input name="email" type="text" class="input" value="<?=set_value('email')?>"></div>
 			</div>
 			<div class="field">
-				<label class="label">Password</label>
+				<label class="label">Password: <span class="has-text-danger">(Required)</span></label>
 				<div class="control"><input name="password" type="password" class="input"></div>
 			</div>
 			<div class="field">
-				<label class="label">Confirm Password</label>
+				<label class="label">Confirm Password: <span class="has-text-danger">(Required)</span></label>
 				<div class="control"><input name="password-confirm" type="password" class="input"></div>
 			</div>
 		

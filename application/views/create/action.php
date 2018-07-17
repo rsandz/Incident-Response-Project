@@ -8,7 +8,7 @@
 			<div class="field">
 				<div class="columns">
 					<div class="column">
-						<label class="label">For Project:</label>
+						<label class="label">For Project: <span class="has-text-danger">(Required)</span></label>
 						<div class="control select">
 								<?= form_dropdown('project_id', $projects, NULL,'id="project-selector"');?>
 						</div>
@@ -22,13 +22,13 @@
 				</div>
 			</div>
 			<div class="field">
-				<label class="label">Action Name</label>
+				<label class="label">Action Name: <span class="has-text-danger">(Required)</span></label>
 				<div class="control">
 					<input name="action_name" class = "input" type="text" value="<?=set_value('action_name')?>">
 				</div>
 			</div>		
 			<div class="field">
-				<label class="label">Action Type</label>
+				<label class="label">Action Type: <span class="has-text-danger">(Required)</span></label>
 				<div class="control">
 					<div class="select">
 						<select name="action_type" id="type-selector">

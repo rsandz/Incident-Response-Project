@@ -57,7 +57,7 @@ class Authentication
 	 * @var array
 	 */
 	private $session_data_base = array(
-		'email', 'name', 'user_id', 'privileges', 'logged_in'
+		'email', 'first_name', 'last_name', 'name', 'user_id', 'privileges', 'logged_in'
 	);
 
 
@@ -142,11 +142,13 @@ class Authentication
 	public function set_session_data($user)
 	{
 		$sess_data = array(
-			'email' => $user->email,
-			'name' 	=> $user->name,
-			'user_id' => $user->user_id,
+			'email'      => $user->email,
+			'first_name' => $user->first_name,
+			'last_name'  => $user->last_name,
+			'name'       => $user->name,
+			'user_id'    => $user->user_id,
 			'privileges' => $user->privileges,
-			'logged_in' => TRUE
+			'logged_in'  => TRUE
 		);
 		$this->validate_sess_data($sess_data);
 		$this->CI->session->set_userdata($sess_data);
