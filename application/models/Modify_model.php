@@ -128,27 +128,27 @@ class Modify_model extends MY_Model {
 					continue;
 			}
 
-			//If the current field is a foreign key, we wikk replace it with 
-			//a dropdown as configured in the config
-			if (array_key_exists($column->name, $this->config->item('dropdown_config'))) 
+			//If the current field is a foreign key, we will replace it with 
+			//a dropdown selection as configured in the config
+			if (isset($this->config->item('foreign_keys')[$column->name])) 
 			{
-				//Get the config for this dropdown
-				$config = $this->config->item('dropdown_config')[$column->name];
+				//Get the config for this foreign_key
+				$config = $this->config->item('foreign_keys')[$column->name];
 
 				//Get Primary key of the reference table
-				$primary_key = $this->get_primary_key_name($config['FK_table']);
+				$FK_primary_name = $this->get_primary_key_name($config['FK_table']);
 
 				//Get the reference table
-				$dropdown_data = $this->db
+				$foreign_data = $this->db
 					//Value to be seen by user
 					->select($config['display_column'].' AS `display_name`') 
 					//Value of the item in the dropdown
-					->select($primary_key.' AS `value`')
+					->select($FK_primary_name.' AS `value`')
 					->get($config['FK_table'])->result();
 
 				//Create the form html string
 				$options = array();
-				foreach ($dropdown_data as $item)
+				foreach ($foreign_data as $item)
 				{
 					//$options[value] = display_name
 					$options[$item->value] = $item->display_name;

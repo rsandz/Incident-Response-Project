@@ -49,7 +49,7 @@ $config['modify_rules'] = array(
 );
 
 /*
- *	Dropdown Configuration
+ *	Foreign Key Configuration
  *	======================
  *
  *	This will declare which fields are foreign Keys and will subsequently turn them into
@@ -57,7 +57,7 @@ $config['modify_rules'] = array(
  *
  * 	This is so that the user can select fields like project by name, instead of by id
  *
- * $config['dropdown_config'] = array(
+ * $config['foreign_key'] = array(
  * 	'foreign_key' => array(
  * 		'FK_table' => 'Name of the table that the foreign key maps to'
  * 		'display_column' => 'Name of the column from the reference/foreign table that the user will see (i.e. type_name)'
@@ -65,7 +65,7 @@ $config['modify_rules'] = array(
  * );
  */
 
-$config['dropdown_config'] = array(
+$config['foreign_keys'] = array(
   	'type_id' => array(
   		'FK_table' => 'action_types',
   		'display_column' => 'type_name',
