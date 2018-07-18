@@ -65,11 +65,12 @@ class Search extends CI_Controller {
 			$this->search(); //Show search Matches
 		} else {
 			//Get form Data
+			$is_admin = $this->authentication->check_admin();
 			
-			$data['action_types'] = $this->get_model->get_action_types();
-			$data['teams'] = $this->get_model->get_teams();
-			$data['projects'] = $this->get_model->get_projects();
-			$data['users'] = $this->get_model->get_users();
+			$data['action_types'] = $this->get_model->get_action_types($is_admin);
+			$data['teams'] = $this->get_model->get_teams($is_admin);
+			$data['projects'] = $this->get_model->get_projects($is_admin);
+			$data['users'] = $this->get_model->get_users($is_admin);
 
 			//Load the form
 			$this->load->view('templates/header', $data);

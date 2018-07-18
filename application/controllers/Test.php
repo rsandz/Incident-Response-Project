@@ -11,11 +11,23 @@ class Test extends CI_Controller {
 
 	public function test()
 	{
-		$this->load->model('statistics_model');
-		$query = array(
-			'users' => 1
-		);
-		echo json_encode($this->statistics_model->get_log_frequency('daily', $query));
+		$this->load->library('Log_Builder', NULL, 'lb');
+		// $insert_data = array(
+		// 	'action_id' => 1,
+		// 	'user_id' => $this->session->user_id,
+		// 	'log_date' => '2018-07-17',
+		// 	'log_time' => '12:12:00',
+		// 	'log_desc' => 'testing new daslib'
+		// );
+		// $this->logging->quick_log($insert_data);
+		$this->lb
+			->sys_action('Test sys')
+			->user(10)
+			->date('now')
+			->hours(10)
+			->desc('SYs Test2')
+			->log();
+		
 	}
 }
 

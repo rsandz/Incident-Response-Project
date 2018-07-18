@@ -22,12 +22,11 @@ class Manage extends CI_Controller {
 		parent::__construct();
 
 		$this->load->library('form_validation');
-
+		$this->load->library('Log_Builder', NULL, 'lb');
 		$this->load->helper('form');
 		
 		$this->load->model('get_model');
 		$this->load->model('modify_model');
-		$this->load->model('statistics_model');
 
 		$this->authentication->check_login();
 	}
@@ -91,8 +90,9 @@ class Manage extends CI_Controller {
 
 		if ($this->form_validation->run())
 		{
+			$user_id_list = $this->input->post('users[]', TRUE);
 			//Add user to database
-			foreach ($this->input->post('users[]', TRUE) as $user_id)
+			foreach ($user_id_list as $user_id)
 			{
 				$query = $this->modify_model->add_to_team($team_id, $user_id);
 				if (!$query) //Query failed if query was false
@@ -100,7 +100,19 @@ class Manage extends CI_Controller {
 					log_message('error', "Failed to add User Id: $user_id to Team: Id: $team_id in manage teams");
 					show_error('Failed to add a user to a team.');
 				}
+
+				//Put into list of user names - Used for logging
+				$user_name_list[]  = $this->get_model->get_user_name($user_id);
 			}
+
+			//Get Team name
+			$team_name = $this->get_model->get_team_name($team_id);
+			//Log the action
+			$this->lb
+				->sys_action('Added Users to Team')
+				->date('now')
+				->desc('Added `'.implode(', ', $user_name_list)."` to Team `{$team_name}`.")
+				->log();
 
 			$data['header'] = array(
 				'text' => 'Success',
@@ -144,8 +156,18 @@ class Manage extends CI_Controller {
 		foreach ($this->input->post('users[]', TRUE) as $user_id)
 		{
 			$this->modify_model->remove_from_team($team_id, $user_id);
+			//Put into list of user names - Used for logging
+			$user_name_list[]  = $this->get_model->get_user_name($user_id);
 		}
 
+		//Get Team name
+		$team_name = $this->get_model->get_team_name($team_id);
+		//Create the log
+		$this->lb
+			->sys_action('Removed Users from Team')
+			->date('now')
+			->desc('Removed Users `'.implode(', ', $user_name_list)."` from Team `{$team_name}`.")
+			->log();
 
 		$data['header'] = array(
 			'text' => 'Remove Users',

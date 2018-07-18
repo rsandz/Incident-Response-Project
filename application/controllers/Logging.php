@@ -25,7 +25,7 @@ class Logging extends CI_controller {
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->load->model('logging_model');
+		$this->load->library('log_builder', NULL, 'lb');
 		$this->load->model('get_model');
 		$this->load->helper('form');
 
@@ -70,27 +70,29 @@ class Logging extends CI_controller {
 		else 
 		{
 			//Show the logging form
-			$data['title'] = 'Success';
-			$insert_data = array(
-				'action_id'  => $this->input->post('action', TRUE),
-				'log_desc'   => $this->input->post('desc', TRUE),
-				'log_date'   => $this->input->post('date', TRUE),
-				'log_time'   => $this->input->post('time', TRUE),
-				'team_id'    => $this->input->post('team', TRUE),
-				'project_id' => $this->input->post('project', TRUE),
-				'hours'      => $this->input->post('hours', TRUE),
-				'user_id'    => $this->session->user_id,
-				);
+			$result = $this->lb
+				->action($this->input->post('action', TRUE))
+				->desc($this->input->post('desc', TRUE))
+				->date($this->input->post('date', TRUE))
+				->time($this->input->post('time', TRUE))
+				->team($this->input->post('team', TRUE))
+				->project($this->input->post('project', TRUE))
+				->hours($this->input->post('hours', TRUE))
+				->user($this->session->user_id)
+				->log();
 
-			$this->logging_model->log_action('form', $insert_data);
-
-			$data['header'] = array(
-				'text' => 'Success!',
-				'colour' => 'is-success'
-			);
-			$data['title'] = 'Logging Form';
-			$data['success_msg'] = 'Your Activity has been inserted into the log table';
-			$data['success_back_url'] = site_url('Logging');
+			if (!$result) //Unsuccessful log
+			{
+				$data['title'] = 'An Error Occured';
+				$data['success_msg'] = 'Your activity was not successfully logged.';
+				$data['success_back_url'] = site_url('Logging');
+			}
+			else
+			{
+				$data['title'] = 'Success';
+				$data['success_msg'] = 'Your Activity has been inserted into the log table';
+				$data['success_back_url'] = site_url('Logging');
+			}
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);

@@ -71,7 +71,7 @@ class Authentication
         $this->CI =& get_instance();
 
         //Load the user authentication model
-        $this->CI->load->model('authentication/user_model');
+        $this->CI->load->model('tables/user_model');
 
         //Load Configuration and Set the properties
         $this->CI->load->config('authentication', TRUE);
@@ -94,7 +94,7 @@ class Authentication
 	public function login_user($email, $password)
 	{
 		//Validate email first
-		$user = $this->CI->user_model->get_user($email);
+		$user = $this->CI->user_model->get_by_email($email);
 
 		if (empty($user))
 		{
@@ -258,7 +258,7 @@ class Authentication
 	 */
 	public function recover($email)
 	{
-		$user = $this->CI->user_model->get_user($email);
+		$user = $this->CI->user_model->get_by_email($email);
 		//Validate email
 		if (empty($user))
 		{
@@ -271,7 +271,7 @@ class Authentication
 
 		$temp_pass = random_string();
 		$insert_data = array('password' => crypt($temp_pass, $this->salt));
-		$this->CI->user_model->update_user($user->user_id, $insert_data);
+		$this->CI->user_model->update($user->user_id, $insert_data);
 
 		//Generate the email
 		//------------------
@@ -307,7 +307,7 @@ class Authentication
 	public function reset_pass($user_id, $pass)
 	{
 		$update_data = array('password' => crypt($pass, $this->salt));
-		$this->CI->user_model->update_user($user_id, $update_data);
+		$this->CI->user_model->update($user_id, $update_data);
 		return TRUE;
 	}
 
@@ -319,7 +319,7 @@ class Authentication
 	 */
 	public function validate_pass($user_id, $pass)
 	{
-		$user = $this->CI->user_model->get_user($user_id, 'id');
+		$user = $this->CI->user_model->get_by_id($user_id, 'id');
 
 		if ($user->password === crypt($pass, $user->password))
 		{

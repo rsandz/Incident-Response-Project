@@ -167,13 +167,13 @@ class Get_model extends MY_Model {
 	 */
 	public function get_users_not_in_team($team_id)
 	{
-		$users_in_team = array_map(
-			function ($user) {return $user->user_id;},
-			$this->get_team_users($team_id));
-
-		if (count($users_in_team) > 0)
+		$users_in_team = $this->get_team_users($team_id);
+		if (!empty($users_in_team))
 		{
-			return $this->db->where_not_in('user_id', $users_in_team);
+			$exclude_ids = array_map(
+				function ($user) {return $user->user_id;},
+				$users_in_team);
+			$this->db->where_not_in('user_id', $exclude_ids);
 		}
 		
 		return $this->get_users();

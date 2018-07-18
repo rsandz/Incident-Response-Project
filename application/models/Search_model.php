@@ -15,7 +15,6 @@ class Search_model extends MY_Model {
 		parent::__construct();
 
 		$this->load->library('table');
-		$this->load->model('logging_model');
 	}
 
 	/**

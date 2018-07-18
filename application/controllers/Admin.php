@@ -20,8 +20,6 @@ class Admin extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->helper('form');
 		
-		$this->load->model('logging_model');
-
 		$this->authentication->check_admin();
 	}
 	/**

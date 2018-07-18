@@ -24,8 +24,8 @@ class Create extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->library('form_validation');
+		$this->load->library('log_builder', NULL, 'lb');
 		$this->load->helper('form');
-		$this->load->model('Logging_model');
 		$this->load->model('get_model');
 		$this->load->model('Form_get_model');
 
@@ -91,23 +91,29 @@ class Create extends CI_Controller {
 		$this->form_validation->set_rules('project_id', 'Project ID', 'trim|required');
 
 		if ($this->form_validation->run()) {
-			//Logging action
-			$this->Logging_model->log_action('create', 'action', $this->input->post('action_name', TRUE));			
 
 			//Enter into Database
 			$insert_data = array
 				(
-				'action_name' => $this->input->post('action_name', TRUE),
-				'type_id'     => $this->input->post('action_type', TRUE),
-				'action_desc' => $this->input->post('action_desc') == "" ? NULL : $this->input->post('action_desc', TRUE),
-				'project_id'  => $this->input->post('project_id', TRUE),
-				'is_active'   => 1,
-				'is_global'   => $this->input->post('is_global', TRUE) == 1 ? 1 : 0,
+					'action_name' => $this->input->post('action_name', TRUE),
+					'type_id'     => $this->input->post('action_type', TRUE),
+					'action_desc' => $this->input->post('action_desc') == "" ? NULL : $this->input->post('action_desc', TRUE),
+					'project_id'  => $this->input->post('project_id', TRUE),
+					'is_active'   => 1,
+					'is_global'   => $this->input->post('is_global', TRUE) == 1 ? 1 : 0,
 				);
 
-			$this->Logging_model->log_item('actions', $insert_data);
+			$this->load->model('table/action_model');
+			$this->action_model->make($insert_data);
+
+			//Create Log
+			$this->lb
+				->sys_action('Created Action')
+				->date('now')
+				->desc("Action `{$insert_data['action_name']}` was inserted into the Action Table.")
+				->log();
 			
-			//Success
+			//Create Success Data for Success page
 			$data = array_merge($data, $this->success_data($data['type']));
 
 			$this->load->view('templates/header', $data);
@@ -143,8 +149,6 @@ class Create extends CI_Controller {
 
 		if ($this->form_validation->run() == TRUE) 
 		{
-			//Logging action
-			$this->Logging_model->log_action('create', 'project', $this->input->post('project_name', TRUE));
 			//Enter into Database
 			$insert_data = array
 				(
@@ -153,9 +157,17 @@ class Create extends CI_Controller {
 				'project_leader' => $this->input->post('project_leader', TRUE),
 				);
 
-			$this->Logging_model->log_item('projects', $insert_data);
-			//Success
+			$this->load->model('tables/project_model');
+			$this->project_model->make($insert_data);
 
+			//Create the log
+			$this->lb
+				->sys_action('Created Project')
+				->date('now')
+				->desc("Project `{$insert_data['project_name']}` was inserted into the Project Table.")
+				->log();
+			
+			//Create Success Data for success page
 			$data = array_merge($data, $this->success_data($data['type']));
 
 			$this->load->view('templates/header', $data);
@@ -203,13 +215,18 @@ class Create extends CI_Controller {
 
 			$full_name = $insert_data['first_name']." ".$insert_data['last_name'];
 
-			//Logging action
-			$this->Logging_model->log_action('create', 'user', $full_name);
-
 			//Put into Database
-			$this->Logging_model->log_item('users', $insert_data);
+			$this->load->model('tables/user_model');
+			$this->user_model->make($insert_data);
 
-			//Success
+			//Create the log
+			$this->lb
+				->sys_action('Created User')
+				->date('now')
+				->desc("User `{$full_name}` was inserted into the User table.")
+				->log();
+
+			//Success data for the success page
 			$data = array_merge($data, $this->success_data($data['type']));
 
 			$this->load->view('templates/header', $data);
@@ -245,8 +262,6 @@ class Create extends CI_Controller {
 
 		if ($this->form_validation->run() == TRUE) 
 		{
-			//Logging action
-			$this->Logging_model->log_action('create', 'team', $this->input->post('team_name', TRUE));
 			//Enter into Database
 			$insert_data = array
 				(
@@ -255,9 +270,17 @@ class Create extends CI_Controller {
 				'team_leader' => $this->input->post('team_leader', TRUE),
 				);
 
-			$this->Logging_model->log_item('teams', $insert_data);
-			//Success
+			$this->load->model('tables/team_model');
+			$this->team_model->make($insert_data);
 
+			//Create the log
+			$this->lb
+				->sys_action('Created Team')
+				->date('now')
+				->desc("Team `{$insert_data['team_name']}` was inserted into the Team table.")
+				->log();
+
+			//Success Data for the success page
 			$data = array_merge($data, $this->success_data($data['type']));
 
 			$this->load->view('templates/header', $data);
@@ -298,9 +321,7 @@ class Create extends CI_Controller {
 		$this->form_validation->set_rules('action_type_name', 'Action Type Name', 'trim|required');
 		$this->form_validation->set_rules('action_type_desc', 'Action Description', 'trim');
 
-		if ($this->form_validation->run()) {
-			//Logging action
-			$this->Logging_model->log_action('create', 'action type', $this->input->post('action_type_name', TRUE));			
+		if ($this->form_validation->run()) {		
 
 			//Enter into Database
 			$insert_data = array
@@ -310,16 +331,24 @@ class Create extends CI_Controller {
 					'is_active' => $this->input->post('is_active') ?: 0
 				);
 
-			$this->Logging_model->log_item('action_types', $insert_data);
+			$this->load->model('tables/action_type_model');
+			$this->action_type_model->make($insert_data);
+
+			//Create the log
+			$this->lb
+				->sys_action('Created Action Type')
+				->date('now')
+				->desc("Type `{$insert_data['type_name']}` was inserted into the Action Types table.")
+				->log();
+			
 			//Success
+			$data = array_merge($data, $this->success_data($data['type']));
 
 			$data['title'] = 'Created '.$data['type'];
 			$data['header'] = array(
 				'text'   => 'Success',
 				'colour' => 'is-success'
 			);
-
-			$data = array_merge($data, $this->success_data($data['type']));
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);

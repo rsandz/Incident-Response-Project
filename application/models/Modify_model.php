@@ -24,7 +24,6 @@ class Modify_model extends MY_Model {
 		$this->load->database(); //load database
 		$this->load->library('table');
 
-		$this->load->model('logging_model');
 		$this->load->model('get_model');
 		
 		
@@ -242,13 +241,8 @@ class Modify_model extends MY_Model {
 	{
 		//Get user and team name
 		$query = $this->db->where('team_id', $team_id)->get('teams');
-		$team_name = $query->row()->team_name;
 
 		$query = $this->get_model->get_users($user_id);
-		$user_name = $query[0]->name;
-
-		//Insert to log that current user is adding a user to team
-		$this->logging_model->log_team_action($team_name, $user_name, 'add');
 
 		//Add to the user to team
 		$insert_data = array(
@@ -256,7 +250,7 @@ class Modify_model extends MY_Model {
 			'team_id' => $team_id
 		);
 		//Check Data Exists first
-		if (!$this->search_model->data_exists('user_teams', $insert_data))
+		if (!$this->data_exists('user_teams', $insert_data))
 		{
 			$query = $this->db->insert('user_teams', $insert_data);
 			if (!$query)
@@ -279,13 +273,8 @@ class Modify_model extends MY_Model {
 	{
 		//Get user and team name
 		$query = $this->db->where('team_id', $team_id)->get('teams');
-		$team_name = $query->row()->team_name;
 
 		$query = $this->db->where('user_id', $user_id)->get('users');
-		$user_name = $query->row()->name;
-
-		//Insert to log that current user is removing a user from a team
-		$this->logging_model->log_team_action($team_name, $user_name, 'remove');
 
 		//Remove the user from the team
 		$delete_data = array(
@@ -294,7 +283,7 @@ class Modify_model extends MY_Model {
 		);
 
 		//Check Data Exists first
-		if ($this->search_model->data_exists('user_teams', $delete_data))
+		if ($this->data_exists('user_teams', $delete_data))
 		{
 			$query =  $this->db->delete('user_teams', $delete_data);
 			if (!$query)
