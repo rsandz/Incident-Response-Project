@@ -53,11 +53,14 @@ class Manage extends CI_Controller {
 				$this->session->user_id, 
 				$this->authentication->check_admin()
 			);
-			$data['team_modify_links'] = array_map(function($x)
-				{
-					return anchor("manage_teams/{$x->team_id}", "Manage", 'class="button is-info"');
-				},
-				$data['teams']);
+			if(!empty($data['teams']))
+			{
+				$data['team_modify_links'] = array_map(function($x)
+					{
+						return anchor("manage_teams/{$x->team_id}", "Manage", 'class="button is-info"');
+					},
+					$data['teams']);
+			}
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
