@@ -97,10 +97,9 @@ class Modify_model extends MY_Model {
 	{
 		//Load resources
 		$this->load->config('modify_config');
-		$this->load->model('search_model');
 
 		//First get column data. This will be used to format the form.
-		$columns = $this->search_model->get_field_data($table, TRUE);
+		$columns = $this->get_field_data($table, TRUE);
 
 		//Get primary key name
 		$primary_key = $this->get_primary_key_name($table);
@@ -129,17 +128,30 @@ class Modify_model extends MY_Model {
 					continue;
 			}
 
-			if (array_key_exists($column->name, $this->config->item('dropdown_config'))) //If the current field is a dropdown
+			//If the current field is a foreign key, we wikk replace it with 
+			//a dropdown as configured in the config
+			if (array_key_exists($column->name, $this->config->item('dropdown_config'))) 
 			{
+				//Get the config for this dropdown
 				$config = $this->config->item('dropdown_config')[$column->name];
 
-				//Get all action types and put into a dropdown
-				$dropdown_data = $this->search_model->get_items($config['table']);
+				//Get Primary key of the reference table
+				$primary_key = $this->get_primary_key_name($config['FK_table']);
 
+				//Get the reference table
+				$dropdown_data = $this->db
+					//Value to be seen by user
+					->select($config['display_column'].' AS `display_name`') 
+					//Value of the item in the dropdown
+					->select($primary_key.' AS `value`')
+					->get($config['FK_table'])->result();
+
+				//Create the form html string
 				$options = array();
 				foreach ($dropdown_data as $item)
 				{
-					$options[$item->{$column->name}] = $item->{$config['text_column']};
+					//$options[value] = display_name
+					$options[$item->value] = $item->display_name;
 				}
 				$field->form = '<div class="select">';
 				$field->form .= form_dropdown($column->name, $options, $query->{$column->name}, 'class="select"');
@@ -191,26 +203,6 @@ class Modify_model extends MY_Model {
 		}
 
 		return $fields;
-	}
-
-	/**
-	 * Utility class that gets the name of the primary key of a table
-	 * @param  string $table The name of the table that you want a primary key name from
-	 * @return strinf        The name of the primary key
-	 */
-	public function get_primary_key_name($table)
-	{ 
-		$query = $this->search_model->get_field_data($table, TRUE); //Get all columns
-
-		foreach ($query as $column)
-		{
-			if ($column->primary_key)
-			{
-				return $column->name;
-			}
-		}
-
-		show_error('Selected error does not have a primary key. Modification is not allowed.');
 	}
 
 	/**

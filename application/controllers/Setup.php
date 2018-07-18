@@ -34,8 +34,7 @@ class Setup extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		
-		$this->load->model('Logging_model');
+		$this->load->model('tables/user_model');		
 	}
 
 	public function index()
@@ -50,7 +49,7 @@ class Setup extends CI_Controller {
 			'privileges' => 'admin',
 			);
 
-		$this->Logging_model->log_item('users', $insert_data);
+		$this->user_model->make($insert_data);
 		echo('Admin account has been inserted into database');
 	}
 

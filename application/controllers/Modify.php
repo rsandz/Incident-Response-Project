@@ -35,9 +35,9 @@ class Modify extends CI_Controller {
 		parent::__construct();
 
 		$this->load->library('form_validation');
+		$this->load->library('Log_Builder', NULL, 'lb');
 		$this->load->helper('form');
 
-		$this->load->model('search_model');
 		$this->load->model('modify_model');
 
 		$this->authentication->check_admin(); //Must be admin to acess admin modify tables
@@ -92,8 +92,8 @@ class Modify extends CI_Controller {
 	 */
 	public function modify_form($table, $key)
 	{
-		//Get field Data
-		$field_data = $this->search_model->get_field_data($table);
+		//Get field Data (Columns of the table)
+		$field_data = $this->modify_model->get_field_data($table);
 
 		$this->form_validation->set_rules('modify', 'Modify', 'required'); //Modify button needs to be clicked
 
@@ -112,6 +112,7 @@ class Modify extends CI_Controller {
 		}
 		else
 		{
+			//Set the rules if found
 			foreach ($modify_rules as $field => $rule)
 			{
 				$this->form_validation->set_rules($field, humanize($field), $rule);
@@ -120,6 +121,7 @@ class Modify extends CI_Controller {
 
 		if (!$this->form_validation->run())
 		{
+			//Validation Failed
 			$this->show_form($table, $key);
 		}
 		else
@@ -136,28 +138,31 @@ class Modify extends CI_Controller {
 			{
 				//Sucess!
 				
-				$data['header'] = array(
-					'text' => "Modify ".humanize($table),
-					'colour' => 'is-info');
+				//Log it
+				$this->lb
+					->sys_action('Modification')
+					->date('now')
+					->desc("Modified Item #{$key} on Table `{$table}`")
+					->log();
+
 				$data['title'] = "Modify ".humanize($table);
-				$data['table'] = $table;
-				$data['key'] =$key;
-				$foo = array(
-						'table_data' => array_values($update_data),
-						'heading' => array_keys($update_data)
-					);
 
 				//Make a table to display changes
 				$this->load->library('table');
-				$data['update_data_table'] = $this->table->my_generate(
+				$update_table = $this->table->my_generate(
 						array(array_values($update_data)), //2D Array. An array of columns (update_data) within array of rows;
 						array_map(function($x) {return humanize($x);}, array_keys($update_data))
 					);
 
+				//Make the Success Page
+				$data['success_msg'] = "Item #{$key} in Table `{$table}` has been updated with the following:" ;
+				$data['success_body'] = $update_table;
+				$data['success_back_url'] = site_url('modify/table/'.$table);
+
 				$this->load->view('templates/header', $data);
 				$this->load->view('templates/hero-head', $data);
 				$this->load->view('templates/navbar', $data);
-				$this->load->view('modify/success', $data);
+				$this->load->view('templates/success', $data);
 				$this->load->view('templates/footer', $data);
 			}
 			else

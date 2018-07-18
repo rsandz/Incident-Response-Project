@@ -2,7 +2,7 @@
 	<div class="content">
 		<div class="columns is-centered">
 			<div class="box column is-half has-text-centered">
-				<h1><?php echo $success_msg?>.</h1>
+				<h1 class="title is-3"><?php echo $success_msg?></h1>
 				<?php if (isset($success_body)):?>
 					<p>
 						<?php echo $success_body?>

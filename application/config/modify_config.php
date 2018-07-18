@@ -52,32 +52,37 @@ $config['modify_rules'] = array(
  *	Dropdown Configuration
  *	======================
  *
- *	This will declare which fields are drop downs in the modify form.
- *	It will also declare the option to be seen by the end user and its value.
+ *	This will declare which fields are foreign Keys and will subsequently turn them into
+ *	dropdown selection boxes.
  *
- * The value in the dropdown will be the field name. (i.e. type_id)
+ * 	This is so that the user can select fields like project by name, instead of by id
  *
  * $config['dropdown_config'] = array(
- * 	'field_name' => array(
- * 		'table' => 'Name of the table to get data from'
- * 		'text_column' => 'Name of the column that the user will see (i.e. type_name)',
+ * 	'foreign_key' => array(
+ * 		'FK_table' => 'Name of the table that the foreign key maps to'
+ * 		'display_column' => 'Name of the column from the reference/foreign table that the user will see (i.e. type_name)'
  * 	)
  * );
  */
 
 $config['dropdown_config'] = array(
   	'type_id' => array(
-  		'table' => 'action_types',
-  		'text_column' => 'type_name',
+  		'FK_table' => 'action_types',
+  		'display_column' => 'type_name',
   	),
 
   	'project_id' => array(
-  		'table' => 'projects',
-  		'text_column' => 'project_name',
+  		'FK_table' => 'projects',
+  		'display_column' => 'project_name',
   	),
 
   	'action_id' => array(
-  		'table' => 'actions',
-  		'text_column' => 'action_name',
+  		'FK_table' => 'actions',
+  		'display_column' => 'action_name',
+  	),
+
+  	'project_leader' => array(
+  		'FK_table' => 'users',
+  		'display_column' => 'CONCAT(first_name, " ", last_name)'
   	),
  );
