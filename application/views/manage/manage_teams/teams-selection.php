@@ -46,8 +46,8 @@
 								</div>
 							</article>
 						</div>
-					</div>
-				<?php endforeach;?>
+					<?php endforeach;?>
+				</div>
 			<?php else:?>
 				<div class="box">
 					<h2 class="subtitle">No Teams to Manage</h2>

@@ -343,7 +343,7 @@ class Statistics_model extends MY_Model {
 		if ($this->session->privileges !== $match_privilege)
 		{
 			//lock user_id
-			$this->db->where('user_id', $this->session->user_id);
+			$this->db->where('users.user_id', $this->session->user_id);
 		}
 
 		return TRUE;
