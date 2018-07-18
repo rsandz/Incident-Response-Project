@@ -84,7 +84,7 @@ class Log_Builder
 	 * @param integer $id  The ID Number of the action
 	 * @return Log_Builder This library. Method chaining
 	 */
-	public function action_id($id)
+	public function action($id)
 	{
 		$this->log_action = $id;
 		return $this;
@@ -162,6 +162,12 @@ class Log_Builder
 	 */
 	public function team($identifier, $type = 'id')
 	{
+		//Check if null
+		if (empty($identifier) OR strtolower($identifier) == 'null')
+		{
+			$identifier = NULL;
+		}
+
 		$this->log_team = $identifier;
 		return $this;
 	}
@@ -174,6 +180,12 @@ class Log_Builder
 	 */
 	public function project($identifier, $type = 'id')
 	{
+		//Check if null
+		if (empty($identifier) OR strtolower($identifier) == 'null')
+		{
+			$identifier = NULL;
+		}
+		
 		$this->log_project = $identifier;
 		return $this;
 	}

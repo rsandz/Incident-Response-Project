@@ -46,9 +46,12 @@
 				<div class="control">
 					<div class="select"> 
 						<select name="team">
-							<?php foreach ($teams as $team_row): ?>
-								<?php echo '<option value="'.$team_row->team_id.'">'.$team_row->team_name.'</option><br>' ?>
-							<?php endforeach ?>
+							<?php if(!empty($teams)):?>
+								<?php foreach ($teams as $team_row): ?>
+									<?php echo '<option value="'.$team_row->team_id.'">'.$team_row->team_name.'</option><br>' ?>
+								<?php endforeach ?>
+							<?php endif;?>
+							<option value='null'>No Team</option>
 						</select>
 					</div>
 				</div>
