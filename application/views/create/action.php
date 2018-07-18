@@ -51,7 +51,7 @@
 					
 				</label>
 			</div>
-		
+			<?=$errors?>
 			<?=form_submit('submit', 'Create', 'class="button is-primary is-medium"');?>
 		</form>
 	</div>

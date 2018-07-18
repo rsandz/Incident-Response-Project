@@ -120,18 +120,20 @@ class Create extends CI_Controller {
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('templates/success', $data);
-			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
-		} else {
+		} 
+		else 
+		{
 			
 			$data['types'] = $this->get_model->get_action_types();
+			//Get errors
+			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
 
 			// Make the Form
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/action', $data);
-			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		}
 	}
@@ -174,16 +176,18 @@ class Create extends CI_Controller {
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('templates/success', $data);
-			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		} 
 		else 
 		{
+			//Get errors
+			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/project', $data);
-			$this->load->view('create/errors', $data);
+			$this->load->view('templates/errors', $data);
 			$this->load->view('templates/footer');
 		}
 			
@@ -233,16 +237,18 @@ class Create extends CI_Controller {
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('templates/success', $data);
-			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		} 
 		else 
 		{
+			//Get errors
+			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/user', $data);
-			$this->load->view('create/errors', $data);
+			$this->load->view('templates/errors', $data);
 			$this->load->view('templates/footer');
 		}
 
@@ -287,7 +293,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('templates/success', $data);
-			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		} 
 		else 
@@ -302,11 +307,14 @@ class Create extends CI_Controller {
 				$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select();
 			}
 
+			//Get errors
+			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/team', $data);
-			$this->load->view('create/errors', $data);
+			$this->load->view('templates/errors', $data);
 			$this->load->view('templates/footer');
 		}
 	}
@@ -354,17 +362,19 @@ class Create extends CI_Controller {
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('templates/success', $data);
-			$this->load->view('create/errors', $data);
 			$this->load->view('templates/footer');
 		} 
 		else 
 		{
+			//Get errors
+			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+
 			// Make the Form
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/action_type', $data);
-			$this->load->view('create/errors', $data);
+			$this->load->view('templates/errors', $data);
 			$this->load->view('templates/footer');
 		}
 	}

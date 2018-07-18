@@ -137,11 +137,14 @@ class Stats extends CI_Controller {
 				$this->session->user_id, 
 				$this->authentication->check_admin());
 
-			$data['team_modify_links'] = array_map(function($x)
-				{
-					return anchor("stats/team_stats/$x->team_id", "View", 'class="button is-info"');
-				},
-				$data['teams']);
+			if(!empty($data['teams']))
+			{
+				$data['team_stats_links'] = array_map(function($x)
+					{
+						return anchor("stats/team_stats/$x->team_id", "View", 'class="button is-info"');
+					},
+					$data['teams']);
+			}
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);

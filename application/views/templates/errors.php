@@ -8,6 +8,9 @@ $this->view('templates/errors', $data, TRUE)
 
 
 <!--Errors-->
-
-<?php echo validation_errors('<span class="has-text-danger">', '</span><br>')?>
-<span class="has-text-danger"><?php if (isset($errors)) echo $errors;?></span>
+<?php if (!empty(validation_errors() OR isset($errors))): ?>
+	<div class="notification is-danger">
+		<?php echo validation_errors()?>
+		<?php if (isset($errors)) echo $errors;?>
+	</div>
+<?php endif;?>
