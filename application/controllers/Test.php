@@ -11,23 +11,9 @@ class Test extends CI_Controller {
 
 	public function test()
 	{
-		$this->load->library('Log_Builder', NULL, 'lb');
-		// $insert_data = array(
-		// 	'action_id' => 1,
-		// 	'user_id' => $this->session->user_id,
-		// 	'log_date' => '2018-07-17',
-		// 	'log_time' => '12:12:00',
-		// 	'log_desc' => 'testing new daslib'
-		// );
-		// $this->logging->quick_log($insert_data);
-		$this->lb
-			->sys_action('Test sys')
-			->user(10)
-			->date('now')
-			->hours(10)
-			->desc('SYs Test2')
-			->log();
-		
+		$this->load->model('settings/admin_model', 'admin_settings');
+		$this->admin_settings->notify_investigated(10, 1);
+
 	}
 }
 

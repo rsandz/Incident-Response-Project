@@ -205,7 +205,11 @@ class Get_model extends MY_Model {
 									->count;
 
 		//Get Team leader
-		$query2 = $this->db->where('user_id', $query->team_leader)->get('users')->row();
+		$query2 = $this->db
+			->select('*, CONCAT(first_name, " ", last_name) as name')
+			->where('user_id', $query->team_leader)
+			->get('users')
+			->row();
 		if (isset($query2))
 		{
 			$data['team_leader_name'] = $query2->name;

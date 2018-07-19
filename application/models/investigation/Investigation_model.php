@@ -19,6 +19,9 @@ class Investigation_model extends MY_Model {
 	 */
 	public $total_rows;
 
+	/** @var integer ID of the incident that just got inserted */
+	public $insert_id;
+
 	/**
 	 * Constructor for the Investigation Model
 	 * Loads all the necessary resources
@@ -35,7 +38,15 @@ class Investigation_model extends MY_Model {
 	 */
 	public function insert_incident($insert_data)
 	{
-		return $this->db->insert('incidents', $insert_data);
+		$result = $this->db->insert('incidents', $insert_data);
+		$this->insert_id = $this->db->insert_id(); // Set last incident ID
+		return $result;
+	}
+
+	public function get_incident($incident_id)
+	{
+		$this->db->where('incident_id', $incident_id);
+		return $this->db->get('incidents')->row();
 	}
 
 	/**
@@ -44,7 +55,7 @@ class Investigation_model extends MY_Model {
 	 * @param  integer  $limit Amount of incidents to fetch. See MySql LIMIT
 	 * @return object          Result object from db->get()
 	 */
-	public function get_incidents($offset = 0, $limit = NULL)
+	public function get_all_incidents($offset = 0, $limit = NULL)
 	{
 		$limit = $limit ?: $this->config->item('per_page');
 

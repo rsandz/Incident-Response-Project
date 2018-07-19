@@ -79,10 +79,16 @@ class Investigation
 		//Put into Database
 		$this->CI->investigation_model->insert_incident($insert_data);
 
+		$this->notify_admin_new($this->CI->investigation_model->insert_id);
 		//Put into Log
 		//TODO: Hook up to logging lib
 
 		return TRUE;
+
+	}
+
+	public function investigate($incident_id)
+	{
 
 	}
 
@@ -99,12 +105,83 @@ class Investigation
 	 */
 	public function recent_incidents($offset = 0)
 	{
-		$data = $this->CI->investigation_model->get_incidents($offset);
+		$data = $this->CI->investigation_model->get_all_incidents($offset);
 		return array( 
 			'data' => $data, 
 			'total_rows' => $this->CI->investigation_model->total_rows,
 			'num_rows' => $data->num_rows()
 		);
+	}
+
+
+	/**
+	 * Notifies admins on new incidents if they have chosen to receive
+	 * notifications on new incidents
+	 * @param  integer $incident_id The ID of the incident
+	 * @return boolean              TRUE on success
+	 */
+	public function notify_admin_new($incident_id)
+	{
+		$this->CI->load->model('settings/admin_model', 'admin_settings');
+		//Get all the users with notify_new_incident_on
+		
+		//Load Library and Configs
+		$this->CI->load->library('email');
+		$this->CI->load->config('email');
+		$this->CI->load->config('incidents', TRUE);
+
+		$users_send_to = $this->CI->admin_settings->get_notify_new_incidents();
+		$incident_summary = $this->incident_summary($incident_id);
+
+		foreach ($users_send_to as $user)
+		{
+			//Generate the email
+			$this->CI->email->from($this->CI->config->item('smtp_user'), 'Incident Manager');
+			$this->CI->email->to($user->email);
+			
+			$this->CI->email->subject('New Incident');
+			
+			//Message formatting
+			$message = $this->CI->config->item('new_incident_body', 'incidents');
+			$message = str_replace('{name}', $user->name, $message);
+			$message = str_replace('{link}', "PlaceHolder", $message);
+			$message = str_replace('{summary}', $incident_summary, $message);
+
+			$this->CI->email->message($message);
+
+			//Send it out!
+			$this->CI->email->send();
+
+			return TRUE;
+		}
+	}
+
+	/**
+	 * Creates an HTML string summary of an incident
+	 * @param  integer $incident_id The incident to make the summary for
+	 * @return string               The HTML string
+	 */
+	public function incident_summary($incident_id)
+	{
+		$incident = $this->CI->investigation_model->get_incident($incident_id);
+
+		$name = $incident->incident_name;
+		$id = $incident->incident_id;
+		$date = $incident->incident_date;
+		$time = $incident->incident_time;
+		$desc = $incident->incident_desc;
+
+		$summary = "
+		<h3>Incident #{$id}: {$name}</h3>
+		<ul>
+			<li>Date of Occurence: {$date}</li>
+			<li>Time of Occurence: {$time}</li>
+		</ul>
+		<h3>Description: </h3>
+		<p>{$desc}</p>
+		";
+
+		return $summary;
 	}
 
 }

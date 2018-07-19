@@ -33,7 +33,8 @@ $config['modify_rules'] = array(
 	'users' => array(
 		'email' => 'required|valid_email',
 		'password' => 'required',
-		'name' => 'required',
+		'first_name' => 'required',
+		'last_name' => 'required',
 		'privileges' => 'required',
 		'user_id' => 'required'
 	),

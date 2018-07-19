@@ -63,15 +63,45 @@ class Account extends CI_Controller {
 	public function admin_settings()
 	{
 		$this->authentication->check_admin(TRUE);
+		
+		$this->load->model('settings/admin_model', 'admin_settings');
+		$this->load->library('form_validation');
+
+		$this->form_validation->set_rules('submit', 'Submit', 'required');
 
 		$data['title'] = 'Admin Settings';
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
-		$this->load->view('templates/navbar', $data);
-		$this->load->view('user/settings/admin-settings', $data);
+		if ($this->form_validation->run())
+		{
+			$this->admin_settings->notify_new_incident(
+				$this->session->user_id, $this->input->post('notify_new_incident', TRUE)
+			);
+			$this->admin_settings->notify_investigated(
+				$this->session->user_id, $this->input->post('notify_investigated', TRUE)
+			);
 
-		$this->load->view('templates/footer');
+			$data['success_msg'] = 'Your Settings have been updated';
+			$data['success_back_url'] = site_url('Account/admin-settings');
+
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar', $data);
+			$this->load->view('templates/success', $data);
+			$this->load->view('templates/footer');
+		}
+		else
+		{
+			//Create form
+			$data['current_settings'] = $this->admin_settings->get_current_settings($this->session->user_id);
+
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/hero-head', $data);
+			$this->load->view('templates/navbar', $data);
+			$this->load->view('user/settings/admin-settings', $data);
+			$this->load->view('templates/footer');
+		}
+
+		
 	}
 }
 
