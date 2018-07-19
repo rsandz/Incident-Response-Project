@@ -11,9 +11,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @uses Logging_model
  * @uses Action_Model
  * @uses Action_Type_Model
- * @uses User_model
- * @uses Team_model
- * @uses Project_model
  *
  * The Log Builder Library allows for he construction and insertion of acitvity logs.
  * It is inspired by the Code Igniter DB_Query_Builder Class.
@@ -40,6 +37,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *  	->date('now')
  *  	->project(2)
  * Will create a log with action_id = 1, project_id = 2, date and time right now, and user = current user.
+ * Note: to retrieve IDs, use the models in the tables folder.
  *
  * Furthermore, for system actions, the sys_action(action_name) method can be used.
  * This gets (or automatically creates, if it is non-existent) the action with
