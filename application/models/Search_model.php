@@ -76,9 +76,10 @@ class Search_model extends MY_Model {
 				{
 					//Will be using 'OR' between keywords		
 					$this->db->or_group_start();
-					//For Agregate Functions
+					
 					foreach ($query['keyword_filters'] as $column) 
 					{
+						//For Agregate Functions
 						if ($column == 'name')
 						{
 							$column = 'CONCAT(first_name, " ", last_name)';
@@ -95,9 +96,10 @@ class Search_model extends MY_Model {
 				{
 					//Will be using 'AND' between keywords		
 					$this->db->group_start();
-					//For Agregate Functions
+					
 					foreach ($query['keyword_filters'] as $column) 
 					{
+						//For Agregate Functions
 						if ($column == 'name')
 						{
 							$column = 'CONCAT(first_name, " ", last_name)';

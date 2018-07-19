@@ -12,6 +12,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class MY_Model extends CI_Model {
 
+	/** @var string Holds the most previous error */
+	protected $error;
+
 	/**
 	 * Constructor for the base model
 	 *
@@ -235,12 +238,35 @@ class MY_Model extends CI_Model {
 	}
 
 	/**
-	 * Gets the most recent error that has occured.
-	 * @return array Array containing error number and message
+	 * Get the last error that occured in the database class.
+	 * @return array Contains message and error number(code)
 	 */
-	public function get_error()
+	public function get_db_errors()
 	{
 		return $this->db->error();
+		$errors['model'] = $this->error;
+	}
+
+	/**
+	 * Get last error that occured in the model
+	 * @return string Error
+	 */
+	public function get_model_errors()
+	{
+		return $this->error;
+	}
+
+	/**
+	 * Gets the most recent error that has occured.
+	 * @return array Array containing:
+	 *               - db
+	 *               	- error number and message
+	 *               - model
+	 *               	- error message
+	 */
+	public function get_errors()
+	{
+		return array('db' => $this->get_db_errors(), 'model' => $this->get_model_errors());
 	}
 
 }

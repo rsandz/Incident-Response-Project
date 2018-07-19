@@ -1,6 +1,55 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Log Builder Library
+ * ===================
+ * @author Ryan Sandoval
+ * @package Logging
+ * @version 1.0
+ *
+ * @uses Logging_model
+ * @uses Action_Model
+ * @uses Action_Type_Model
+ * @uses User_model
+ * @uses Team_model
+ * @uses Project_model
+ *
+ * The Log Builder Library allows for he construction and insertion of acitvity logs.
+ * It is inspired by the Code Igniter DB_Query_Builder Class.
+ *
+ * --------------------------------------------------------------------------------
+ *
+ * The following properties of the log can be changed and can be called by calling
+ * their respective functions:
+ * 	- action  			action()
+ * 	- description  		desc()
+ * 	- hours  			hours()			Defaults to 0
+ * 	- user  			user() 			Defaults to current user in session
+ * 	- project  			project()		
+ * 	- team 				team()
+ * 	- date 				date()			Defaults to Date at moment of log
+ * 	- time 				time()			Defaults to Time at moment of log
+ *
+ * The log can then be inserted using log()
+ * Logs can be made by method chaining.
+ * 
+ * For example:
+ *  $this->Log_Builder
+ *  	->action(1)
+ *  	->date('now')
+ *  	->project(2)
+ * Will create a log with action_id = 1, project_id = 2, date and time right now, and user = current user.
+ *
+ * Furthermore, for system actions, the sys_action(action_name) method can be used.
+ * This gets (or automatically creates, if it is non-existent) the action with
+ * the provided action name that has an action type of 'System'.
+ * 	- This is useful for things like 'Create', 'Modify', 'Manage' Logs.
+ * 
+ *
+ * For more information on what can be set please read the comments above the setting functions.
+ * 	
+ */
 class Log_Builder
 {
 	/** @var object Code Igniter Instance Reference */
@@ -11,7 +60,7 @@ class Log_Builder
 	----------------*/
 
 	/** @var integer Action ID of log */
-	protected $log_action;
+	protected $log_action = NULL;
 
 	/** @var string Description of the log */
 	protected $log_desc = '';
@@ -20,19 +69,19 @@ class Log_Builder
 	protected $log_hours = 0;
 
 	/** @var integer ID of user making the log */
-	protected $log_user;
+	protected $log_user = NULL;
 
 	/** @var integer ID of team affiliated with the log */	
-	protected $log_team;
+	protected $log_team = NULL;
 
 	/** @var integer ID of project affiliated with the log */
-	protected $log_project;
+	protected $log_project = NULL;
 
 	/** @var date|string The Date of the log*/
-	protected $log_date;
+	protected $log_date = NULL;
 
 	/** @var time|string The time of the log */
-	protected $log_time;
+	protected $log_time = NULL ;
 
 	/** @var int The ID of the system log action type */
 	protected $sys_type_id;
@@ -60,13 +109,13 @@ class Log_Builder
 
 	/**
 	 * Inserts the provided log data into the database,
-	 * after performing validation.
+	 * after performing validation on the data.
 	 * @param  array $insert_data Associative array of the data
 	 * @return boolean            TRUE if successful. FALSE if not.
 	 */
 	public function quick_log($insert_data)
 	{
-		$this->fill_data($insert_data);
+		$this->fill_data($insert_data); //Set default
 		if ($this->validate($insert_data))
 		{
 			$this->log_data = $insert_data;
@@ -98,6 +147,7 @@ class Log_Builder
 	 */
 	public function sys_action($action_name)
 	{
+		$this->CI->action_model->type($this->sys_type_id);
 		$sys_action = $this->CI->action_model->get_by_name($action_name);
 		if (!$sys_action) //No system action
 		{
@@ -126,7 +176,6 @@ class Log_Builder
 	 */
 	public function desc($desc)
 	{
-
 		$this->log_desc .= $desc;
 		return $this;
 	}
@@ -144,49 +193,46 @@ class Log_Builder
 
 	/**
 	 * Sets the user creating the log
-	 * @param  mixed $identifier The Identifier for the user. (i.e. ID, name)
-	 * @param  string $type      How to indterpret the identifier (i.e. 'id', 'name')
+	 * @param  mixed $id The ID of the user
 	 * @return Log_Builder       Method Chaining
 	 */
-	public function user($identifier, $type = 'id')
+	public function user($id)
 	{
-		$this->log_user = $identifier;
+		$this->log_user = $id;
 		return $this;
 	}
 
 	/**
 	 * Sets the team in the log
-	 * @param  mixed $identifier The identifier for the team (i.e. ID, name)
-	 * @param  string $type      How to interpret the identifier. (i.e. 'id', 'name')
+	 * @param  mixed $id The ID of the team
 	 * @return Log_Builder       Method Chaining
 	 */
-	public function team($identifier, $type = 'id')
+	public function team($id)
 	{
 		//Check if null
-		if (empty($identifier) OR strtolower($identifier) == 'null')
+		if (empty($id) OR strtolower($id) == 'null')
 		{
-			$identifier = NULL;
+			$id = NULL;
 		}
 
-		$this->log_team = $identifier;
+		$this->log_team = $id;
 		return $this;
 	}
 
 	/**
 	 * Sets the project in the log
-	 * @param  mixed $identifier The identifier for the project (i.e. ID, name)
-	 * @param  string $type      How to interpret the identifier. (i.e. 'id', 'name')
+	 * @param  mixed $id The id of the project
 	 * @return Log_Builder       Method Chaining
 	 */
-	public function project($identifier, $type = 'id')
+	public function project($id)
 	{
 		//Check if null
-		if (empty($identifier) OR strtolower($identifier) == 'null')
+		if (empty($id) OR strtolower($id) == 'null')
 		{
-			$identifier = NULL;
+			$id = NULL;
 		}
 		
-		$this->log_project = $identifier;
+		$this->log_project = $id;
 		return $this;
 	}
 
@@ -194,7 +240,7 @@ class Log_Builder
 	 * Sets the Date of the log
 	 * Can pass 'now' to set both the time and date to now
 	 * @param  mixes $date The date
-	 * @return void       
+	 * @return Log_Builder Method Chaining       
 	 */
 	public function date($date)
 	{
@@ -214,7 +260,7 @@ class Log_Builder
 	 * Sets the time of the log.
 	 * Can pass 'now' to set both the time and date to now
 	 * @param  mixed $time The time
-	 * @return void       
+	 * @return Log_Builder Method Chaining       
 	 */
 	public function time($time)
 	{
@@ -315,7 +361,9 @@ class Log_Builder
 	{
 		$defaults = array(
 			'hours' => 0,
-			'user_id' => $this->curr_user
+			'user_id' => $this->curr_user,
+			'log_date' => date('Y-m-d'),
+			'log_time' => date('H:i:s')
 		);
 		foreach ($defaults as $default => $value)
 		{
