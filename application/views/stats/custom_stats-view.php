@@ -8,7 +8,7 @@
 			</div>
 			<div class="level-right">
 				<div class="level-item">
-					<?php echo anchor('stats/custom/create/'.$index, 'Edit Query', 'class="button is-primary"');?>
+					<?php echo anchor('Stats/custom/create/'.$index, 'Edit Query', 'class="button is-primary"');?>
 				</div>
 			</div>
 		</div>

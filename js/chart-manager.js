@@ -444,7 +444,7 @@ class chartManager
     		};
     	$('#to_date').val(elementData.toDate);
     	$('#from_date').val(elementData.fromDate);
-    	$('#query').val(JSON.stringify(elementData.query));
+    	$('#query').val(elementData.query);
     	$('#search-form').submit();
     }
 

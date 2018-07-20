@@ -65,18 +65,11 @@ $config['user_teams']['headings'] = array(
 );
 
 /**
- * For the table created by the Searching. (Search/results)
- */
-
-$config['logs']['select'] = array(
-	'CONCAT(first_name, " ", last_name) as Name', 'action_name as Action Name', 'type_name as Type', 'project_name as Project', 'team_name as Team', 'log_desc as Description', 'hours as Hours', 'log_date as Date', 'log_time as Time'
-);
-
-/**
  * Action logs table in Modify
  */
 
-$config['action_logs']['headings'] = $config['logs']['select'];
+$config['action_logs']['headings'] = array(
+	'CONCAT(first_name, " ", last_name) as Name', 'action_name as Action Name', 'type_name as Type', 'project_name as Project', 'team_name as Team', 'log_desc as Description', 'hours as Hours', 'log_date as Date', 'log_time as Time');
 
 $config['logs']['join'] = array(
 	'actions' => 'actions.action_id = action_log.action_id',

@@ -8,10 +8,10 @@
 	<!-- Project and Team ID for AJAX-->
 	<input id="project_id" name="project_id" <?php echo isset($project_id) ? "value='${project_id}'" : NULL;?> hidden>
 	<input id="team_id" name="team_id" <?php echo isset($team_id) ? "value='${team_id}'" : NULL;?> hidden>
-	<!-- Index for Custom stats -->
-	<input id="query_index" name="query_index" <?php echo isset($index) ? "value='$index'" : NULL;?> hidden>
 	<!-- Search Query-->
 	<input id="query" name="query" hidden>
+	<!-- Search Query Index for Custom Querries -->
+	<input id="query_index" name="query_index" <?php echo isset($index) ? "value='$index'" : NULL;?> hidden>
 </form>
 
 

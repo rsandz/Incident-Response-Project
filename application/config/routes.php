@@ -157,11 +157,6 @@ $route['Ajax/(:any)/(:any)'] = 'Ajax/$1/$2';
 $route['Ajax/(:any)'] = 'Ajax/$1';
 
 /*
-	Test Controller Route
- */
-$route['test'] = 'Test/test';
-
-/*
 	Default Route
  */
 $route['default_controller'] = 'Welcome/index';

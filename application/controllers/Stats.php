@@ -25,6 +25,7 @@ class Stats extends CI_Controller {
 		parent::__construct();
 		$this->load->model('get_model');
 		$this->load->model('statistics_model');
+		$this->load->model('search_model');
 		$this->load->helper('form');
 		$this->config->load('stats_config');
 		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
@@ -190,8 +191,20 @@ class Stats extends CI_Controller {
 		if ($this->input->server('REQUEST_METHOD') == 'POST')
 		{
 			//Must be a new query, so save it.
-			$query = query_from_post();
-			$query['back_url'] = current_url(); //Set back url
+			$this->search_model
+					->keywords($this->input->post('keywords', TRUE))
+					->keywords_in($this->input->post('kfilters'), TRUE)
+					->keywords_type($this->input->post('ksearch_type', TRUE))
+					->from_date($this->input->post('from_date' , TRUE))
+					->to_date($this->input->post('to_date', TRUE))
+					->action_types($this->input->post('action_types[]', TRUE))
+					->users($this->input->post('users[]', TRUE))
+					->projects($this->input->post('projects[]', TRUE))
+					->teams($this->input->post('teams[]', TRUE))
+					->null_projects($this->input->post('null_projects', TRUE))
+					->null_teams($this->input->post('null_teams', TRUE));
+
+			$query = $this->search_model->export_query();
 			$this->session->set_userdata('query_'.$index, $query);
 		}
 		else
@@ -205,6 +218,11 @@ class Stats extends CI_Controller {
 				redirect('Stats/create_custom/'.$index,'refresh');
 			}
 		}
+
+		//Get query summary
+		$this->load->helper('search_helper');
+		$data['query_string'] = query_summary($query);
+		
 		//Display the stats
 		$data['header'] = array(
 			'text' => 'Custom Statistic '.$index,
@@ -212,7 +230,6 @@ class Stats extends CI_Controller {
 		$data['title'] = 'Custom Statistic '.$index;
 		$data['interval_options'] = $this->config->item('interval_options');
 		$data['index'] = $index; //The custom stat id number.
-		$data['query_string'] = query_to_string($query);
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);

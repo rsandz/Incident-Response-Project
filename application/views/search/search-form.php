@@ -8,7 +8,7 @@
 	</div>
 	<!-- End of Form Errors-->
 
-	<?php echo form_open('Search/result'); ?>
+	<?php echo form_open('Search/result', NULL, array('back_url' => current_url())); ?>
 		<div class="columns is-centered">
 			<div class="column is-three-quarters ">
 				<div class="columns">
@@ -29,7 +29,7 @@
 							<div class="field-body">
 								<div class="field">
 									<div class="control">
-										<label class="checkbox"><input name="kfilters[]" type="checkbox" class="checkbox" value="name" <?=set_checkbox('kfilters[]', 'name', TRUE)?>>Name</label>
+										<label class="checkbox"><input name="kfilters[]" type="checkbox" class="checkbox" value="user_name" <?=set_checkbox('kfilters[]', 'user_name', TRUE)?>>Name</label>
 										<label class="checkbox"><input name="kfilters[]" type="checkbox" class="checkbox" value="team_name" <?=set_checkbox('kfilters[]', 'team_name', TRUE)?>>Team</label>
 										<label class="checkbox"><input name="kfilters[]" type="checkbox" class="checkbox" value="project_name" <?=set_checkbox('kfilters[]', 'project_name', TRUE)?>>Project</label>
 										<label class="checkbox"><input name="kfilters[]" type="checkbox" class="checkbox" value="action_name" <?=set_checkbox('kfilters[]', 'action_name', TRUE)?>>Action</label>

@@ -41,9 +41,15 @@ class Dashboard extends CI_Controller {
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
+		
 		//Loads table for previous entries
-		$this->load->model('statistics_model');
-		$data['entries_table'] = $this->statistics_model->get_my_entries_table();
+		$this->load->model('searching/search_model');
+		$this->load->library('table');
+		$this->search_model->pagination($this->config->item('per_page'));
+		$previous_logs = $this->search_model->search();
+
+		$data['entries_table'] = $this->table->my_generate($previous_logs);
+
 		$this->load->view('logging/user-entries', $data); 
 
 		$this->load->view('templates/footer');

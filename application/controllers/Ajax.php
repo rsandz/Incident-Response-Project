@@ -22,9 +22,9 @@ class Ajax extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->load->model('Searching/search_model');
 		$this->load->model('statistics_model');
 		$this->load->model('Form_get_model');
-		$this->load->model('search_model');
 		$this->load->helper('form');
 		$this->load->helper('url');
 
@@ -90,10 +90,7 @@ class Ajax extends CI_Controller {
 	public function get_user_log_frequency()
 	{
 		$data = $this->statistics_model->get_log_frequency(
-			$this->input->get('interval_type', TRUE),
-			array('users' => $this->session->user_id)
-		);
-
+			$this->input->get('interval_type', TRUE));
 		//Give the data a name. Used for the graph legend
 		$data['name'] = 'User Log Frequency';
 		echo json_encode($data);
@@ -108,10 +105,8 @@ class Ajax extends CI_Controller {
 	public function get_user_hours()
 	{
 		$data = $this->statistics_model->get_hours(
-			$this->input->get('interval_type'),
-			array('users' => $this->session->user_id)
+			$this->input->get('interval_type')
 		);
-
 		//Give the data a name. Used for the graph legend
 		$data['name'] = 'User Hours';
 		echo json_encode($data);
@@ -126,6 +121,10 @@ class Ajax extends CI_Controller {
 	 */
 	public function get_project_log_frequency($project_id)
 	{
+		$this->statistics_model->null_projects(FALSE);
+		$this->statistics_model->null_teams(FALSE);
+		$this->statistics_model->projects($project_id);
+
 		$data = $this->statistics_model->get_log_frequency(
 			$this->input->get('interval_type', TRUE), 
 			array('projects' => $project_id)
@@ -145,6 +144,10 @@ class Ajax extends CI_Controller {
 	 */
 	public function get_project_hours($project_id)
 	{
+		$this->statistics_model->null_projects(FALSE);
+		$this->statistics_model->null_teams(FALSE);
+		$this->statistics_model->projects($project_id);
+
 		$data = $this->statistics_model->get_hours(
 			$this->input->get('interval_type', TRUE), 
 			array('projects' => $project_id)
@@ -164,6 +167,10 @@ class Ajax extends CI_Controller {
 	 */
 	public function get_team_log_frequency($team_id)
 	{
+		$this->statistics_model->null_projects(FALSE);
+		$this->statistics_model->null_teams(FALSE);
+		$this->statistics_model->teams($team_id);
+
 		$data = $this->statistics_model->get_log_frequency(
 			$this->input->get('interval_type', TRUE), 
 			array('teams' => $team_id)
@@ -183,6 +190,10 @@ class Ajax extends CI_Controller {
 	 */
 	public function get_team_hours($team_id)
 	{
+		$this->statistics_model->null_projects(FALSE);
+		$this->statistics_model->null_teams(FALSE);
+		$this->statistics_model->teams($team_id);
+
 		$data = $this->statistics_model->get_hours(
 			$this->input->get('interval_type', TRUE), 
 			array('teams' => $team_id)
@@ -201,10 +212,9 @@ class Ajax extends CI_Controller {
 	 */
 	public function get_custom_log_frequency($index)
 	{
+		$this->statistics_model->import_query($this->session->{'query_'.$index});
 		$data = $this->statistics_model->get_log_frequency(
-			$this->input->get('interval_type', TRUE),
-			$this->session->{'query_'.$index}
-		);
+			$this->input->get('interval_type', TRUE));
 
 		//Give the data a name. Used for the graph legend
 		$data['name'] = "Custom Stats {$index} Log Freq";
@@ -219,6 +229,7 @@ class Ajax extends CI_Controller {
 	 */
 	public function get_custom_hours($index)
 	{
+		$this->statistics_model->import_query($this->session->{'query_'.$index});
 		$data = $this->statistics_model->get_hours(
 			$this->input->get('interval_type', TRUE), 
 			$this->session->{'query_'.$index}

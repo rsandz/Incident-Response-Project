@@ -34,13 +34,16 @@ class Search extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->library('form_validation');
+		$this->load->library('table');
 		$this->load->helper('form');
 		
-		$this->load->model('statistics_model');
-		$this->load->model('search_model');
 		$this->load->model('get_model');
 
 		$this->authentication->check_login(TRUE);
+		$this->load->model('Searching/search_model');
+		$this->search_model->user_lock(!$this->authentication->check_admin());
+
+
 	}
 
 	/**
@@ -88,70 +91,102 @@ class Search extends CI_Controller {
 	 */
 	public function search($offset = 0)
 	{
-		$user_lock = ($this->session->privileges === 'admin') ? FALSE : TRUE;
-		$this->load->helper('search_helper');
+		
 		// If there is a post request method, then it is a new query. Otherwise, its just a pagination request
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') 
 		{
 			if(!empty($this->input->post('query', TRUE)))
 			{
-				//Use the premade query already in post array
-				//This query must be posted in json format
-				$query = query_in_post();
+				//Use a query inside post since query is defined
+				$this->search_model->import_query($this->input->post('query', TRUE));
+
+				if (!empty($this->input->post('from_date' , TRUE)))
+				{
+					$this->search_model->from_date($this->input->post('from_date' , TRUE));
+				}
+				if(!empty($this->input->post('to_date', TRUE)))
+				{
+					$this->search_model->to_date($this->input->post('to_date', TRUE));
+				}
 			}
-			elseif(!empty($this->input->post('query_index', TRUE)))
+			elseif (!empty($this->input->post('query_index', TRUE)))
 			{
-				//Used a stored query since query_index is defined
-				$query = query_from_session($this->input->post('query_index', TRUE));
+				//Query is stored in the session data. So get it from there
+				$query = $this->session->{'query_'.$index};
+				$this->search_model->import_query($query);
+
+				if (!empty($this->input->post('from_date' , TRUE)))
+				{
+					$this->search_model->from_date($this->input->post('from_date' , TRUE));
+				}
+				if(!empty($this->input->post('to_date', TRUE)))
+				{
+					$this->search_model->to_date($this->input->post('to_date', TRUE));
+				}
 			}
 			else
 			{
-				$query = query_from_post();
+				$this->search_model
+					->keywords($this->input->post('keywords', TRUE))
+					->keywords_in($this->input->post('kfilters'), TRUE)
+					->keywords_type($this->input->post('ksearch_type', TRUE))
+					->from_date($this->input->post('from_date' , TRUE))
+					->to_date($this->input->post('to_date', TRUE))
+					->action_types($this->input->post('action_types[]', TRUE))
+					->users($this->input->post('users[]', TRUE))
+					->projects($this->input->post('projects[]', TRUE))
+					->teams($this->input->post('teams[]', TRUE))
+					->null_projects($this->input->post('null_projects', TRUE))
+					->null_teams($this->input->post('null_teams', TRUE));
 			}
-			$this->session->set_userdata('search_query', $query);
+
 			$offset = 0; //Reset Offset
 		}
 		else
 		{
-			$query = $this->session->search_query;
 			// Retrieve array for query
+			$query = $this->session->last_search_query;
+			$this->search_model->import_query($query);
 		}
-		//Keywords
-		$keyword_ids = $this->search_model->keyword_search($query);
-		
-		//Filters
-		$filter_ids = $this->search_model->filter_search($query);
 
-		//Intersect ids
-		$match_ids = array_intersect($keyword_ids, $filter_ids);
+		//Store query
+		$query = $this->search_model->export_query();
+		$this->session->set_userdata('last_search_query', $query);
 
-		//Get Entries
-		$log_entries = $this->search_model->get_log_entries($match_ids, $offset);
-
-		if (empty($log_entries))
+		//Getting the back URL
+		if (!empty($this->input->post('back_url', TRUE)))
 		{
-			//No Results
-			$data['table'] = 'No Results Found';
-			$data['num_rows'] = 0;
+			$back_url = $this->input->post('back_url', TRUE);
+			$this->session->set_userdata('back_url', $back_url);
 		}
 		else
 		{
-			//Turn Entries into Table
-			$data['table'] = $this->table->my_generate($log_entries);
-			$data['num_rows'] = $this->search_model->total_rows;
-
-			$this->load->library('pagination');
-			$data['page_links'] = $this->pagination->my_create_links($data['num_rows'], 'Search/result/');
+			$back_url = $this->session->back_url;
 		}
+		$data['back_url'] = $back_url;
+		
+		//Apply pagination
+		$this->search_model->pagination(
+			$this->config->item('per_page'), $offset
+		);
+
+		//Get the data
+		$search_data = $this->search_model->search();
+
+		$data['num_rows'] = $this->search_model->unpaginated_rows;
+		
+		//Turn Data into Table
+		$data['table'] = $this->table->my_generate($search_data);
+
+		$this->load->library('pagination');
+		$data['page_links'] = $this->pagination->my_create_links($data['num_rows'], 'Search/result/');
 
 		$data['title'] = 'Search Results';
 		$data['header'] = array(
 			'colour' => 'is-info',
 			'text'   => 'Results'
 		);
-		$data['query'] = $query;
 		
-		$data['back_url'] = $query['back_url'];
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
