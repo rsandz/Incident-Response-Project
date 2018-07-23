@@ -14,9 +14,16 @@
 				</div>
 			</div>
 		<?php endforeach;?>
+		<hr>
 
-		<?php echo form_submit('modify', 'Modify', 'class="button is-info"');?>
-		<?php echo anchor("modify/table/{$table}", 'Cancel', 'class="button is-danger"');?>
+		<div class="field is-grouped">
+			<div class="control">
+				<?php echo anchor("modify/table/{$table}", 'Cancel', 'class="button is-danger is-medium"');?>
+			</div>
+			<div class="control">
+				<?php echo form_submit('modify', 'Modify', 'class="button is-info is-medium"');?>
+			</div>
+		</div>
 
 	</div>
 </div>

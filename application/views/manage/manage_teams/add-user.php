@@ -17,8 +17,10 @@
 			</div>
 			<hr>
 			<div class="level">
-				<div class="level-item">
-					<input type="Submit" name="submit" value="Add Users" class="button is-info">
+				<div class="level-right">
+					<div class="level-item">
+						<input type="Submit" name="submit" value="Add Users" class="button is-medium is-info">
+					</div>
 				</div>
 			</div>
 		</form>

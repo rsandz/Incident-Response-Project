@@ -187,7 +187,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/project', $data);
-			$this->load->view('templates/errors', $data);
 			$this->load->view('templates/footer');
 		}
 			
@@ -248,7 +247,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/user', $data);
-			$this->load->view('templates/errors', $data);
 			$this->load->view('templates/footer');
 		}
 
@@ -314,7 +312,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/team', $data);
-			$this->load->view('templates/errors', $data);
 			$this->load->view('templates/footer');
 		}
 	}
@@ -374,7 +371,6 @@ class Create extends CI_Controller {
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
 			$this->load->view('create/action_type', $data);
-			$this->load->view('templates/errors', $data);
 			$this->load->view('templates/footer');
 		}
 	}

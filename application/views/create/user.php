@@ -32,8 +32,9 @@
 				<label class="label">Confirm Password: <span class="has-text-danger">(Required)</span></label>
 				<div class="control"><input name="password-confirm" type="password" class="input"></div>
 			</div>
-		
-			<?=form_submit('submit', 'Create', 'class="button is-primary is-medium"');?>
+			<?=$errors?>
+			<hr>
+			<?=form_submit('submit', 'Create', 'class="button is-info is-medium"');?>
 		</form>
 	</div>
 </div>

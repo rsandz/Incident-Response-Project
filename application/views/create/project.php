@@ -18,7 +18,9 @@
 					<p class="has-text-right">Supports some HTML Markups. Click <?php echo anchor('Help/markups', 'here');?> to learn more.</p>
 				</div>
 			</div>
-			<?=form_submit('submit', 'Create', 'class="button is-primary is-medium"');?>
+			<?=$errors?>
+			<hr>
+			<?=form_submit('submit', 'Create', 'class="button is-info is-medium"');?>
 		</form>
 	</div>
 </div>

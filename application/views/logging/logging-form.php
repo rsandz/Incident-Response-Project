@@ -135,8 +135,6 @@
 
 			<div class="level">
 				<div class="level-left">
-				</div>
-				<div class="level-right">
 						<div class="field is-grouped">
 							<div class="control">
 								<p class="button is-danger is-medium">Reset</p>
@@ -145,6 +143,8 @@
 								<input type="submit" class = "button is-info is-medium" name="submit" value="New Log" />
 							</div>
 						</div>
+				</div>
+				<div class="level-right">
 					<div class="level-item">
 					</div>
 				</div>

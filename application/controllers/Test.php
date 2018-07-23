@@ -34,8 +34,15 @@ class Test extends CI_Controller {
 		$this->load->helper('search');
 		echo query_summary('{"SB_keywords":[],"SB_keywords_in":["CONCAT(first_name, \" \", last_name)","team_name","project_name","action_name","type_name","log_desc"],"SB_keyword_type":"any","SB_from_date":null,"SB_to_date":null,"SB_action_types":[],"SB_projects":[],"SB_teams":[],"SB_users":"10","SB_null_teams":true,"SB_null_projects":true}');
 	}
-}
 
+	public function gapi()
+	{
+		$this->load->library('Google/analytics');
+		$report = $this->analytics->get_report();
+		$this->analytics->print_results($report);
+	}
+
+}
 /* End of file Test.php */
 /* Location: ./application/controllers/Test.php */
 
