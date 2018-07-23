@@ -478,6 +478,12 @@ class chartManager
 		this.chart.data = chartData;
 		this.chart.options.scales.yAxes[0].ticks.max = this.maxY;
 		this.chart.update();
+
+		//Debug mode
+		if (this.debugMode)
+		{
+			console.log(this);
+		}
 		return true;
 	}
 

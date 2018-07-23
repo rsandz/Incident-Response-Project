@@ -701,6 +701,21 @@ class Search_model extends MY_Model {
 	}
 
 	/**
+	 * Returns a string containing Debug Data
+	 * Can just be echoed
+	 * @return string Denug Data
+	 */
+	public function get_debug()
+	{
+		$string = '';
+		foreach ($this->debug as $name => $content)
+		{
+			$string .= "<b>{$name}:</b> {$content} <br><br>";
+		}
+		return $string;
+	}
+
+	/**
 	 * Resets the stored search query.
 	 * @return void 
 	 */

@@ -144,10 +144,9 @@ class Statistics_model extends Search_Model {
 
 			case 'weekly':
 				$this->db
-					->group_by('MONTH(log_date)')
-					->select('CONCAT(MONTHNAME(log_date), " ", YEAR(log_date)) AS x, COUNT(*) AS y')
-					->order_by('YEAR(log_date)', 'ASC')
-					->order_by('MONTH(log_date)', 'ASC');
+					->group_by('WEEKOFYEAR(log_date)')
+					->select('DATE_SUB(log_date, INTERVAL (WEEKDAY(log_date) - 1) DAY) AS x, COUNT(*) AS y')
+					->order_by('log_date', 'DESC');
 				break;
 
 			case 'monthly':

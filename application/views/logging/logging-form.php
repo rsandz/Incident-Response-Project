@@ -131,8 +131,23 @@
 				<p class="has-text-right">Supports some HTML Markups. Click <?php echo anchor('Help/markups', 'here');?> to learn more.</p>
 			</div>
 				
-			<div class="field">
-				<input type="submit" class = "button is-primary" name="submit" value="New Log" />
+			<hr>
+
+			<div class="level">
+				<div class="level-left">
+				</div>
+				<div class="level-right">
+						<div class="field is-grouped">
+							<div class="control">
+								<p class="button is-danger is-medium">Reset</p>
+							</div>
+							<div class="control">
+								<input type="submit" class = "button is-info is-medium" name="submit" value="New Log" />
+							</div>
+						</div>
+					<div class="level-item">
+					</div>
+				</div>
 			</div>
 		</div>
 

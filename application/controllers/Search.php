@@ -172,6 +172,7 @@ class Search extends CI_Controller {
 
 		//Get the data
 		$search_data = $this->search_model->search();
+		echo $this->search_model->get_debug();
 
 		$data['num_rows'] = $this->search_model->unpaginated_rows;
 		
