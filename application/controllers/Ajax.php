@@ -212,7 +212,17 @@ class Ajax extends CI_Controller {
 	 */
 	public function get_custom_log_frequency($index)
 	{
-		$this->statistics_model->import_query($this->session->{'query_'.$index});
+		$indexed_query = $this->session->{'query_'.$index};
+		if (empty($indexed_query))
+		{
+			//i.e. Get empty data set
+			$this->statistics_model->from_date('0000-00-00');
+			$this->statistics_model->to_date('0000-00-00');
+		}
+		else
+		{
+			$this->statistics_model->import_query();
+		}
 		$data = $this->statistics_model->get_log_frequency(
 			$this->input->get('interval_type', TRUE));
 
@@ -229,7 +239,17 @@ class Ajax extends CI_Controller {
 	 */
 	public function get_custom_hours($index)
 	{
-		$this->statistics_model->import_query($this->session->{'query_'.$index});
+		$indexed_query = $this->session->{'query_'.$index};
+		if (empty($indexed_query))
+		{
+			//i.e. Get empty data set
+			$this->statistics_model->from_date('0000-00-00');
+			$this->statistics_model->to_date('0000-00-00');
+		}
+		else
+		{
+			$this->statistics_model->import_query();
+		}
 		$data = $this->statistics_model->get_hours(
 			$this->input->get('interval_type', TRUE), 
 			$this->session->{'query_'.$index}

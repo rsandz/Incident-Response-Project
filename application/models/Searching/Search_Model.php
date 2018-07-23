@@ -676,6 +676,11 @@ class Search_model extends MY_Model {
 	 */
 	public function import_query($json)
 	{
+		if(empty($json))
+		{
+			$this->error('Import JSON is empty');
+			return;
+		}
 		$import = json_decode($json);
 
 		foreach ($import as $property_name => $value)
