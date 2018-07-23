@@ -71,7 +71,7 @@ class Authentication
         $this->CI =& get_instance();
 
         //Load the user authentication model
-        $this->CI->load->model('tables/user_model');
+        $this->CI->load->model('Tables/user_model');
 
         //Load Configuration and Set the properties
         $this->CI->load->config('authentication', TRUE);

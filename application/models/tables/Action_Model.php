@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Action_Model extends MY_Model {
+class Action_model extends MY_Model {
 
 	/** @var int The ID of the action_type to filter by */
 	protected $type_id;
@@ -121,5 +121,5 @@ class Action_Model extends MY_Model {
 	}
 }
 
-/* End of file Action_Model.php */
-/* Location: ./application/models/Logging/Action_Model.php */
+/* End of file Action_model.php */
+/* Location: ./application/models/Logging/Action_model.php */

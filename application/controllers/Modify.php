@@ -35,7 +35,7 @@ class Modify extends CI_Controller {
 		parent::__construct();
 
 		$this->load->library('form_validation');
-		$this->load->library('Log_Builder', NULL, 'lb');
+		$this->load->library('log_builder', NULL, 'lb');
 		$this->load->helper('form');
 
 		$this->load->model('modify_model');

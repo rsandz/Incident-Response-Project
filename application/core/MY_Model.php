@@ -256,7 +256,7 @@ class MY_Model extends CI_Model {
 		$string = '';
 		foreach ($this->errors as $index => $error_msg)
 		{
-			$string .= "Error #{$index}: {$error_msg}";
+			$string .= "Error #{$index}: {$error_msg}<br>";
 		}
 		return $string;
 	}

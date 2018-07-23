@@ -64,7 +64,7 @@ class Account extends CI_Controller {
 	{
 		$this->authentication->check_admin(TRUE);
 		
-		$this->load->model('settings/admin_model', 'admin_settings');
+		$this->load->model('Settings/admin_model', 'admin_settings');
 		$this->load->library('form_validation');
 
 		$this->form_validation->set_rules('submit', 'Submit', 'required');

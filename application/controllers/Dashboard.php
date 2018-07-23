@@ -43,7 +43,7 @@ class Dashboard extends CI_Controller {
 		$this->load->view('templates/navbar', $data);
 		
 		//Loads table for previous entries
-		$this->load->model('searching/search_model');
+		$this->load->model('Searching/search_model');
 		$this->load->library('table');
 		$this->search_model->pagination($this->config->item('per_page'));
 		$previous_logs = $this->search_model->search();

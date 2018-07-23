@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Action_Type_Model extends MY_Model {
+class Action_type_model extends MY_Model {
 
 	public function __construct()
 	{
@@ -119,5 +119,5 @@ class Action_Type_Model extends MY_Model {
 
 }
 
-/* End of file Action_Type_Model.php */
-/* Location: ./application/models/Logging/Action_Type_Model.php */
+/* End of file Action_type_model.php */
+/* Location: ./application/models/Logging/Action_type_model.php */

@@ -48,7 +48,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * For more information on what can be set please read the comments above the setting functions.
  * 	
  */
-class Log_Builder
+class Log_builder
 {
 	/** @var object Code Igniter Instance Reference */
 	protected $CI;
@@ -96,8 +96,8 @@ class Log_Builder
 
         //Load the model
         $this->CI->load->model('Logging/logging_model');
-        $this->CI->load->model('tables/action_type_model');
-        $this->CI->load->model('tables/action_model');
+        $this->CI->load->model('Tables/action_type_model');
+        $this->CI->load->model('Tables/action_model');
 
         //Set the time zone
         date_default_timezone_set($this->CI->config->item('timezone')); //SETS DEFAULT TIME ZONE
@@ -405,4 +405,4 @@ class Log_Builder
 }
 
 /* End of file Log_Builder.php */
-/* Location: ./application/libraries/Log_Builder.php */
+/* Location: ./application/libraries/Log_builder.php */

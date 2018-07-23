@@ -17,6 +17,15 @@ class Investigation
 	/** @var object Code Igniter Instance */
 	protected $CI;
 
+	protected $IL_name = NULL;
+	protected $IL_date = NUll;
+	protected $IL_time = NUll;
+	protected $IL_desc = '';
+	protected $IL_auto = TRUE;
+	protected $IL_user = NUll;
+
+	protected $errors = array();
+
 	/** 
 	 * User ID for creating new incidents and logging.
 	 * @var int
@@ -42,7 +51,7 @@ class Investigation
         $this->user_id = $user_id ?: $this->CI->session->user_id;
 
         //Load the model
-        $this->CI->load->model('investigation/investigation_model');
+        $this->CI->load->model('Investigation/investigation_model');
 
         //Load Logging if logging is TRUE
         if ($this->logging = $logging)
@@ -52,29 +61,141 @@ class Investigation
 	}
 
 	/**
-	 * Use to create a new incident, either automatically 
-	 * 	(with scripts) or manually (with forms)
+	 * Sets the name of the incident
+	 * @param  string $name The name
+	 * @return Investigation       Method Chaining
+	 */
+	public function name($name)
+	{
+		if(empty($name))
+		{
+			$this->error('Name Field received an empty string.');
+			return $this;
+		}
+
+		$this->IL_name = $name;
+		return $this;
+	}
+
+	/**
+	 * Sets the date of the incident
+	 * @param  string $date The Date
+	 * @return Investigation       Method Chaining
+	 */
+	public function date($date)
+	{
+		if (empty($date))
+		{
+			$this->error('Date Field received an empty string');
+			return $this;
+		}
+
+		//PHP auto-format
+		$date = strtotime($date);
+		$date = date('Y-m-d', $date);
+
+		$this->IL_date = $date;
+		return $this;
+	}
+
+	/**
+	 * Sets the time of the incident
+	 * @param  string $time Time
+	 * @return Investigation      Method Chaining
+	 */
+	public function time($time)
+	{
+		if (empty($time))
+		{
+			$this->error('Time Field received an empty string');
+			return $this;
+		}
+
+		//PHP auto-format
+		$time = strtotime($time);
+		$time = date('H:i:s', $time);
+
+		$this->IL_time = $time;
+		return $this;
+	}
+
+	/**
+	 * Sets the incident description
+	 * @param  string $desc The description
+	 * @return Investigation    Method Chaining
+	 */
+	public function desc($desc)
+	{
+		$this->IL_desc .= $desc;
+		return $this;
+	}
+
+	/**
+	 * Sets whether log was automated or not
+	 * @param  boolean $value Whether it was automated or not
+	 * @return Investigation        Method chaining
+	 */
+	public function auto($value)
+	{
+		$this->IL_auto = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+		if (!isset($this->IL_auto))
+		{
+			$this->error('Automated Field did received incorrect data');
+		}
+		return $this;
+	}
+
+	/**
+	 * Sets the user
+	 * @param  string $users User ID
+	 * @return Investigation        Method Chaining
+	 */
+	public function user($user)
+	{
+		if (empty($users))
+		{
+			$this->error('User Field reveived an empty string');
+			return $this;
+		}
+		
+		$this->IL_user = $user;
+		return $this;
+	}
+
+
+	/**
+	 * Use to create a new incident/
 	 * Formats the data then passes it to the investigation model.
 	 * @param  array $insert_data The data array to insert
 	 * @return boolean            True if successful
 	 */
-	public function new_incident($insert_data)
+	public function create()
 	{
 		//Assume it was automated if not explicitly declared
-		if (!isset($insert_data['was_automated']))
+		if (!isset($this->IL_auto))
 		{
-			$insert_data['was_automated']  = TRUE;
+			$this->IL_auto  = TRUE;
 		}
 
 		//If no user id is set in 'created_by' key,
 		//and it was not automated, then the current user
 		//will be set.
-		if (!isset($insert_data['created_by']) && !$insert_data['was_automated'])
+		if (!isset($this->IL_user) && !$this->IL_auto)
 		{
-			$insert_data['created_by'] = $this->CI->session->user_id;
+			$this->IL_user =  $this->CI->session->user_id;
 		}
 
 		//Other info for the incident. TODO
+		
+		//Create the array
+		$insert_data = array(
+			'incident_name' => $this->IL_name,
+			'incident_date' => $this->IL_date,
+			'incident_time' => $this->IL_time,
+			'incident_desc' => $this->IL_desc,
+			'was_automated' => $this->IL_auto,
+			'created_by'	=> $this->IL_user
+		);
 
 		//Put into Database
 		$this->CI->investigation_model->insert_incident($insert_data);
@@ -122,7 +243,7 @@ class Investigation
 	 */
 	public function notify_admin_new($incident_id)
 	{
-		$this->CI->load->model('settings/admin_model', 'admin_settings');
+		$this->CI->load->model('Settings/admin_model', 'admin_settings');
 		//Get all the users with notify_new_incident_on
 		
 		//Load Library and Configs
@@ -184,6 +305,29 @@ class Investigation
 		return $summary;
 	}
 
+
+	/**
+	 * Gets the errors, as a string
+	 * @return string The errors
+	 */
+	public function get_errors()
+	{
+		$string = '';
+		foreach ($this->errors as $index => $error_msg)
+		{
+			$string .= "Error #{$index}: {$error_msg}<br>";
+		}
+		return $string;
+	}
+
+	/**
+	 * Adds an error to the error array
+	 * @return void
+	 */
+	protected function error($error)
+	{
+		$this->errors[] = $error;
+	}
 }
 
 /* End of file Investigation.php */

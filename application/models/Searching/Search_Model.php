@@ -46,7 +46,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * This will return the object that db->get() returns but with all
  * the logs that matches the search.
  */
-class Search_Model extends MY_Model {
+class Search_model extends MY_Model {
 
 	protected $SB_keywords       = array();
 	protected $SB_keywords_in    = array();
@@ -68,6 +68,7 @@ class Search_Model extends MY_Model {
 	
 	/** @var boolean Whether to lock searches to the current user */
 	protected $user_lock         = TRUE;
+	protected $curr_user;
 
 	/** @var array Stores Data on last query */
 	public $debug = array();
@@ -78,6 +79,13 @@ class Search_Model extends MY_Model {
 
         //Reset The stored data
         $this->reset();
+
+        if ($this->authentication->check_admin())
+        {
+        	$this->user_lock = FALSE;
+        }
+
+        $this->curr_user = $this->session->user_id;
 	}
 
 
@@ -351,6 +359,13 @@ class Search_Model extends MY_Model {
 	 */
 	public function users($users)
 	{
+		//Validate with user lock...
+		if ($this->user_lock)
+		{
+			$this->apply_user_lock();
+			return $this;
+		}
+
 		if (empty($users))
 		{
 			return $this;
@@ -431,7 +446,7 @@ class Search_Model extends MY_Model {
 	public function apply_filters()
 	{
 		//Lock users before setting 'where' for users
-		$this->user_lock();
+		$this->apply_user_lock();
 
 		$this->apply_keywords();
 		$this->apply_dates();
@@ -449,7 +464,7 @@ class Search_Model extends MY_Model {
 	{
 		if($this->user_lock)
 		{
-			$this->SB_users = $this->session->user_id;
+			$this->SB_users = $this->curr_user;
 		}
 	}
 
@@ -708,5 +723,5 @@ class Search_Model extends MY_Model {
 	
 }
 
-/* End of file Search_Model.php */
-/* Location: ./application/models/Search_Model.php */
+/* End of file Search_model.php */
+/* Location: ./application/models/Search_model.php */

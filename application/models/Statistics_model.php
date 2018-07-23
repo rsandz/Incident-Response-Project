@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-require_once('Searching/Search_Model.php');
+require_once('Searching/Search_model.php');
 
 /**
  * Statistics Model

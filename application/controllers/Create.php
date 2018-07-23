@@ -103,7 +103,7 @@ class Create extends CI_Controller {
 					'is_global'   => $this->input->post('is_global', TRUE) == 1 ? 1 : 0,
 				);
 
-			$this->load->model('table/action_model');
+			$this->load->model('Tables/action_model');
 			$this->action_model->make($insert_data);
 
 			//Create Log
@@ -159,7 +159,7 @@ class Create extends CI_Controller {
 				'project_leader' => $this->input->post('project_leader', TRUE),
 				);
 
-			$this->load->model('tables/project_model');
+			$this->load->model('Tables/project_model');
 			$this->project_model->make($insert_data);
 
 			//Create the log
@@ -220,7 +220,7 @@ class Create extends CI_Controller {
 			$full_name = $insert_data['first_name']." ".$insert_data['last_name'];
 
 			//Put into Database
-			$this->load->model('tables/user_model');
+			$this->load->model('Tables/user_model');
 			$this->user_model->make($insert_data);
 
 			//Create the log
@@ -276,7 +276,7 @@ class Create extends CI_Controller {
 				'team_leader' => $this->input->post('team_leader', TRUE),
 				);
 
-			$this->load->model('tables/team_model');
+			$this->load->model('Tables/team_model');
 			$this->team_model->make($insert_data);
 
 			//Create the log
@@ -339,7 +339,7 @@ class Create extends CI_Controller {
 					'is_active' => $this->input->post('is_active') ?: 0
 				);
 
-			$this->load->model('tables/action_type_model');
+			$this->load->model('Tables/action_type_model');
 			$this->action_type_model->make($insert_data);
 
 			//Create the log

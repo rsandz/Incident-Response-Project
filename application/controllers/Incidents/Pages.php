@@ -69,15 +69,13 @@ class Pages extends CI_Controller {
 		if ($this->form_validation->run())
 		{
 			//Validation good, put into database
-			$insert_data = array(
-				'incident_name' => $this->input->post('incident_name', TRUE),
-				'incident_date' => $this->input->post('incident_date', TRUE),
-				'incident_time' => $this->input->post('incident_time', TRUE),
-				'incident_desc' => $this->input->post('incident_desc', TRUE),
-				'was_automated' => FALSE,
-			);
-			
-			$this->investigation->new_incident($insert_data);
+			$this->investigation
+				->name($this->input->post('incident_name', TRUE))
+				->date($this->input->post('incident_date', TRUE))
+				->time($this->input->post('incident_time', TRUE))
+				->desc($this->input->post('incident_desc', TRUE))
+				->auto(FALSE)
+				->create();
 
 			//Success Page
 			$data['title'] = 'Incident Created';

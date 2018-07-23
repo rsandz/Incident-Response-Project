@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Admin_Model extends MY_Model {
+class Admin_model extends MY_Model {
 
 	/**
 	 * Changes the notify on new incident setting
