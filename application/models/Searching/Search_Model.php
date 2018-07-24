@@ -62,6 +62,8 @@ class Search_model extends MY_Model {
 	protected $SB_null_projects  = TRUE;
 	protected $SB_null_teams     = TRUE;
 	
+	protected $sort_array		 = array('log_date' => 'DESC', 'log_time' => 'DESC');
+
 	protected $pagination_offset = 0;
 	protected $pagination_limit  = 0;
 	public 	  $unpaginated_rows  = NULL;
@@ -86,6 +88,8 @@ class Search_model extends MY_Model {
         }
 
         $this->curr_user = $this->session->user_id;
+        //Set Values to Default
+        $this->reset();
 	}
 
 
@@ -382,6 +386,64 @@ class Search_model extends MY_Model {
 	}
 
 	/**
+	 * Sorts the results according to arguments
+	 * @param  array $sort_array An array containing the parameter to sort by as the key 
+	 *                           and the sorting direction as the value.
+	 *                           Valid sorting parameters are:
+	 *                           	- date
+	 *                           	- time
+	 *                           Valid Directions are 'asc' or 'desc',
+	 *                           which are asceding and descending respectively
+	 
+	 *                           Example: array('date' => 'desc', 'time' => 'desc') 
+	 *                           Sorts by date descending first then by time descending
+	 * @return Search_model      Method Chaining
+	 */
+	public function sort($sort_array)
+	{
+		//Clear Defaul Sort
+		$this->sort_array = array();
+
+		foreach ($sort_array as $param => $direction)
+		{
+			//Validation//
+			
+			//Parameters
+			switch (strtolower($param))
+			{
+				case 'date':
+					$sort_parameter = 'log_date';
+					break;
+				case 'time':
+					$sort_parameter = 'log_time';
+					break;
+				default:
+					$sort_parameter = 'log_date';
+					break;
+			}
+
+			//Direction
+			switch (strtolower($direction))
+			{
+				case 'asc':
+					$sort_direction = 'ASC';
+					break;
+				case 'desc':
+					$sort_direction = 'DESC';
+					break;
+				default:
+					$sort_direction = 'DESC';
+			}
+
+			//Store the data
+			$this->sort_array[$sort_parameter] = $sort_direction;
+		}
+		
+
+		return $this;
+	}
+
+	/**
 	 * Paginated the results by applying a limit and an offset
 	 * @param  int $limit  How many results to get
 	 * @param  int $offset The row offset when searching
@@ -454,6 +516,7 @@ class Search_model extends MY_Model {
 		$this->apply_teams();
 		$this->apply_types();
 		$this->apply_users();
+		$this->apply_sort();
 	}
 
 	/**
@@ -592,6 +655,18 @@ class Search_model extends MY_Model {
 	}
 
 	/**
+	 * Applies the sorting settings set
+	 * @return void
+	 */
+	public function apply_sort()
+	{
+		foreach($this->sort_array as $param => $direction)
+		{
+			$this->db->order_by($param, $direction);
+		}
+	}
+
+	/**
 	 * Applies the pagination limit and offset
 	 * @return void 
 	 */
@@ -613,9 +688,7 @@ class Search_model extends MY_Model {
 			->join('action_types','actions.type_id = action_types.type_id', 'left')
 			->join('projects','projects.project_id = action_log.project_id', 'left')
 			->join('teams','teams.team_id = action_log.team_id', 'left')
-			->join('users','users.user_id = action_log.user_id', 'left')
-			->order_by( 'log_date', 'DESC')
-			->order_by( 'log_time', 'DESC');
+			->join('users','users.user_id = action_log.user_id', 'left');
 
 		return TRUE;
 	}
@@ -659,6 +732,7 @@ class Search_model extends MY_Model {
 			'SB_users',
 			'SB_null_teams',
 			'SB_null_projects',
+			'sort_array'
 		);
 
 		foreach ($to_export as $property_name)
@@ -726,19 +800,21 @@ class Search_model extends MY_Model {
 	 */
 	public function reset()
 	{
-		$this->SB_keywords = array();
+		$this->SB_keywords      = array();
 		$this->keywords_in('all');
 		$this->keywords_type('any');
-
-		$this->SB_from_date = NULL;
-		$this->SB_to_date = NULL;
-		$this->SB_action_types = array();
-		$this->SB_projects = array();
-		$this->SB_teams = array();
-		$this->SB_users = array();
-
+		
+		$this->SB_from_date     = NULL;
+		$this->SB_to_date       = NULL;
+		$this->SB_action_types  = array();
+		$this->SB_projects      = array();
+		$this->SB_teams         = array();
+		$this->SB_users         = array();
+		
 		$this->SB_null_projects = TRUE;
-		$this->SB_null_teams = TRUE;
+		$this->SB_null_teams    = TRUE;
+		
+		$this->sort_array		= array('log_date' => 'DESC', 'log_time' => 'DESC');
 	}
 	
 }

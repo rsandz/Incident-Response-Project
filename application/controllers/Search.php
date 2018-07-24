@@ -148,6 +148,8 @@ class Search extends MY_Controller {
 			$query = $this->session->last_search_query;
 			$this->search_model->import_query($query);
 		}
+		//Apply the sort order
+		$this->search_model->sort(array('date' => 'desc', 'time' => 'desc'));
 
 		//Store query
 		$query = $this->search_model->export_query();
@@ -172,7 +174,6 @@ class Search extends MY_Controller {
 
 		//Get the data
 		$search_data = $this->search_model->search();
-
 		$data['num_rows'] = $this->search_model->unpaginated_rows;
 		
 		//Turn Data into Table
