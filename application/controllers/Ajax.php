@@ -11,7 +11,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *
  * This controller is mostly used for getting descriptions, and updated field values based on user selection.
  */
-class Ajax extends CI_Controller {
+class Ajax extends MY_Controller {
 
 	/**
 	 * Constructor for the AJAX Controller
@@ -26,9 +26,7 @@ class Ajax extends CI_Controller {
 		$this->load->model('statistics_model');
 		$this->load->model('Form_get_model');
 		$this->load->helper('form');
-		$this->load->helper('url');
 
-		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
 		if ($_SERVER['REQUEST_METHOD'] !== 'GET') //If not acessed by post, redirect away
 		{
 			redirect('home','refresh');

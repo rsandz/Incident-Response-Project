@@ -25,7 +25,7 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Setup extends CI_Controller {
+class Setup extends MY_Controller {
 
 	/**
 	 * Constructor

@@ -22,7 +22,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 	 radio selection if the sql field's datatype is enum.
  * 
  */
-class Modify extends CI_Controller {
+class Modify extends MY_Controller {
 
 	/**
 	 * Constructor method for Modify Controller

@@ -11,7 +11,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Most of the stats display functionality is handles by javascript since I used chart.js to create graphs.
  * This controller mostly deals with displaying text data. 
  */
-class Stats extends CI_Controller {
+class Stats extends MY_Controller {
 
 	/**
 	 * Constructs the Stats class.
@@ -28,7 +28,6 @@ class Stats extends CI_Controller {
 		$this->load->model('search_model');
 		$this->load->helper('form');
 		$this->config->load('stats_config');
-		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
 
 		$this->authentication->check_login(TRUE); //Redirect if not logged in.
 	}

@@ -14,7 +14,7 @@
  */
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Logging extends CI_controller {
+class Logging extends MY_controller {
 	/**
 	 * Constructs the logging class.
 	 *
@@ -28,8 +28,6 @@ class Logging extends CI_controller {
 		$this->load->library('log_builder', NULL, 'lb');
 		$this->load->model('get_model');
 		$this->load->helper('form');
-
-		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
 
 		$this->authentication->check_login(TRUE); //Redirect if not logged in.
 	}

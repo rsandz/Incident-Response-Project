@@ -10,7 +10,7 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  * This controller handles the login process and password recovery 
  * 
  */
-class Login extends CI_Controller {
+class Login extends MY_Controller {
 
 	/**
 	 * Constructor for User Controller

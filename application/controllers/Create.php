@@ -14,7 +14,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Create extends CI_Controller {
+class Create extends MY_Controller {
 	/**
 	 * Constructor class for Create
 	 *
@@ -28,8 +28,6 @@ class Create extends CI_Controller {
 		$this->load->helper('form');
 		$this->load->model('get_model');
 		$this->load->model('Form_get_model');
-
-		date_default_timezone_set($this->config->item('timezone'));
 
 		$this->authentication->check_login(TRUE);
 
@@ -298,7 +296,7 @@ class Create extends CI_Controller {
 			//Get Team Leaders
 			if($this->authentication->check_admin())
 			{
-				$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select();
+				$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select(TRUE);
 			}
 			else
 			{

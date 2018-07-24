@@ -10,7 +10,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 
  * This contains all the methods for outside interfacing with the app
  */
-class API extends CI_Controller {
+class API extends MY_Controller {
 
 	/**
 	 * Constructor for the API Controller.
@@ -25,7 +25,6 @@ class API extends CI_Controller {
 		$this->load->model('search_model');
 		$this->load->helper('form');
 
-		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
 		if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'POST') 
 		{
 			//If not acessed by post or get, redirect away

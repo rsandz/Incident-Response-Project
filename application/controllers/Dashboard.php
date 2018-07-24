@@ -14,7 +14,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 	- Previous entries table
  * 	- User Information
  */
-class Dashboard extends CI_Controller {
+class Dashboard extends MY_Controller {
 
 	/**
 	 * Constructor for the Dashboard Controller

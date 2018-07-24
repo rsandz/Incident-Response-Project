@@ -13,7 +13,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 	- Historical Incidents
  * 	- Running investigations
  */
-class Pages extends CI_Controller {
+class Pages extends MY_Controller {
 
 	/**
 	 * Constructor for this controller.
@@ -25,7 +25,6 @@ class Pages extends CI_Controller {
 		$this->load->library('investigation');
 		$this->load->helper('form');
 
-		date_default_timezone_set($this->config->item('timezone')); //SETS DEFAULT TIME ZONE
 		$this->authentication->check_admin();
 	}
 

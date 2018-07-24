@@ -9,7 +9,7 @@
  * @Depreciated
  * 
  */
-class Admin extends CI_Controller {
+class Admin extends MY_Controller {
 
 	/**
 	 * Construcor Method fo Admin Controller

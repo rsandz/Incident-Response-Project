@@ -9,7 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * This controls the functionality related to End-User Data management.
  * For Admin Data Management, see the modfy controller.
  */
-class Manage extends CI_Controller {
+class Manage extends MY_Controller {
 
 	/**
 	 * Constructor method for Manage Controller

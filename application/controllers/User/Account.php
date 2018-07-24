@@ -14,7 +14,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 	(i.e. Change Incident E-Mail Settings.)
  * 
  */
-class Account extends CI_Controller {
+class Account extends MY_Controller {
 
 	/**
 	 * Constructor for account controller.
