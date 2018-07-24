@@ -22,8 +22,9 @@ class Pages extends MY_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->library('Investigation/investigation_builder', NULL, 'ib');
+		$this->load->library('Investigation/incident_builder', NULL, 'ib');
 		$this->load->library('Investigation/investigator');
+		$this->load->model('Investigation/investigation_model');
 		$this->load->helper('form');
 
 		$this->authentication->check_admin();
@@ -39,12 +40,10 @@ class Pages extends MY_Controller {
 		$data = array('title' => 'Incidents Overview');
 
 		//Get Recent Incidents
-		$recent_incidents = $this->investigator->recent_incidents(); // Contains 'num_rows' & 'data'
-
+		$recent_incidents = $this->investigation_model->get_all_incidents(); // Contains 'num_rows' & 'data'
 		//Tabulate the Data
 		$this->load->library('table');
-		$data['incidents_table'] = $this->table->my_generate($recent_incidents['data']);
-		$data['total_rows'] = $recent_incidents['total_rows'];
+		$data['incidents_table'] = $this->table->my_generate($recent_incidents);
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);
@@ -105,14 +104,48 @@ class Pages extends MY_Controller {
 		}
 	}
 
-	public function view_incidents()
+	/**
+	 * Selection Page for the report
+	 * @param  integer $offset The pagination offset for the table
+	 */
+	public function view_incidents($offset = 0)
 	{
+		$this->load->library('table');
+		$this->load->library('pagination');
+
+		//ID not set so show the selection screen
 		$data['title'] = 'View Incidents';
+		$table_data = $this->investigation_model->report_table_data($offset);
+		$num_rows = $this->investigation_model->total_rows;
+		$new_headers = array('Name', 'Date', 'Time', 'Description', 'Automated', 'Created By', 'Report');
+
+		$data['table'] = $this->table->my_generate($table_data, $new_headers);
+		$data['page_links'] = $this->pagination->my_create_links($num_rows, 'Incidents/report/select/');
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
 		$this->load->view('admin/tabs');
+		$this->load->view('incidents/select-report', $data);
+		$this->load->view('templates/footer');
+	}
+
+	/**
+	 * Shows the report for the chosen Incident ID
+	 * @param int $incident_id The ID of the incident to view the report for
+	 */
+	public function report($incident_id)
+	{
+		//Set the incident
+		$this->investigator->incident($incident_id);
+		$data['report'] = $this->investigator->get_html_report($incident_id);
+		$data['title'] = "Report for Incident #{$incident_id}";
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/hero-head', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('admin/tabs');
+		$this->load->view('incidents/view-report', $data);
 		$this->load->view('templates/footer');
 	}
 

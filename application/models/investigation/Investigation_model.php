@@ -51,23 +51,48 @@ class Investigation_model extends MY_Model {
 
 	/**
 	 * Gets the incidents based on an offset and limit.
-	 * @param  integer $offset Offset for the rows to fetch. See MySql OFFSET
-	 * @param  integer  $limit Amount of incidents to fetch. See MySql LIMIT
-	 * @return object          Result object from db->get()
+	 * @param  integer $offset 		Offset for the rows to fetch. See MySql OFFSET
+	 * @param  integer  $limit 		Amount of incidents to fetch. See MySql LIMIT
+	 * @param  boolean $return_id 	Whether to return the incident_id field in the object
+	 * @return object          		Result object from db->get()
 	 */
-	public function get_all_incidents($offset = 0, $limit = NULL)
+	public function get_all_incidents($offset = 0, $limit = NULL, $return_id = FALSE)
 	{
 		$limit = $limit ?: $this->config->item('per_page');
 
 		$this->db->from('incidents');
 
-		//Find the total rows in incidents
-		$this->total_rows = $this->db->count_all();
 		$this->sql_commands_for_table('incidents');
+		if ($return_id)
+		{
+			$this->db->select('incident_id as ID');
+		}
 
+		//Find the total rows in incidents
+		$this->total_rows = $this->db->count_all_results('', FALSE);
 		//Set limit and offset
 		$this->db->limit($limit, $offset);
+		$this->db->order_by('incident_date', 'DESC');
+		$this->db->order_by('incident_time', 'DESC');
 		return $this->db->get();
+	}
+
+	/**
+	 * Gets the Data needed to create the table that allows the user 
+	 * to select which incident's report to view.
+	 * @return object Object to be passed onto the table library
+	 */
+	public function report_table_data($offset = 0)
+	{
+		$incidents = $this->get_all_incidents($offset, NULL, TRUE);
+		//Add the report link by replacing the ID field
+		foreach($incidents->result() as &$incident)
+		{
+			$report_url = site_url('Incidents/report/'.$incident->ID);
+			$incident->ID = "<a href='$report_url' class='button is-primary'>Link</a>";
+		}
+		//Add View report to the field data
+		return $incidents;
 	}
 
 }

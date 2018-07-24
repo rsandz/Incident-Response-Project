@@ -17,11 +17,23 @@
 						<?php echo anchor('Incidents/create', 'New Incident', 'class="button is-light is-fullwidth"');?>
 					</div>
 					<div class="panel-block">
-						<?php echo anchor('Incidents/view-reports', 'View Reports', 'class="button is-light is-fullwidth"');?>
+						<?php echo anchor('Incidents/report/select', 'View Reports', 'class="button is-light is-fullwidth"');?>
 					</div>
 					<div class="panel-block">
 						<?php echo anchor('Incidents/run', 'Manually Run/Rerun', 'class="button is-light is-fullwidth"');?>
 					</div>
+				</nav>
+				<nav class="panel">
+					<div class="panel-heading">
+						<h2 class="title is-4">Incidents Statistics</h2>
+					</div>
+					<div class="panel-block">
+						<p class="has-text-weight-bold">Last Incident: </p>
+					</div>
+					<div class="panel-block">
+						<p class="has-text-weight-bold">Total Incidents: </p>
+					</div>
+					<div class="panel-block"></div>
 				</nav>
 			</div>
 		</div>

@@ -1,8 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+require_once('Investigate_base.php');
 
 /**
- * Investigation Builder Library
+ * Incident Builder Library
  * =============================
  * @author Ryan Sandoval
  * @version 1.0
@@ -35,19 +36,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 	->auto(TRUE)
  * 	->user(1)
  */
-class Investigation_builder
+class Incident_builder extends Investigate_base
 {
-	/** @var object Code Igniter Instance */
-	protected $CI;
-
 	protected $IL_name = NULL;
 	protected $IL_date = NUll;
 	protected $IL_time = NUll;
 	protected $IL_desc = '';
 	protected $IL_auto = TRUE;
 	protected $IL_user = NUll;
-
-	protected $errors = array();
 
 	/** 
 	 * User ID for creating new incidents and logging.
@@ -68,13 +64,10 @@ class Investigation_builder
 	 */
 	public function __construct($user_id = NULL, $logging = TRUE)
 	{
-        $this->CI =& get_instance();
+		parent::__construct();
         //The library will check to see if user_id was passed. Otherwise, use the one
         //set in the session.
         $this->user_id = $user_id ?: $this->CI->session->user_id;
-
-        //Load the model
-        $this->CI->load->model('Investigation/investigation_model');
 	}
 
 	/**
@@ -278,59 +271,7 @@ class Investigation_builder
 			return TRUE;
 		}
 	}
-
-	/**
-	 * Creates an HTML string summary of an incident
-	 * @param  integer $incident_id The incident to make the summary for
-	 * @return string               The HTML string
-	 */
-	public function incident_summary($incident_id)
-	{
-		$incident = $this->CI->investigation_model->get_incident($incident_id);
-
-		$name = $incident->incident_name;
-		$id = $incident->incident_id;
-		$date = $incident->incident_date;
-		$time = $incident->incident_time;
-		$desc = $incident->incident_desc;
-
-		$summary = "
-		<h3>Incident #{$id}: {$name}</h3>
-		<ul>
-			<li>Date of Occurence: {$date}</li>
-			<li>Time of Occurence: {$time}</li>
-		</ul>
-		<h3>Description: </h3>
-		<p>{$desc}</p>
-		";
-
-		return $summary;
-	}
-
-
-	/**
-	 * Gets the errors, as a string
-	 * @return string The errors
-	 */
-	public function get_errors()
-	{
-		$string = '';
-		foreach ($this->errors as $index => $error_msg)
-		{
-			$string .= "Error #{$index}: {$error_msg}<br>";
-		}
-		return $string;
-	}
-
-	/**
-	 * Adds an error to the error array
-	 * @return void
-	 */
-	protected function error($error)
-	{
-		$this->errors[] = $error;
-	}
 }
 
-/* End of file Investigation.php */
-/* Location: ./application/libraries/Investigation.php */
+/* End of file Investigation_builder.php */
+/* Location: ./application/libraries/Investigation/Investigation_builder.php */

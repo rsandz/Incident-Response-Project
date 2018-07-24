@@ -1,45 +1,79 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Investigator
+require_once('Investigate_base.php');
+
+class Investigator extends Investigate_base
 {
-	protected $CI;
+	protected $incident_id;
+	protected $incident;
+
+	/**
+	 * Timestamp of Date and Time of the incident
+	 * @var number
+	 */
+	protected $date_time;
 
 	public function __construct()
 	{
-        $this->CI =& get_instance();
+		parent::__construct();
 
-        //Load models 
-        $this->CI->load->model('Investigation/investigation_model');
-
+		$this->CI->load->model('Searching/search_model');
+		$this->CI->load->model('statistics_model');
+		$this->CI->load->library('table');
 	}
 
 	/**
-	 * Returns Data for the most recent investigations.
-	 * The amount fetched is configured in $per_page set in appconfig.
-	 *
-	 * @param  integer $offset Offset for rows to fetch. Can use for pagination
-	 * @return array          The array contains the following:
-	 *                            'data' => sql object
-	 *                            'total_rows' => Total results if query was not limited.
-	 *                            					i.e. All possible results
-	 *                            'num_rows' => Number of rows in the sql object
+	 * Sets the incident
+	 * @param  int $id The ID of the incident
+	 * @return Investigator     Method Chaining
 	 */
-	public function recent_incidents($offset = 0)
+	public function incident($id)
 	{
-		$data = $this->CI->investigation_model->get_all_incidents($offset);
-		return array( 
-			'data' => $data, 
-			'total_rows' => $this->CI->investigation_model->total_rows,
-			'num_rows' => $data->num_rows()
-		);
+		if ($this->CI->investigation_model->data_exists('incidents', array('incident_id' => $id)))
+		{
+			$this->incident_id = $id;
+		}
+		else
+		{
+			$this->error('Incident does not exist');
+			return $this;
+		}
+
+		$this->incident = $this->CI->investigation_model->get_incident($this->incident_id);
+
+		$this->date_time = strtotime($this->incident->incident_date.$this->incident->incident_time);
 	}
 
-	public function investigate()
+	public function get_html_report()
 	{
-		
+		$data['summary'] = $this->incident_summary();
+		$data['test'] = $this->CI->table->my_generate($this->past_week_logs());
+
+		$html = $this->CI->load->view('incidents/templates/report', $data, TRUE);
+		return $html;
 	}
 
+	/**
+	 * Modifies the superclass' summary method
+	 * @return string incident summary as a string
+	 */
+	public function incident_summary($incident_id = NUll)
+	{
+		if (!isset($incident_id))
+		{
+			$incident_id = $this->incident_id;
+		}
+		return parent::incident_summary($incident_id);
+	}
+
+	public function past_week_logs()
+	{
+		return $this->CI->search_model
+			->from_date(date('Y-m-d', $this->date_time - 604800)) //7 Days * 24 Hours * 60 mins * 60 sec
+			->to_date(date('Y-m-d'), $this->date_time)
+			->search();
+	}
 }
 
 /* End of file Investigator.php */

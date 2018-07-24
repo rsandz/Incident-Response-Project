@@ -104,5 +104,5 @@ $config['incidents']['select'] = array('
 	incident_time as "Time", 
 	incident_desc as "Description", 
 	IF (was_automated,"Yes", "No") as "Automated", 
-	CONCAT(first_name, " ", last_name) as "Created By"'
+	CONCAT(first_name, " ", last_name) as "Created By",'
 );
