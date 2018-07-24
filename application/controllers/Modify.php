@@ -57,6 +57,7 @@ class Modify extends MY_Controller {
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
+		$this->load->view('admin/tabs');
 		$this->load->view('modify/modify-selection', $data);
 		$this->load->view('templates/footer', $data);
 	}

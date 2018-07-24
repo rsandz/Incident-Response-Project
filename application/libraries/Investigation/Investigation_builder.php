@@ -2,17 +2,40 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Investigation Library
- * =====================
+ * Investigation Builder Library
+ * =============================
  * @author Ryan Sandoval
  * @version 1.0
  * @package Investigation
- * @dependencies TODO
  *
- * This library contains the functionality that allows app
- * to perform automatic investigation and report creation.
+ * This library contains the investigation
+ * builder methods.
+ * ---------------------------------------
+ *
+ * Creating incidents is similar to Code Igniter's
+ * database query builder.
+ * The following methods allow the incident's properties
+ * to be set:
+ *  - name 				Name of incident
+ *  - date 				Date of the incident
+ *  - time 				Time of the incident
+ *  - desc 				Description of the incident
+ *  - auto 				Was this incident created automatically? Or by user?
+ *  					Default: TRUE
+ *  - user 				The user that created the incident
+ * To actually create the incident, simlply call create().
+ *
+ * Example:
+ * ```
+ * $this->load->library('investigation_builder');
+ * $this->investigation_builder
+ * 	->name('Incident 1')
+ * 	->date('now')
+ * 	->desc('Incident 1 caused something. Plz help!')
+ * 	->auto(TRUE)
+ * 	->user(1)
  */
-class Investigation
+class Investigation_builder
 {
 	/** @var object Code Igniter Instance */
 	protected $CI;
@@ -52,12 +75,6 @@ class Investigation
 
         //Load the model
         $this->CI->load->model('Investigation/investigation_model');
-
-        //Load Logging if logging is TRUE
-        if ($this->logging = $logging)
-        {
-        	//$this->load->library('logging');
-        }
 	}
 
 	/**
@@ -89,6 +106,12 @@ class Investigation
 			$this->error('Date Field received an empty string');
 			return $this;
 		}
+		if ($date == 'now')
+		{
+			$this->date = date('Y-m-d');
+			$this->time = date('H:i:s');
+			return;
+		}
 
 		//PHP auto-format
 		$date = strtotime($date);
@@ -109,6 +132,12 @@ class Investigation
 		{
 			$this->error('Time Field received an empty string');
 			return $this;
+		}
+		if ($time == 'now')
+		{
+			$this->date = date('Y-m-d');
+			$this->time = date('H:i:s');
+			return;
 		}
 
 		//PHP auto-format
@@ -207,33 +236,6 @@ class Investigation
 		return TRUE;
 
 	}
-
-	public function investigate($incident_id)
-	{
-
-	}
-
-	/**
-	 * Returns Data for the most recent investigations.
-	 * The amount fetched is configured in $per_page set in appconfig.
-	 *
-	 * @param  integer $offset Offset for rows to fetch. Can use for pagination
-	 * @return array          The array contains the following:
-	 *                            'data' => sql object
-	 *                            'total_rows' => Total results if query was not limited.
-	 *                            					i.e. All possible results
-	 *                            'num_rows' => Number of rows in the sql object
-	 */
-	public function recent_incidents($offset = 0)
-	{
-		$data = $this->CI->investigation_model->get_all_incidents($offset);
-		return array( 
-			'data' => $data, 
-			'total_rows' => $this->CI->investigation_model->total_rows,
-			'num_rows' => $data->num_rows()
-		);
-	}
-
 
 	/**
 	 * Notifies admins on new incidents if they have chosen to receive

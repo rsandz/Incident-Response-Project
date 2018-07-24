@@ -22,7 +22,8 @@ class Pages extends MY_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->library('investigation');
+		$this->load->library('Investigation/investigation_builder', NULL, 'ib');
+		$this->load->library('Investigation/investigator');
 		$this->load->helper('form');
 
 		$this->authentication->check_admin();
@@ -38,7 +39,7 @@ class Pages extends MY_Controller {
 		$data = array('title' => 'Incidents Overview');
 
 		//Get Recent Incidents
-		$recent_incidents = $this->investigation->recent_incidents(); // Contains 'num_rows' & 'data'
+		$recent_incidents = $this->investigator->recent_incidents(); // Contains 'num_rows' & 'data'
 
 		//Tabulate the Data
 		$this->load->library('table');
@@ -68,7 +69,7 @@ class Pages extends MY_Controller {
 		if ($this->form_validation->run())
 		{
 			//Validation good, put into database
-			$this->investigation
+			$this->ib
 				->name($this->input->post('incident_name', TRUE))
 				->date($this->input->post('incident_date', TRUE))
 				->time($this->input->post('incident_time', TRUE))
@@ -102,6 +103,17 @@ class Pages extends MY_Controller {
 			$this->load->view('incidents/create');
 			$this->load->view('templates/footer');
 		}
+	}
+
+	public function view_incidents()
+	{
+		$data['title'] = 'View Incidents';
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/hero-head', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('admin/tabs');
+		$this->load->view('templates/footer');
 	}
 
 }
