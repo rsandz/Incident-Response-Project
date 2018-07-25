@@ -47,7 +47,8 @@ class Authentication
 	private $specific_errors;
 
 	/**
-	 * Error messages
+	 * Array of Error messages set in the config file. The user
+	 * will see these messages
 	 * @var array
 	 */
 	private $messages;
@@ -59,6 +60,21 @@ class Authentication
 	private $session_data_base = array(
 		'email', 'first_name', 'last_name', 'name', 'user_id', 'privileges', 'logged_in'
 	);
+
+	/**
+	 * The URL that the user was redirected from if
+	 * any privelege check failed.
+	 * i.e. Last page the user was at before being redirected
+	 * 		due to not being logged in, not admin, etc.
+	 * @var string
+	 */
+	public $redirected_url = '';
+
+	/**
+	 * Reason why the User was redirected
+	 * @var string
+	 */
+	public $redirected_reason = '';
 
 
 	/**
@@ -83,6 +99,8 @@ class Authentication
         //authentication config.
         $this->salt = $this->CI->config->item('salt') ?: $this->CI->config('default_salt', 'authentication');
 
+        //Save the redirected url from flash data
+        $this->redirected_url = $this->CI->session->redirected_url;
 	}
 
 	/**
@@ -152,6 +170,9 @@ class Authentication
 		);
 		$this->validate_sess_data($sess_data);
 		$this->CI->session->set_userdata($sess_data);
+
+		//Unset the redirected URL in session.
+		$this->CI->session->unset_userdata('redirected_url');
 	}
 
 	/**
@@ -204,6 +225,7 @@ class Authentication
 		}
 		if ($redirect)
 		{
+			$this->CI->session->set_userdata('redirected_url', current_url());
 			redirect('login','refresh', 401);
 		}
 		return FALSE;
@@ -218,13 +240,15 @@ class Authentication
 	 */
 	function check_admin($redirect = FALSE)
 	{
+		$this->check_login(TRUE);
+
 		if ($this->CI->session->user_id !== NULL && $this->CI->session->privileges == 'admin')
 		{
 			return TRUE;
 		}
 		if ($redirect)
 		{
-			redirect('login','refresh');
+			redirect('Dashboard','refresh');
 		}
 		return FALSE;
 	}
@@ -246,6 +270,7 @@ class Authentication
 			//Not authorized
 			if ($redirect)
 			{
+
 				redirect('home','refresh'); 
 			}
 			return FALSE;

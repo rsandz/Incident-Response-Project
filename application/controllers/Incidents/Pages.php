@@ -27,7 +27,7 @@ class Pages extends MY_Controller {
 		$this->load->model('Investigation/investigation_model');
 		$this->load->helper('form');
 
-		$this->authentication->check_admin();
+		$this->authentication->check_admin(TRUE);
 	}
 
 	/**

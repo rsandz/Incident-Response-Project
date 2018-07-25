@@ -40,7 +40,8 @@ class Login extends MY_Controller {
 
 			if ($result) 
 			{
-				redirect('Dashboard');
+				$redirect_url = $this->authentication->redirected_url ?: site_url('Dashboard');
+				redirect($redirect_url);
 			} 
 			else 
 			{

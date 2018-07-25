@@ -260,7 +260,7 @@ class Incident_builder extends Investigate_base
 			//Message formatting
 			$message = $this->CI->config->item('new_incident_body', 'incidents');
 			$message = str_replace('{name}', $user->name, $message);
-			$message = str_replace('{link}', "PlaceHolder", $message);
+			$message = str_replace('{link}', site_url('Incidents/report/'.$incident_id), $message);
 			$message = str_replace('{summary}', $incident_summary, $message);
 
 			$this->CI->email->message($message);
