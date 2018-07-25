@@ -35,10 +35,12 @@ class Authentication
 	protected $CI;
 
 	/**
-	 * The last error
+	 * Array of errors that occurred during authentication
+	 * i.e. - Incorrect Credentials
+	 * 		- Not Logged in when accessing a page
 	 * @var string
 	 */
-	private $error;
+	private $errors = array();
 
 	/**
 	 * Whether to return a specific error in login failure
@@ -101,6 +103,12 @@ class Authentication
 
         //Save the redirected url from flash data
         $this->redirected_url = $this->CI->session->redirected_url;
+
+        //Tell the user why they were redirected to login page
+        if (isset($this->redirected_url))
+        {
+        	$this->error('reason_not_logged_in', TRUE);
+        }
 	}
 
 	/**
@@ -117,7 +125,7 @@ class Authentication
 		if (empty($user))
 		{
 			//Invalid User
-			$this->error = 'invalid_email';
+			$this->error('invalid_email');
 			return FALSE;
 		}
 
@@ -132,7 +140,7 @@ class Authentication
 		else
 		{
 			//Incorect Password
-			$this->error = 'invalid_pass';
+			$this->error('invalid_pass');
 			return FALSE;
 		}
 	}
@@ -287,7 +295,7 @@ class Authentication
 		//Validate email
 		if (empty($user))
 		{
-			$this->error = 'invalid_email';
+			$this->error('invalid_email');
 			return FALSE;
 		}
 
@@ -355,21 +363,47 @@ class Authentication
 	}
 
 	/**
-	 * Gets the latest error.
+	 * Adds an error to the error array
+	 * @param string $error 			The error key that matched the error in the 
+	 *                        			$this->message array
+	 *                         			OR
+	 *                          		An error String
+	 * @param string $ignore_specific 	Set this to TRUE to display the error
+	 *                                  instead of the general error even if
+	 *                                  specific errors in config is FALSE
+	 * @return void 
+	 */
+	public function error($error, $ignore_specific = FALSE)
+	{
+		$msg = $this->messages[$error];
+
+		if (!$this->specific_errors && !$ignore_specific)
+		{
+			$msg = $this->messages['general_error'];
+		}
+
+		//Prevent Duplicates
+		if (!in_array($msg, $this->errors))
+		{
+			$this->errors[] = $msg; //Add it in
+		}
+		return;
+	}
+
+	/**
+	 * Gets all the errors during authentication
 	 *
 	 * Error can be specific or general base on the $specific_errors config	
 	 * @return string The error
 	 */
-	public function get_error()
+	public function get_errors()
 	{
-		if ($this->specific_errors)
+		$string = '';
+		foreach ($this->errors as $error)
 		{
-			return $this->messages[$this->error];
+			$string .= $error."<br>";
 		}
-		else
-		{
-			return $this->messages['general_error'];
-		}
+		return $string;
 	}
 }
 

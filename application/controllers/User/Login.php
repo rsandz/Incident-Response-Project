@@ -43,17 +43,17 @@ class Login extends MY_Controller {
 				$redirect_url = $this->authentication->redirected_url ?: site_url('Dashboard');
 				redirect($redirect_url);
 			} 
-			else 
-			{
-				//Login Failed
-				$data['errors'] = $this->authentication->get_error();
-			}
-			
 		} 
-			//Validation or Login has Failed
-			$this->load->view('templates/header', $data);
-			$this->load->view('user/login/login', $data);
-			$this->load->view('templates/footer', $data);
+
+		//Get any errors
+		$data['errors'] = $this->authentication->get_errors();
+		//Formats the errors. View returns a string
+		$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+
+		//Validation or Login has Failed
+		$this->load->view('templates/header', $data);
+		$this->load->view('user/login/login', $data);
+		$this->load->view('templates/footer', $data);
 	}
 	/**
 	 * Logs user out.

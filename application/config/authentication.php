@@ -39,7 +39,8 @@ $config['specific_errors'] = TRUE;
 $config['messages'] = array(
 	'invalid_email' => 'The Email Could not be found in the Database',
 	'invalid_pass' => 'Incorrect Password',
-	'general_error' => 'Invalid Credentials'
+	'general_error' => 'Invalid Credentials',
+	'reason_not_logged_in' => 'You were redirected here since you were not logged in.'
 );
 
 /*
