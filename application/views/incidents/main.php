@@ -22,6 +22,12 @@
 					<div class="panel-block">
 						<?php echo anchor('Incidents/run', 'Manually Run/Rerun', 'class="button is-light is-fullwidth"');?>
 					</div>
+					<div class="panel-block">
+						<?php echo anchor('Account/admin-settings', 'Your Incident Settings', 'class="button is-light is-fullwidth"');?>
+					</div>
+					<div class="panel-block">
+						<?php echo anchor('Account/admin-settings', 'Google Analytics Settings', 'class="button is-light is-fullwidth"');?>
+					</div>
 				</nav>
 				<nav class="panel">
 					<div class="panel-heading">

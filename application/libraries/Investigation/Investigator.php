@@ -14,6 +14,11 @@ class Investigator extends Investigate_base
 	 */
 	protected $date_time;
 
+	/**
+	 * Constructor for the Investigator library
+	 * 
+	 * Loads all the necessary resources
+	 */
 	public function __construct()
 	{
 		parent::__construct();

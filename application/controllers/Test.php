@@ -38,8 +38,11 @@ class Test extends MY_Controller {
 	public function gapi()
 	{
 		$this->load->library('Google/analytics');
+		$this->analytics->date('2018-06-01', 'yesterday');
+		$this->analytics->metrics('ga:sessions', 'sessions');
+		$this->analytics->metrics('ga:users', 'users');
 		$report = $this->analytics->get_report();
-		$this->analytics->print_results($report);
+		echo json_encode($report);
 	}
 
 }
