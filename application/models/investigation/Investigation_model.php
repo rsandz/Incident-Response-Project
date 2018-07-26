@@ -94,6 +94,20 @@ class Investigation_model extends MY_Model {
 		//Add View report to the field data
 		return $incidents;
 	}
+	
+	/**	
+	 * Gets the statistics for the incidents
+	 */
+	public function get_incident_stats()
+	{
+		$total_incidents = $this->db->count_all('incidents');
+		$last_incident = $this->db
+							->order_by('created_on')
+							->select('CONCAT("Incident #", `incident_id`, ": ", `incident_name`) as last_incident')
+							->get('incidents')
+							->row()->last_incident;
+		return array('total_incidents' => $total_incidents, 'last_incident' => $last_incident);
+	}
 
 }
 

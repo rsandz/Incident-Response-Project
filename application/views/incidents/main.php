@@ -34,10 +34,12 @@
 						<h2 class="title is-4">Incidents Statistics</h2>
 					</div>
 					<div class="panel-block">
-						<p class="has-text-weight-bold">Last Incident: </p>
+						<p class="has-text-weight-bold">Last Incident:&nbsp</p>
+						<?php echo $stats['last_incident']?>
 					</div>
 					<div class="panel-block">
-						<p class="has-text-weight-bold">Total Incidents: </p>
+						<p class="has-text-weight-bold">Total Incidents:&nbsp</p>
+						<?php echo $stats['total_incidents']?>
 					</div>
 					<div class="panel-block"></div>
 				</nav>

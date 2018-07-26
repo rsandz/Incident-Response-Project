@@ -305,7 +305,7 @@ class Get_model extends MY_Model {
 		//Format the table
 		$this->sql_commands_for_table($table); //Applies table filters as stated in view_tables.php
 
-		//Get total results before pagination
+		// Get total results before pagination
 		$this->total_rows = $this->db->count_all_results('', FALSE);
 
 		//Limits and Offset

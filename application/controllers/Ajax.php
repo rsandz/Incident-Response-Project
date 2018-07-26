@@ -1,4 +1,6 @@
 <?php
+
+use function GuzzleHttp\json_encode;
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**

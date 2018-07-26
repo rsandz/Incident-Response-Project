@@ -62,6 +62,7 @@ class Analytics
 		}
 		
 		return $this;
+$this->authentication
 	}
 	
 	/**

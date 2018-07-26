@@ -4,7 +4,9 @@
 | ---------------------------------------------
 |   Analytics Configuration
 | ---------------------------------------------
-|
+| Please ote that analytics settings are split between
+| the analytics_metrics table in the database and this
+| configuration file
 */
 
 /* 
@@ -13,7 +15,7 @@
 | ----------------------------------------------
 */
 
-$config['default_view'] = "178427523";
+$config['view_id'] = "178427523";
 
 /*
 | -----------------------------------------------

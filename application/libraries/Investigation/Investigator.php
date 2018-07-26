@@ -79,6 +79,7 @@ class Investigator extends Investigate_base
 			->to_date(date('Y-m-d'), $this->date_time)
 			->search();
 	}
+
 }
 
 /* End of file Investigator.php */
