@@ -26,7 +26,7 @@
 						<?php echo anchor('Account/admin-settings', 'Your Incident Settings', 'class="button is-light is-fullwidth"');?>
 					</div>
 					<div class="panel-block">
-						<?php echo anchor('Account/admin-settings', 'Google Analytics Settings', 'class="button is-light is-fullwidth"');?>
+						<?php echo anchor('Incidents/analytics-settings', 'Google Analytics Settings', 'class="button is-light is-fullwidth"');?>
 					</div>
 				</nav>
 				<nav class="panel">

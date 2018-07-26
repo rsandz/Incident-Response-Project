@@ -7,7 +7,7 @@
  * Handles Administrative functionality and routing.
  *
  * @Depreciated
- * 
+ *
  */
 class Admin extends MY_Controller
 {
@@ -20,7 +20,6 @@ class Admin extends MY_Controller
 		parent::__construct();
 		$this->load->library('form_validation');
 		$this->load->helper('form');
-
 	}
 	/**
 	 * Loads the main administration Dashboard

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Create Controller
  * =================
@@ -12,9 +13,10 @@
  * Certain actions are locked to specific user prvilleges
  */
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Create extends MY_Controller {
+class Create extends MY_Controller
+{
 	/**
 	 * Constructor class for Create
 	 *
@@ -24,12 +26,12 @@ class Create extends MY_Controller {
 	{
 		parent::__construct();
 		$this->load->library('form_validation');
-		$this->load->library('log_builder', NULL, 'lb');
+		$this->load->library('log_builder', null, 'lb');
 		$this->load->helper('form');
 		$this->load->model('get_model');
 		$this->load->model('Form_get_model');
 
-		$this->authentication->check_login(TRUE);
+		$this->authentication->check_login(true);
 
 	}
 
@@ -39,33 +41,22 @@ class Create extends MY_Controller {
 	 * 
 	 * @param  string $type Type of data to create. (i.e. User, Action, Project)
 	 */
-	public function index($type) 
+	public function index($type)
 	{
-		$data['type']       = $type;
-		$data['title']      = 'Create '.humanize($type);
+		$data['type'] = $type;
+		$data['title'] = 'Create ' . humanize($type);
 
-		if ($data['type'] === 'action') 
-		{
+		if ($data['type'] === 'action') {
 			$this->action_form($data);
-		}
-		elseif($data['type'] === 'action_type' && !$this->authentication->check_privileges('user'))
-		{
+		} elseif ($data['type'] === 'action_type' && !$this->authentication->check_privileges('user')) {
 			$this->action_type_form($data);
-		}
-		elseif ($data['type'] === 'project' && !$this->authentication->check_privileges('user')) 
-		{
+		} elseif ($data['type'] === 'project' && !$this->authentication->check_privileges('user')) {
 			$this->project_form($data);
-		}
-		elseif ($data['type'] === 'user' && !$this->authentication->check_privileges('user')) 
-		{
+		} elseif ($data['type'] === 'user' && !$this->authentication->check_privileges('user')) {
 			$this->user_form($data);
-		}
-		elseif ($data['type'] === 'team' && !$this->authentication->check_privileges('user'))
-		{
+		} elseif ($data['type'] === 'team' && !$this->authentication->check_privileges('user')) {
 			$this->team_form($data);
-		}
-		else
-		{
+		} else {
 			show_error('Not Authorized', 401);
 		}
 	}
@@ -74,7 +65,7 @@ class Create extends MY_Controller {
 	 * Controller for the action form
 	 * @param  array $data Data from index method above
 	 */
-	public function action_form($data) 
+	public function action_form($data)
 	{
 		$projects = $this->get_model->get_projects();
 
@@ -91,15 +82,14 @@ class Create extends MY_Controller {
 		if ($this->form_validation->run()) {
 
 			//Enter into Database
-			$insert_data = array
-				(
-					'action_name' => $this->input->post('action_name', TRUE),
-					'type_id'     => $this->input->post('action_type', TRUE),
-					'action_desc' => $this->input->post('action_desc') == "" ? NULL : $this->input->post('action_desc', TRUE),
-					'project_id'  => $this->input->post('project_id', TRUE),
-					'is_active'   => 1,
-					'is_global'   => $this->input->post('is_global', TRUE) == 1 ? 1 : 0,
-				);
+			$insert_data = array(
+				'action_name' => $this->input->post('action_name', true),
+				'type_id' => $this->input->post('action_type', true),
+				'action_desc' => $this->input->post('action_desc') == "" ? null : $this->input->post('action_desc', true),
+				'project_id' => $this->input->post('project_id', true),
+				'is_active' => 1,
+				'is_global' => $this->input->post('is_global', true) == 1 ? 1 : 0,
+			);
 
 			$this->load->model('Tables/action_model');
 			$this->action_model->make($insert_data);
@@ -119,13 +109,11 @@ class Create extends MY_Controller {
 			$this->load->view('templates/navbar');
 			$this->load->view('templates/success', $data);
 			$this->load->view('templates/footer');
-		} 
-		else 
-		{
-			
+		} else {
+
 			$data['types'] = $this->get_model->get_action_types();
 			//Get errors
-			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+			$data['errors'] = $this->load->view('templates/errors', $data, true);
 
 			// Make the Form
 			$this->load->view('templates/header', $data);
@@ -140,22 +128,20 @@ class Create extends MY_Controller {
 	 * Controller for the project form
 	 * @param  array $data Data from the index method above
 	 */
-	public function project_form($data) 
+	public function project_form($data)
 	{
 		//Form Validation Rules
 		$this->form_validation->set_rules('project_name', 'Project Name', 'trim|required');
 		$this->form_validation->set_rules('project_leader', 'Project Leader', 'trim');
 		$this->form_validation->set_rules('project_desc', 'Project Description', 'trim');
 
-		if ($this->form_validation->run() == TRUE) 
-		{
+		if ($this->form_validation->run() == true) {
 			//Enter into Database
-			$insert_data = array
-				(
-				'project_name'   => $this->input->post('project_name', TRUE),
-				'project_desc'   => $this->input->post('project_desc', TRUE),
-				'project_leader' => $this->input->post('project_leader', TRUE),
-				);
+			$insert_data = array(
+				'project_name' => $this->input->post('project_name', true),
+				'project_desc' => $this->input->post('project_desc', true),
+				'project_leader' => $this->input->post('project_leader', true),
+			);
 
 			$this->load->model('Tables/project_model');
 			$this->project_model->make($insert_data);
@@ -175,11 +161,9 @@ class Create extends MY_Controller {
 			$this->load->view('templates/navbar');
 			$this->load->view('templates/success', $data);
 			$this->load->view('templates/footer');
-		} 
-		else 
-		{
+		} else {
 			//Get errors
-			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+			$data['errors'] = $this->load->view('templates/errors', $data, true);
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
@@ -187,7 +171,7 @@ class Create extends MY_Controller {
 			$this->load->view('create/project', $data);
 			$this->load->view('templates/footer');
 		}
-			
+
 	}
 
 	/**
@@ -205,16 +189,15 @@ class Create extends MY_Controller {
 
 		if ($this->form_validation->run()) {
 
-			$insert_data = array
-				(
-				'first_name' => $this->input->post('first_name', TRUE),
-				'last_name'  => $this->input->post('last_name', TRUE),
-				'email'      => $this->input->post('email', TRUE),
-				'password'   => crypt($this->input->post('password'), $this->config->item('salt')),
+			$insert_data = array(
+				'first_name' => $this->input->post('first_name', true),
+				'last_name' => $this->input->post('last_name', true),
+				'email' => $this->input->post('email', true),
+				'password' => crypt($this->input->post('password'), $this->config->item('salt')),
 				'privileges' => 'user',
-				);
+			);
 
-			$full_name = $insert_data['first_name']." ".$insert_data['last_name'];
+			$full_name = $insert_data['first_name'] . " " . $insert_data['last_name'];
 
 			//Put into Database
 			$this->load->model('Tables/user_model');
@@ -235,11 +218,9 @@ class Create extends MY_Controller {
 			$this->load->view('templates/navbar');
 			$this->load->view('templates/success', $data);
 			$this->load->view('templates/footer');
-		} 
-		else 
-		{
+		} else {
 			//Get errors
-			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+			$data['errors'] = $this->load->view('templates/errors', $data, true);
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
@@ -254,7 +235,7 @@ class Create extends MY_Controller {
 	 * Controller for the team form
 	 * @param  array $data Data Array from index method
 	 */
-	public function team_form($data) 
+	public function team_form($data)
 	{
 
 		//Form Validation Rules
@@ -262,15 +243,13 @@ class Create extends MY_Controller {
 		$this->form_validation->set_rules('team_leader', 'Team Leader', 'trim');
 		$this->form_validation->set_rules('team_desc', 'Team Description', 'trim');
 
-		if ($this->form_validation->run() == TRUE) 
-		{
+		if ($this->form_validation->run() == true) {
 			//Enter into Database
-			$insert_data = array
-				(
-				'team_name'   => $this->input->post('team_name', TRUE),
-				'team_desc'   => $this->input->post('team_desc', TRUE),
-				'team_leader' => $this->input->post('team_leader', TRUE),
-				);
+			$insert_data = array(
+				'team_name' => $this->input->post('team_name', true),
+				'team_desc' => $this->input->post('team_desc', true),
+				'team_leader' => $this->input->post('team_leader', true),
+			);
 
 			$this->load->model('Tables/team_model');
 			$this->team_model->make($insert_data);
@@ -290,21 +269,16 @@ class Create extends MY_Controller {
 			$this->load->view('templates/navbar');
 			$this->load->view('templates/success', $data);
 			$this->load->view('templates/footer');
-		} 
-		else 
-		{
+		} else {
 			//Get Team Leaders
-			if($this->authentication->check_admin())
-			{
-				$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select(TRUE);
-			}
-			else
-			{
+			if ($this->authentication->check_admin()) {
+				$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select(true);
+			} else {
 				$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select();
 			}
 
 			//Get errors
-			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+			$data['errors'] = $this->load->view('templates/errors', $data, true);
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
@@ -318,7 +292,7 @@ class Create extends MY_Controller {
 	 * Controller for the action type form
 	 * @param  array $data Data from index method above
 	 */
-	public function action_type_form($data) 
+	public function action_type_form($data)
 	{
 		//Form Validation Rules
 		$this->form_validation->set_rules('action_type_name', 'Action Type Name', 'trim|required');
@@ -327,12 +301,11 @@ class Create extends MY_Controller {
 		if ($this->form_validation->run()) {		
 
 			//Enter into Database
-			$insert_data = array
-				(
-					'type_name' => $this->input->post('action_type_name', TRUE),
-					'type_desc' => $this->input->post('action_type_desc', TRUE),
-					'is_active' => $this->input->post('is_active') ?: 0
-				);
+			$insert_data = array(
+				'type_name' => $this->input->post('action_type_name', true),
+				'type_desc' => $this->input->post('action_type_desc', true),
+				'is_active' => $this->input->post('is_active') ? : 0
+			);
 
 			$this->load->model('Tables/action_type_model');
 			$this->action_type_model->make($insert_data);
@@ -347,9 +320,9 @@ class Create extends MY_Controller {
 			//Success
 			$data = array_merge($data, $this->success_data($data['type']));
 
-			$data['title'] = 'Created '.$data['type'];
+			$data['title'] = 'Created ' . $data['type'];
 			$data['header'] = array(
-				'text'   => 'Success',
+				'text' => 'Success',
 				'colour' => 'is-success'
 			);
 
@@ -358,11 +331,9 @@ class Create extends MY_Controller {
 			$this->load->view('templates/navbar');
 			$this->load->view('templates/success', $data);
 			$this->load->view('templates/footer');
-		} 
-		else 
-		{
+		} else {
 			//Get errors
-			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+			$data['errors'] = $this->load->view('templates/errors', $data, true);
 
 			// Make the Form
 			$this->load->view('templates/header', $data);
@@ -385,10 +356,10 @@ class Create extends MY_Controller {
 
 		//Humanize $type
 		$type = humanize($type);
-		
-		$data['title'] = 'Created '.$type;
+
+		$data['title'] = 'Created ' . $type;
 		$data['header'] = array(
-			'text'   => 'Success',
+			'text' => 'Success',
 			'colour' => 'is-success'
 		);
 

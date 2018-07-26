@@ -286,6 +286,45 @@ class Get_model extends MY_Model {
 			->row()
 			->type_name;
 	}
+
+	/**
+	 * Will get all table rows and return a HTML table string. Used for the view tables @see (Search/view_tables)
+	 * @param  string $table  The table name
+	 * @param  offset $offset Offset for pagination
+	 * @return string         HTML string for the table
+	 */
+	public function get_all_entries($table, $offset)
+	{
+		$per_page = $this->config->item('per_page');
+
+		//Conditions and data formatting for certain tables
+
+		//Set From in db
+		$this->db->from($table);
+		
+		//Format the table
+		$this->sql_commands_for_table($table); //Applies table filters as stated in view_tables.php
+
+		//Get total results before pagination
+		$this->total_rows = $this->db->count_all_results('', FALSE);
+
+		//Limits and Offset
+		$this->db->limit($per_page, $offset);
+
+		//Get Table Data
+		$query = $this->db->get();
+
+		//Censoring Password Hashes - See configuration for disabling this
+		if ($this->config->item('show_hashes') && $this->db->field_exists('password', $table)) 
+		{
+			foreach ($query->result() as &$row)
+			{
+				$row->password = '***********';
+			}
+		}
+
+		return $query;
+	}
 }
 
 /* End of file Get_model.php */

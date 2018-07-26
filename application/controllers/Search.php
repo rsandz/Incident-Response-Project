@@ -1,4 +1,5 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * Search Controller
  * =================
@@ -21,9 +22,6 @@
  * 	These 2 results are combined by intersection. So, a result will only be shown if it shows up in the valid results for both keyword searching and
  * 		filter searching
  */
-
-defined('BASEPATH') OR exit('No direct script access allowed');
-
 class Search extends MY_Controller {
 
 	/**
@@ -45,7 +43,7 @@ class Search extends MY_Controller {
 
 
 	}
-
+	
 	/**
 	 * Main Method for the search page. 
 	 * Shows Interface for searching by keyword and filters.
@@ -225,8 +223,8 @@ class Search extends MY_Controller {
 		}
 		else
 		{
-			$data['table_data'] = $this->search_model->get_all_entries($table, $offset);
-			$data['num_rows'] = $this->search_model->total_rows;
+			$data['table_data'] = $this->get_model->get_all_entries($table, $offset);
+			$data['num_rows'] = $this->get_model->total_rows;
 			$data['table_name'] = humanize($table);
 			$data['table'] = $this->table->my_generate($data['table_data']);
 
@@ -243,6 +241,8 @@ class Search extends MY_Controller {
 		}
 
 	}
+	
+	
 
 	/**
 	 * Returns True if the give '$to_date' is after the '$from_date'.

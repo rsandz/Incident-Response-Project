@@ -82,6 +82,7 @@ $route['Account/admin-settings'] = 'User/Account/admin_settings';
 
 $route['Incidents'] = 'Incidents/Pages';
 $route['Incidents/create'] = 'Incidents/Pages/create_incident';
+$route['Incidents/analytics-settings'] = 'Incidents/Pages/analytics_settings';
 $route['Incidents/report/select'] = 'Incidents/Pages/view_incidents';
 $route['Incidents/report/select/(:any)'] = 'Incidents/Pages/view_incidents/$1';
 $route['Incidents/report/(:any)'] = 'Incidents/Pages/report/$1';

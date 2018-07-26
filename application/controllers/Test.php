@@ -41,6 +41,8 @@ class Test extends MY_Controller {
 		$this->analytics->date('2018-06-01', 'yesterday');
 		$this->analytics->metrics('ga:sessions', 'sessions');
 		$this->analytics->metrics('ga:users', 'users');
+		$this->analytics->metrics('ga:bounces', 'bounces');
+		$this->analytics->metrics('ga:bounceRate', 'bounceRate');
 		$report = $this->analytics->get_report();
 		echo json_encode($report);
 	}

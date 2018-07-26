@@ -149,6 +149,18 @@ class Pages extends MY_Controller {
 		$this->load->view('templates/footer');
 	}
 
+	public function analytics_settings()
+	{
+		$data['title'] = 'Google Analytics Settings';
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/hero-head', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('admin/tabs');
+		$this->load->view('incidents/analytics-settings', $data);
+		$this->load->view('templates/footer');
+	}
+
 }
 
 /* End of file Pages.php */

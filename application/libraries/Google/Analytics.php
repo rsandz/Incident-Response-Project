@@ -24,9 +24,8 @@ class Analytics
 		$this->CI->load->config('analytics');
 		
 		// Use the developers console and download your service account
-		// credentials in JSON format. Place them in this directory or
-		// change the key file location if necessary.
-		$this->auth_file = APPPATH . '/../assets/googleAuth/DrFehmiWeb-1c08d45de240.json';
+		// credentials in JSON format. 
+		$this->auth_file = $this->CI->config->item('auth_file');
 		
 		//Init CLient
 		$this->client = new Google_Client();
