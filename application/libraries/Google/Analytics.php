@@ -62,7 +62,6 @@ class Analytics
 		}
 		
 		return $this;
-$this->authentication
 	}
 	
 	/**
@@ -138,10 +137,8 @@ $this->authentication
 		{
 			$header = $report->getColumnHeader();
 			$metricHeaders = $header->getMetricHeader()->getMetricHeaderEntries();
-			$rows = $report->getData()->getRows();
-			
-			$metrics = $rows[0]->getMetrics(); //Only wany first row of metrics
-			$values = $metrics[0]->getValues(); //Only want first row of values
+			$totals = $report->getData()->getTotals();
+			$values = $totals[0]->getValues(); //Only want first row of values
 
 			//Values contains the values for each metricheader (aka metric expressions)
 			foreach ($values as $index => $value)
@@ -180,7 +177,7 @@ $this->authentication
 		$to_reset = array(
 			'metrics_array' => array(),
 			'date_range' => new Google_Service_AnalyticsReporting_DateRange(),
-			'view_id'	=> $this->CI->config->item('default_view')
+			'view_id'	=> $this->CI->config->item('view_id')
 		);
 		
 		foreach ($to_reset as $field => $value) {

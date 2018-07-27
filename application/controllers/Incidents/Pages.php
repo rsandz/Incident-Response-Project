@@ -158,7 +158,7 @@ class Pages extends MY_Controller {
 		//Load Config and initialize some arrays
 		$this->load->config('analytics');
 		$data['title'] = 'Google Analytics Settings';
-		$data['metrics'] = array('ga:user' => 'User', 'ga:sessions' => 'Sessions');
+		$data['metrics'] = $this->config->item('valid_metrics');
 		
 		if ($this->input->server('REQUEST_METHOD') == 'POST')
 		{

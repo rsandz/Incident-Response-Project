@@ -101,9 +101,9 @@ class Incident_builder extends Investigate_base
 		}
 		if ($date == 'now')
 		{
-			$this->date = date('Y-m-d');
-			$this->time = date('H:i:s');
-			return;
+			$this->IL_date = date('Y-m-d');
+			$this->IL_time = date('H:i:s');
+			return $this;
 		}
 
 		//PHP auto-format
@@ -128,9 +128,9 @@ class Incident_builder extends Investigate_base
 		}
 		if ($time == 'now')
 		{
-			$this->date = date('Y-m-d');
-			$this->time = date('H:i:s');
-			return;
+			$this->IL_date = date('Y-m-d');
+			$this->IL_time = date('H:i:s');
+			return $this;
 		}
 
 		//PHP auto-format
@@ -208,7 +208,7 @@ class Incident_builder extends Investigate_base
 		}
 
 		//Other info for the incident. TODO
-		
+
 		//Create the array
 		$insert_data = array(
 			'incident_name' => $this->IL_name,

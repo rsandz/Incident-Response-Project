@@ -7,6 +7,10 @@
                 <div class="control">
                     <label class="label">
                         View ID:
+                        <span style="padding-right: 10px" class="tooltip is-tooltip-right"
+                        data-tooltip="The View ID from your Google Anlytics Property">
+                            <i class="far fa-question-circle"></i>
+                        </span>
                     </label>
                     <input class="input" name="view_id" type="text" <?php echo "value='{$view_id}'"?>>
                 </div>
@@ -15,12 +19,23 @@
                 <div class="control">
                     <label class="label">
                         Authentication File Path:
+                        <span style="padding-right: 10px" class="tooltip is-tooltip-right is-tooltip-multiline"
+                        data-tooltip="The Authentication file from your Google Analytics Service Account. 
+                        We Recomend to change this in the config file so you have access to `APPPATH`">
+                            <i class="far fa-question-circle"></i>
+                        </span>
                     </label>
                     <input class="input" name="auth_path" type="text" <?php echo "value='{$auth_path}'"?>>
                 </div>
             </div>
             <hr>
-            <h3 class="title is-3">Metrics to Monitor</h3>
+            <h3 class="title is-3">
+                Metrics to Monitor
+                <span class="tooltip is-tooltip-right"
+                        data-tooltip="Sets conditions that will cause an automatic Incident Creation">
+                    <i class="far fa-question-circle"></i>
+                </span>
+            </h3>
             <div id="metrics-wrapper" class="field">
             <!-- Current Settings -->
                 <?php echo $current_settings?>
@@ -50,7 +65,9 @@
         </form>
     </div>
 </div>
-
+<!--Load Tooltips-->
+<?php $this->load->helper('html');?>
+<?php echo link_tag('assets/css/bulma-tooltip.min.css')?>
 <!-- Template for JS when adding new metric to track -->
 <template id="metrics-template">
     <div class="field is-grouped ">

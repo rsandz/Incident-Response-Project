@@ -96,7 +96,7 @@ $config['prev_entries']['join'] = array(
 );
 
 $config['incidents']['join'] = array(
-	'users' => 'users.user_id = incidents.created_by'
+	'users' => array('users.user_id = incidents.created_by','left')
 );
 $config['incidents']['select'] = array('
 	incident_name as "Name", 
