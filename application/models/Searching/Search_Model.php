@@ -420,6 +420,24 @@ class Search_model extends MY_Model {
 				case 'id':
 					$sort_parameter = 'log_id';
 					break;
+				case 'action':
+					$sort_parameter = 'action_name';
+					break;
+				case 'hours':
+					$sort_parameter = 'hours';
+					break;
+				case 'user':
+					$sort_parameter = 'name';
+					break;
+				case 'team':
+					$sort_parameter = 'team_name';
+					break;
+				case 'project': 
+					$sort_parameter = 'project_name';
+					break;
+				case 'type':
+					$sort_parameter = 'type_name';
+					break;
 				default:
 					$sort_parameter = 'log_date';
 					break;
