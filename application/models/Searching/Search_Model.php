@@ -417,6 +417,9 @@ class Search_model extends MY_Model {
 				case 'time':
 					$sort_parameter = 'log_time';
 					break;
+				case 'id':
+					$sort_parameter = 'log_id';
+					break;
 				default:
 					$sort_parameter = 'log_date';
 					break;

@@ -9,6 +9,80 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * of the web app.
  */
 
+ if (!function_exists('get_search_sort'))
+ {
+	 /**
+	  * Gets the Search Sorting Preference from the session. 
+	  * If not set, it will set it to Data and Time Descending.
+	  * 
+	  * @return array The Sorting Preference. Can just plug into search builder
+	  */
+	 function get_search_sort()
+	 {
+		$CI =& get_instance();
+		$sort_by = $CI->session->sort_by;
+		if (empty($sort_by))
+		{
+			$sort_by = array('date' => 'desc', 'time' => 'desc');
+			$CI->session->set_userdata('sort_by', $sort_by);
+		}
+		return $sort_by;
+	 }
+ }
+
+ if (!function_exists('set_search_sort'))
+ {
+	 function set_search_sort($field, $dir)
+	 {
+		$CI =& get_instance();
+
+		switch ($field) {
+			case 'date':
+				$sort_by = array('date' => $dir, 'time' => $dir);
+				break;
+			case 'id':
+				$sort_by = array('id' => $dir);
+				break;
+			default:
+				$sort_by = array('date' => 'desc', 'time' => 'desc');
+				break;
+		}
+
+		$CI->session->set_userdata('sort_by', $sort_by);
+	 }
+ }
+
+ if (!function_exists('get_sort_dropdown'))
+ {
+	 /**
+	  * Returns an HTML string for dropdowns containing
+	  * possible sort options
+	  */
+	 function get_sort_dropdown()
+	 {
+		$CI =& get_instance();
+		$CI->load->helper('form');
+
+		//Get Possible dropdowns
+		$field_options = array('date' => 'Date', 'id' => 'Entry Order');
+		$direction_options = array('desc' => 'Descending', 'asc' => 'Ascending');
+		
+		//Get current settings (They will be set as default for dropdowns)
+		$curr_sort = get_search_sort(); //Keys are fields while values are directions
+		$curr_field = array_keys($curr_sort)[0];
+		$curr_val = $curr_sort[$curr_field];
+
+		//Create Select inuts
+		$data['sort_fields'] = form_dropdown('sort_field', $field_options, $curr_field, 'id="sort-fields"');
+		$data['sort_dir'] = form_dropdown('sort_dir', $direction_options, $curr_val, 'id="sort-dir"');		
+
+		//Put into template
+		$drop_down = $CI->load->view('search/templates/sort_dropdown', $data, TRUE);
+
+		return $drop_down;
+	 }
+ }
+
 if (!function_exists('export_summary'))
 {
 	/**

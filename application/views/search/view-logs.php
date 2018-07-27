@@ -1,9 +1,20 @@
 <body>
 	<div class="section">
 		<div class="container">
-			<h1 class="title">
-				Search Results <?php if (isset($query['keywords']) && count($query['keywords']) > 0) {echo 'for: '.implode(' ',$query['keywords']);}?>
-			</h1>
+			<div class="level">
+				<div class="level-left">
+					<div class="level-item">
+						<h1 class="title">
+							Search Results <?php if (isset($query['keywords']) && count($query['keywords']) > 0) {echo 'for: '.implode(' ',$query['keywords']);}?>
+						</h1>
+					</div>
+				</div>
+				<div class="level-right">
+					<div class="level-item">
+						<?php echo $sort_options?>
+					</div>
+				</div>
+			</div>
 			<?=$table?>
 
 			<div class="level">

@@ -29,11 +29,6 @@ class Ajax extends MY_Controller {
 		$this->load->model('Form_get_model');
 		$this->load->helper('form');
 
-		if ($_SERVER['REQUEST_METHOD'] !== 'GET') //If not acessed by post, redirect away
-		{
-			redirect('home','refresh');
-			show_error('No access allowed', 403);
-		}
 	}
 
 	/**
@@ -257,6 +252,19 @@ class Ajax extends MY_Controller {
 
 		//Give the data a name. Used for the graph legend
 		$data['name'] = "Custom Stats {$index} Hours";
+		echo json_encode($data);
+	}
+
+	public function set_sort()
+	{
+		$sort_field = $this->input->get('sort_field', TRUE);
+		$sort_dir = $this->input->get('sort_dir', TRUE);
+
+		$this->load->helper('search');
+		set_search_sort($sort_field, $sort_dir);
+
+		$data['msg'] = 'Sort Changed';
+		$data['new_sort_by'] = get_search_sort();
 		echo json_encode($data);
 	}
 

@@ -34,6 +34,7 @@ class Search extends MY_Controller {
 		$this->load->library('form_validation');
 		$this->load->library('table');
 		$this->load->helper('form');
+		$this->load->helper('search');
 		
 		$this->load->model('get_model');
 
@@ -147,7 +148,7 @@ class Search extends MY_Controller {
 			$this->search_model->import_query($query);
 		}
 		//Apply the sort order
-		$this->search_model->sort(array('date' => 'desc', 'time' => 'desc'));
+		$this->search_model->sort(get_search_sort());
 
 		//Store query
 		$query = $this->search_model->export_query();
@@ -176,6 +177,9 @@ class Search extends MY_Controller {
 		
 		//Turn Data into Table
 		$data['table'] = $this->table->my_generate($search_data);
+
+		//Get sort options
+		$data['sort_options'] = get_sort_dropdown();
 
 		$this->load->library('pagination');
 		$data['page_links'] = $this->pagination->my_create_links($data['num_rows'], 'Search/result/');
