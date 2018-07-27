@@ -1,6 +1,4 @@
 <?php
-
-use function GuzzleHttp\json_encode;
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
@@ -13,7 +11,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *
  * This controller is mostly used for getting descriptions, and updated field values based on user selection.
  */
-class Ajax extends MY_Controller {
+class Ajax extends MY_Controller 
+{
 
 	/**
 	 * Constructor for the AJAX Controller
@@ -28,6 +27,11 @@ class Ajax extends MY_Controller {
 		$this->load->model('statistics_model');
 		$this->load->model('Form_get_model');
 		$this->load->helper('form');
+		if ($_SERVER['REQUEST_METHOD'] !== 'GET') //If not acessed by post, redirect away	
+		{	
+			redirect('home','refresh');	
+			show_error('No access allowed', 403);	
+		}
 
 	}
 
@@ -216,10 +220,9 @@ class Ajax extends MY_Controller {
 		}
 		else
 		{
-			$this->statistics_model->import_query();
+			$this->statistics_model->import_query($this->session->{'query_'.$index});
 		}
-		$data = $this->statistics_model->get_log_frequency(
-			$this->input->get('interval_type', TRUE));
+		$data = $this->statistics_model->get_log_frequency($this->input->get('interval_type', TRUE));
 
 		//Give the data a name. Used for the graph legend
 		$data['name'] = "Custom Stats {$index} Log Freq";
@@ -243,12 +246,9 @@ class Ajax extends MY_Controller {
 		}
 		else
 		{
-			$this->statistics_model->import_query();
+			$this->statistics_model->import_query($this->session->{'query_'.$index});
 		}
-		$data = $this->statistics_model->get_hours(
-			$this->input->get('interval_type', TRUE), 
-			$this->session->{'query_'.$index}
-		);
+		$data = $this->statistics_model->get_hours($this->input->get('interval_type', TRUE));
 
 		//Give the data a name. Used for the graph legend
 		$data['name'] = "Custom Stats {$index} Hours";
@@ -267,8 +267,8 @@ class Ajax extends MY_Controller {
 		$data['new_sort_by'] = get_search_sort();
 		echo json_encode($data);
 	}
-
 }
+
 
 /* End of file ajax.php */
 /* Location: ./application/controllers/ajax.php */

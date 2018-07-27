@@ -141,14 +141,18 @@ class Search extends MY_Controller {
 
 			$offset = 0; //Reset Offset
 		}
+		elseif (!empty($this->session->flashed_search_query))
+		{
+			//Search Query was falshed so use that
+			$query = $this->session->flashed_search_query;
+			$this->search_model->import_query($query);
+		}
 		else
 		{
-			// Retrieve array for query
+			// Just retreive last_search_query
 			$query = $this->session->last_search_query;
 			$this->search_model->import_query($query);
 		}
-		//Apply the sort order
-		$this->search_model->sort(get_search_sort());
 
 		//Store query
 		$query = $this->search_model->export_query();
@@ -170,6 +174,9 @@ class Search extends MY_Controller {
 		$this->search_model->pagination(
 			$this->config->item('per_page'), $offset
 		);
+
+		//Apply the sort order
+		$this->search_model->sort(get_search_sort());
 
 		//Get the data
 		$search_data = $this->search_model->search();

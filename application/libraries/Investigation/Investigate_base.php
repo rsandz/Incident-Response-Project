@@ -39,12 +39,9 @@ class Investigate_base
 	 * @param  integer $incident_id The incident to make the summary for
 	 * @return string               The HTML string
 	 */
-	public function incident_summary($incident_id)
+	public function incident_info($incident_id)
 	{
 		$incident = $this->CI->investigation_model->get_incident($incident_id);
-		$data['name'] = $incident->incident_name;
-
-		$data['id'] = $incident->incident_id;
 
 		$raw_date = strtotime($incident->incident_date);
 		$data['date'] = date('F j, Y', $raw_date);
@@ -57,6 +54,19 @@ class Investigate_base
 		$summary = $this->CI->load->view('incidents/templates/summary', $data, TRUE);
 		
 		return $summary;
+	}
+
+	/**
+	 * Gets a title in HTML string for the incident.
+	 * Includes the name and its ID
+	 */
+	public function incident_title($incident_id)
+	{
+		$incident = $this->CI->investigation_model->get_incident($incident_id);
+		$data['name'] = $incident->incident_name;
+		$data['id'] = $incident->incident_id;
+
+		return $this->CI->load->view('incidents/templates/title', $data, TRUE);
 	}
 	
 	/**

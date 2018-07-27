@@ -322,7 +322,7 @@ class chartManager
 					(
 						url,
 						{'interval_type' : this.type},
-						(data) => this.dataList.push(JSON.parse(data))
+						(data) => this.dataList.push(JSON.parse(data)),
 					));
 				}
 			$.when(...requests).then(callback.bind(this));
@@ -332,7 +332,7 @@ class chartManager
 			$.get
 			(
 				this.ajaxURLs,
-				{'interval_type' : this.type}, (data) => this.dataList.push(JSON.parse(data))
+				{'interval_type' : this.type}, (data) => this.dataList.push(JSON.parse(data)),
 			).done(callback.bind(this));
 		}
 	}

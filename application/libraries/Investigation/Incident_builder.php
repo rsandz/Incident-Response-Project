@@ -247,7 +247,8 @@ class Incident_builder extends Investigate_base
 		$this->CI->load->config('incidents', TRUE);
 
 		$users_send_to = $this->CI->admin_settings->get_notify_new_incidents();
-		$incident_summary = $this->incident_summary($incident_id);
+		$incident_summary = $this->incident_info($incident_id);
+		$incident_title = $this->incident_title($incident_id);
 
 		foreach ($users_send_to as $user)
 		{
@@ -262,6 +263,7 @@ class Incident_builder extends Investigate_base
 			$message = str_replace('{name}', $user->name, $message);
 			$message = str_replace('{link}', site_url('Incidents/report/'.$incident_id), $message);
 			$message = str_replace('{summary}', $incident_summary, $message);
+			$message = str_replace('{title}', $incident_title, $message);
 
 			$this->CI->email->message($message);
 

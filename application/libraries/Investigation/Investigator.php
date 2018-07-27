@@ -5,13 +5,13 @@ require_once('Investigate_base.php');
 
 class Investigator extends Investigate_base
 {
+	/** @var int The incident's ID*/
 	protected $incident_id;
+
+	/** @var object The incident db result obj */
 	protected $incident;
 
-	/**
-	 * Timestamp of Date and Time of the incident
-	 * @var number
-	 */
+	/** @var int Timestamp of incident */
 	protected $date_time;
 
 	/**
@@ -52,24 +52,11 @@ class Investigator extends Investigate_base
 
 	public function get_html_report()
 	{
-		$data['summary'] = $this->incident_summary();
-		$data['test'] = $this->CI->table->my_generate($this->past_week_logs());
+		$data['title'] = $this->incident_title($this->incident_id);
+		$data['summary'] = $this->incident_info($this->incident_id);
 
 		$html = $this->CI->load->view('incidents/templates/report', $data, TRUE);
 		return $html;
-	}
-
-	/**
-	 * Modifies the superclass' summary method
-	 * @return string incident summary as a string
-	 */
-	public function incident_summary($incident_id = NUll)
-	{
-		if (!isset($incident_id))
-		{
-			$incident_id = $this->incident_id;
-		}
-		return parent::incident_summary($incident_id);
 	}
 
 	public function past_week_logs()

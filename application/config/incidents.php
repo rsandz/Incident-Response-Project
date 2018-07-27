@@ -29,7 +29,7 @@ $config['new_incident_body'] = "
 	<p>
 		The following is a short summary of the incident that has occured:
 	<p>
-	<hr>
+		{title}
 		{summary}
 	<hr>
 	<p>

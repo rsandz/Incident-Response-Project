@@ -753,7 +753,6 @@ class Search_model extends MY_Model {
 			'SB_users',
 			'SB_null_teams',
 			'SB_null_projects',
-			'sort_array'
 		);
 
 		foreach ($to_export as $property_name)
