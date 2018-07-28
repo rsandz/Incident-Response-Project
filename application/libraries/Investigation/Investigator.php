@@ -54,17 +54,43 @@ class Investigator extends Investigate_base
 	{
 		$data['title'] = $this->incident_title($this->incident_id);
 		$data['summary'] = $this->incident_info($this->incident_id);
+		$data['last_10_table'] =$this->last_10_logs();
+		$data['past_week_search'] = $this->past_week_search();
+		$data['past_month_search'] = $this->past_month_search();
 
 		$html = $this->CI->load->view('incidents/templates/report', $data, TRUE);
 		return $html;
 	}
 
-	public function past_week_logs()
+	public function last_10_logs()
 	{
-		return $this->CI->search_model
-			->from_date(date('Y-m-d', $this->date_time - 604800)) //7 Days * 24 Hours * 60 mins * 60 sec
-			->to_date(date('Y-m-d'), $this->date_time)
-			->search();
+		$table_data = $this->CI->search_model
+					->to_date(date('Y-m-d'), $this->date_time)
+					->pagination(10)
+					->user_lock(FALSE)
+					->select('name, action, time, date')
+					->search();
+		return $this->CI->table->my_generate($table_data);
+	}
+
+	public function past_week_search()
+	{
+		$data['query'] = $this->CI->search_model
+				->from_date(date('Y-m-d', $this->date_time - 604800)) //7 Days * 24 Hours * 60 mins * 60 sec
+				->to_date(date('Y-m-d'), $this->date_time)
+				->export_query();
+		$data['title'] = 'Past Week';
+		return $this->CI->load->view('incidents/templates/search-box', $data, TRUE);
+	}
+	
+	public function past_month_search()
+	{
+		$data['query'] = $this->CI->search_model
+				->from_date(date('Y-m-d', $this->date_time - 2678400 )) //31 Days * 24 Hours * 60 mins * 60 sec
+				->to_date(date('Y-m-d'), $this->date_time)
+				->export_query();
+		$data['title'] = 'Past Month';
+		return $this->CI->load->view('incidents/templates/search-box', $data, TRUE);
 	}
 
 }

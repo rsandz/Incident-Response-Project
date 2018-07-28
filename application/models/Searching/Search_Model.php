@@ -61,6 +61,8 @@ class Search_model extends MY_Model {
 	
 	protected $SB_null_projects  = TRUE;
 	protected $SB_null_teams     = TRUE;
+
+	protected $SB_select		 = array();
 	
 	protected $sort_array		 = array('log_date' => 'DESC', 'log_time' => 'DESC');
 
@@ -464,6 +466,31 @@ class Search_model extends MY_Model {
 		return $this;
 	}
 
+	/**	
+	 * Use this to change what columns to select
+	 * The possible columns are:
+	 * 	name, action, type, project, team, desc,
+	 * 	hours, date, time
+	 * 
+	 * Can be passed as either array or string
+	 * delimited with commas
+	 * 
+	 * @param array|string $select
+	 * @return Search_Model Method Chaining
+	 */
+	public function select($select = array())
+	{	
+		if (is_array($select))
+		{
+			$this->SB_select = $select;
+		}
+		elseif (is_string($select))
+		{
+			$this->SB_select = explode(', ', $select);
+		}
+		return $this;
+	}
+
 	/**
 	 * Paginated the results by applying a limit and an offset
 	 * @param  int $limit  How many results to get
@@ -498,7 +525,7 @@ class Search_model extends MY_Model {
 	{
 		$this->join_tables();
 		$this->db->from('action_log');
-		$this->column_select();
+		$this->apply_select();
 		
 		$this->apply_filters();
 
@@ -718,21 +745,62 @@ class Search_model extends MY_Model {
 	 * Calls the db functions to select the columns and give them a humanized name
 	 * @return void 
 	 */
-	public function column_select()
+	public function apply_select()
 	{
-		$this->db->select(
-			array(
-				'CONCAT(first_name, " ", last_name) as Name', 
-				'action_name as Action Name', 
-				'type_name as Type', 
-				'project_name as Project', 
-				'team_name as Team', 
-				'log_desc as Description', 
-				'hours as Hours', 
-				'log_date as Date', 
-				'log_time as Time'
-			)
-		);
+		if (empty($this->SB_select))
+		{
+			$this->db->select(
+				array(
+					'CONCAT(first_name, " ", last_name) as Name', 
+					'action_name as Action Name', 
+					'type_name as Type', 
+					'project_name as Project', 
+					'team_name as Team', 
+					'log_desc as Description', 
+					'hours as Hours', 
+					'log_date as Date', 
+					'log_time as Time'
+				)
+			);
+		}
+		else
+		{
+			foreach ($this->SB_select as $select)
+			{
+				switch (strtolower($select))
+				{
+					case 'name':
+						$this->db->select('CONCAT(first_name, " ", last_name) as Name');
+						break;
+					case 'action' :
+						$this->db->select('action_name as Action Name');
+						break;
+					case 'type' :
+						$this->db->select('type_name as Type');
+						break;
+					case 'project':
+						$this->db->select('project_name as Project');
+						break;
+					case 'team':
+						$this->db->select('team_name as Team');
+						break;
+					case 'desc':
+						$this->db->select('log_desc as Description');
+						break;
+					case 'hours':
+						$this->db->select('hours as Hours');
+						break;
+					case 'date':
+						$this->db->select('log_date as Date');
+						break;
+					case 'time':
+						$this->db->select('log_time as Time');
+						break;
+					default:
+						break;
+				}
+			}
+		}
 	}
 
 	/**
@@ -833,6 +901,8 @@ class Search_model extends MY_Model {
 		
 		$this->SB_null_projects = TRUE;
 		$this->SB_null_teams    = TRUE;
+
+		$this->SB_select 		= array();
 		
 		$this->sort_array		= array('log_date' => 'DESC', 'log_time' => 'DESC');
 	}
