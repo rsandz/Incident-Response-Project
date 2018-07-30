@@ -233,7 +233,7 @@ class Authentication
 		}
 		if ($redirect)
 		{
-			$this->CI->session->set_userdata('redirected_url', current_url());
+			$this->CI->session->set_tempdata('redirected_url', current_url(), 300);
 			redirect('login','refresh', 401);
 		}
 		return FALSE;
