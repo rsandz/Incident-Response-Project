@@ -20,7 +20,7 @@ if (!function_exists('assets_url'))
      */
     function assets_url($url)
     {
-        return base_url().'/assets/'.$url;
+        return base_url().'assets/'.$url;
     }
 }
 
@@ -35,6 +35,7 @@ if (!function_exists('script_tag'))
      */
     function script_tag($assets_path)
     {
-
+        $path = assets_url($assets_path);
+        return "<script type='text/javascript' src='{$path}'></script>";
     }
 }

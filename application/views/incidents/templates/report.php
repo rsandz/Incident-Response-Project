@@ -10,6 +10,7 @@
 		</div>
 		<div class="column">
 			<h2 class="subtitle">Hour in the past week</h2>
+			<canvas class="static-chart" data-chart='<?php echo json_encode($past_week_hours)?>'></canvas>
 		</div>
 	</div>
 	<h2 class="subtitle">Quick Searches</h2>
@@ -19,7 +20,13 @@
 			<?php echo $past_week_search?>
 		</div>
 		<div class="column">
-			<?php echo $past_month_search?></div>
-		<div class="column"></div>
+			<?php echo $past_month_search?>
+		</div>
+		<div class="column">
+			<?php echo $past_3days_search?>
+		</div>
 	</div>
 </div>
+
+<!-- Static chart JS-->
+<?php echo script_tag('js/static-chart.js')?>

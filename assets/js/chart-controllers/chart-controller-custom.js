@@ -2,19 +2,20 @@ $(function()
 	{
 		var managers = 
 			[
-				new chartManager({
-					chartType: 'logs',
-					intervalType: $('#interval_type1').val(),
-					ajaxURLs: $('#ajax-link').attr('data') + '/get_custom_log_frequency/' + $('#query_index').val(),
-					canvas: $('#logs-chart')
-				}),
+				new chartManager(
+					{
+						chartType: 'logs',
+						intervalType: $('#interval_type1').val(),
+						ajaxURLs: $('#ajax-link').attr('data') + '/get_custom_log_frequency/' + $('#query_index').val(),
+						canvas: $('#logs-chart')
+					}),
 			 	new chartManager(
-			 	{
-					chartType: 'hours',
-					intervalType: $('#interval_type2').val(),
-					ajaxURLs: $('#ajax-link').attr('data') + '/get_custom_hours/' + $('#query_index').val(),
-					canvas: $('#hours-chart')
-				})
+					{
+						chartType: 'hours',
+						intervalType: $('#interval_type2').val(),
+						ajaxURLs: $('#ajax-link').attr('data') + '/get_custom_hours/' + $('#query_index').val(),
+						canvas: $('#hours-chart')
+					})
 			];
 		//Events for charts
 		for (var i = 1; i <= managers.length; i++)
