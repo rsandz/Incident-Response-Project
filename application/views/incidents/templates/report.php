@@ -30,3 +30,5 @@
 
 <!-- Static chart JS-->
 <?php echo script_tag('js/static-chart.js')?>
+<!-- Chart.js -->
+<?php echo script_tag('js/Chart.js')?>

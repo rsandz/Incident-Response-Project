@@ -10,6 +10,7 @@ class ComposerStaticInite3beef248ab46d8b9d75c6571db96554
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
     );
 
@@ -17,6 +18,11 @@ class ComposerStaticInite3beef248ab46d8b9d75c6571db96554
         'p' => 
         array (
             'phpseclib\\' => 10,
+        ),
+        'S' => 
+        array (
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Component\\Translation\\' => 30,
         ),
         'P' => 
         array (
@@ -45,6 +51,14 @@ class ComposerStaticInite3beef248ab46d8b9d75c6571db96554
         'phpseclib\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
+        ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Component\\Translation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/translation',
         ),
         'Psr\\Log\\' => 
         array (
@@ -84,6 +98,10 @@ class ComposerStaticInite3beef248ab46d8b9d75c6571db96554
         ),
     );
 
+    public static $fallbackDirsPsr4 = array (
+        0 => __DIR__ . '/..' . '/nesbot/carbon/src',
+    );
+
     public static $prefixesPsr0 = array (
         'G' => 
         array (
@@ -108,6 +126,7 @@ class ComposerStaticInite3beef248ab46d8b9d75c6571db96554
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInite3beef248ab46d8b9d75c6571db96554::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInite3beef248ab46d8b9d75c6571db96554::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInite3beef248ab46d8b9d75c6571db96554::$fallbackDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInite3beef248ab46d8b9d75c6571db96554::$prefixesPsr0;
             $loader->classMap = ComposerStaticInite3beef248ab46d8b9d75c6571db96554::$classMap;
 

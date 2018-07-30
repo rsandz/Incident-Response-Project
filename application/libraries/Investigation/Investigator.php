@@ -14,6 +14,8 @@ require_once('Investigate_base.php');
  * been created. Its main purpose is to create reports that
  * will be displayed to the end user.
  */
+
+ //TODO IMPLEMENT CARBON
 class Investigator extends Investigate_base
 {
 	/** @var int The incident's ID*/
@@ -105,7 +107,10 @@ class Investigator extends Investigate_base
 		$data = $this->CI->statistics_model
 				->from_date(date('Y-m-d', $this->date_time - 604800)) //7 Days * 24 Hours * 60 mins * 60 sec
 				->to_date(date('Y-m-d'), $this->date_time)
-				->get_hours('daily');
+				->metrics('hours')
+				->interval_type('daily')
+				->get();
+		$data['label'] = 'Past Week Hours';
 		return $data;
 	}
 

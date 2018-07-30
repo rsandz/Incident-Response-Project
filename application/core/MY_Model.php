@@ -282,6 +282,7 @@ class MY_Model extends CI_Model {
 	public function error($new_error)
 	{
 		$this->errors[] = $new_error;
+		log_message('error', $new_error);
 	}
 
 }
