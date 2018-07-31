@@ -5,9 +5,10 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="<?php echo base_url('js/Chart.js')?>"></script>
-<script type="text/javascript" src="<?php echo base_url('js/chart-controllers/chart-controller-compare.js')?>"></script>
-<script type="text/javascript" src="<?php echo base_url('js/chart-manager.js')?>"></script>
+<?php echo script_tag('js/Chart.js')?>
+<?php echo script_tag('js/chart-controllers/chart-controller-compare.js')?>
+<?php echo script_tag('js/myChart.js')?>
+<?php echo script_tag('js/moment.js')?>
 
 <div class="container">
 	<h3 class="title is-4">Logging Statistics</h3>

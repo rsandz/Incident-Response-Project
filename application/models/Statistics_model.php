@@ -56,7 +56,7 @@ class Statistics_model extends Search_Model {
 	/**	@var string The Date intervals the data should follow */
 	protected $SM_interval_type;
 	/** @var string Log Frequency or Hours */
-	protected $SM_metrics;
+	protected $SM_metrics = array();
 
 	/**
 	 * Loads the necessary resources to run the statistics model. 
@@ -71,37 +71,51 @@ class Statistics_model extends Search_Model {
 	 */
 	public function get()
 	{
+		//--Cached Instructions -------//
+		$this->db->start_cache();
 		$this->join_tables();
 		$this->db->from('action_log');
+		$this->db->stop_cache();
+		//-----------------------------//
 
-		//Apply where and like filters
-		$this->apply_filters();
+		foreach($this->SM_metrics as $index => $metric)
+		{
+			//Apply where and like filters
+			$this->apply_filters();
+			
+			//Set the time interval
+			$this->apply_interval_type();
+			
+			$dataset =& $data['dataSets'][$index];
 
-		//Set the time interval
-		$this->apply_interval_type();
+			//Get total results
+			$dataset['total'] = $this->db->count_all_results('', FALSE);
 
-		//Sets the metric to get
-		$this->apply_metrics();
+			//Sets the metric to get
+			$this->apply_metric($metric);
+			
+			//Export the query so it can be used in searching later
+			$dataset['query'] = $this->export_query();
+			
+			//Debug info
+			$this->set_debug(); //TODO fix for 2+ metrics
 
-		//Export the query so it can be used in searching later
-		$data['query'] = $this->export_query();
-
-		//Debug info
-		$this->set_debug();
-
-		//Get total results
-		$data['total'] = $this->db->count_all_results('', FALSE);
-
-		//Get the data
-		$results = $this->db->get();
-		$data['stats'] = $this->parse_results($results);
+			//Get the data
+			$results = $this->parse_results($this->db->get());
+			$dataset['y'] = $results['y'];
+			$x = $results['x'];
+		}
 
 		//Sets the range of the data
 		$data['range'] = array(
 			'from' => $this->SB_from_date,
 			'to'   => $this->SB_to_date
 		);
+
+		//Sets the X Values
+		$data['x'] = $x;
 		
+		$this->db->flush_cache();
 		$this->reset();
 
 		return $data;
@@ -123,9 +137,22 @@ class Statistics_model extends Search_Model {
 			case 'daily':
 				//Create date range of days
 				$date_range = new CarbonPeriod($this->SB_from_date, '1 day', $this->SB_to_date);
+
+				//If no Data
+				if (empty($raw_x))
+				{
+					foreach($date_range as $date)
+					{
+						$x[] = $date->format('Y-m-d');
+						$y[] = 0;
+					}
+					break;
+				}
+
 				foreach ($date_range as $key => $date)
 				{
 					$x[] = $date->format('Y-m-d');
+
 					$index = array_search($date, $raw_x);
 					if ($index !== FALSE)
 					{
@@ -140,11 +167,22 @@ class Statistics_model extends Search_Model {
 			case 'weekly':
 				//Create date range of Week
 				$date_range = new CarbonPeriod($this->SB_from_date, '1 week', $this->SB_to_date); 
+
+				//If no Data
+				if (empty($raw_x))
+				{
+					foreach($date_range as $date)
+					{
+						$x[] = $date->startOfWeek()->format('Y-m-d');
+						$y[] = 0;
+					}
+					break;
+				}
 				
 				//Modify raw x to represent start of week
 				$raw_x = array_map(function($x) {return $x->startOfWeek();}, $raw_x);
 				foreach ($date_range as $date)
-				{
+				{	
 					$x[] = $date->startOfWeek()->format('Y-m-d');
 					$index = array_search($date->startOfWeek(), $raw_x);
 					if ($index !== FALSE)
@@ -160,6 +198,17 @@ class Statistics_model extends Search_Model {
 			case 'monthly':
 				//Create date range of Week
 				$date_range = new CarbonPeriod($this->SB_from_date, '1 month', $this->SB_to_date); 
+
+				//If no Data
+				if (empty($raw_x))
+				{
+					foreach($date_range as $date)
+					{
+						$x[] = $date->startOfMonth()->format('F Y');
+						$y[] = 0;
+					}
+					break;
+				}
 
 				//Modify raw x to represent start of month
 				$raw_x = array_map(function($x) {return $x->startOfMonth();}, $raw_x);
@@ -181,6 +230,17 @@ class Statistics_model extends Search_Model {
 			case 'yearly':
 				//Create date range of Week
 				$date_range = new CarbonPeriod($this->SB_from_date, '1 year', $this->SB_to_date); 
+
+				//If no Data
+				if (empty($raw_x))
+				{
+					foreach($date_range as $date)
+					{
+						$x[] = $date->startOfYear()->format('Y');
+						$y[] = 0;
+					}
+					break;
+				}
 
 				//Modify raw x to represent start of month
 				$raw_x = array_map(function($x) {return $x->startOfYear();}, $raw_x);
@@ -213,7 +273,7 @@ class Statistics_model extends Search_Model {
 	 */
 	public function metrics($metrics)
 	{
-		$this->SM_metrics = $metrics;
+		$this->SM_metrics[] = $metrics;
 		return $this;
 	}
 
@@ -241,7 +301,7 @@ class Statistics_model extends Search_Model {
 					->group_by('log_date')
 					->select('log_date AS x')
 					->order_by('log_date', 'DESC');
-			break;
+				break;
 
 			case 'weekly':
 				$this->db
@@ -274,18 +334,18 @@ class Statistics_model extends Search_Model {
 	/**	
 	 * Applies the select command that will get the proper metric
 	 */
-	public function apply_metrics()
+	public function apply_metric($metric)
 	{
-		switch($this->SM_metrics)
+		switch($metric)
 		{
 			case 'logs':
-				$this->db->select('COUNT(*) as `y`');
+				$this->db->select('COUNT(*) AS `y`');
 				break;
 			case 'hours':
 				$this->db->select('SUM(hours) AS `y`');
 				break;
 			default:
-				$this->error('Invalid Metric '.$this->SM_metric);
+				$this->error('Invalid Metric '.$metric);
 				break;
 		}
 	}
@@ -297,7 +357,7 @@ class Statistics_model extends Search_Model {
 	{
 		parent::reset();
 		$this->SM_interval_type = '';
-		$this->SM_metric = '';
+		$this->SM_metrics = array();
 	}
 }
 /* End of file Statistics_model.php */

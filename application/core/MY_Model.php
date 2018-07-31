@@ -24,6 +24,7 @@ class MY_Model extends CI_Model {
 	{
 		parent::__construct();
 		$this->load->database();
+		$this->db->flush_cache();
 	}
 
 	/**

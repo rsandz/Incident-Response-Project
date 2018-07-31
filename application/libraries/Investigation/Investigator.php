@@ -108,6 +108,7 @@ class Investigator extends Investigate_base
 				->from_date(date('Y-m-d', $this->date_time - 604800)) //7 Days * 24 Hours * 60 mins * 60 sec
 				->to_date(date('Y-m-d'), $this->date_time)
 				->metrics('hours')
+				->metrics('logs')
 				->interval_type('daily')
 				->get();
 		$data['label'] = 'Past Week Hours';

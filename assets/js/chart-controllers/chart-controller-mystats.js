@@ -2,17 +2,15 @@ $(function()
 	{
 		var managers = 
 			[
-				new chartManager({
-					chartType: 'logs',
+				new dynamicChart({
 					intervalType: $('#interval_type1').val(),
-					ajaxURLs: $('#ajax-link').attr('data') + '/get_user_log_frequency',
+					ajaxURL: $('#ajax-link').attr('data') + '/user_stats/logs',
 					canvas: $('#logs-chart')
 				}),
-			 	new chartManager(
+			 	new dynamicChart(
 			 	{
-					chartType: 'hours',
 					intervalType: $('#interval_type2').val(),
-					ajaxURLs: $('#ajax-link').attr('data') + '/get_user_hours',
+					ajaxURL: $('#ajax-link').attr('data') + '/user_stats/hours',
 					canvas: $('#hours-chart')
 				})
 			];

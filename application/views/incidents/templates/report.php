@@ -29,6 +29,6 @@
 </div>
 
 <!-- Static chart JS-->
-<?php echo script_tag('js/static-chart.js')?>
+<?php echo script_tag('js/myChart.js')?>
 <!-- Chart.js -->
 <?php echo script_tag('js/Chart.js')?>

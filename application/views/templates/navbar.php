@@ -39,6 +39,6 @@
 			<?php echo anchor('logout', 'Logout', 'class="navbar-item"'); ?>
 		</div>
 	</div>
-	<script type="text/javascript" src="<?php echo base_url('js/menu.js')?>"></script>
+	<?php echo script_tag('js/menu.js')?>
 </nav>
 

@@ -2,24 +2,18 @@ $(function()
 	{
 		var managers = 
 			[
-				new chartManager({
+				new dynamicChart({
 					chartType: 'logs',
 					intervalType: $('#interval_type1').val(),
-					ajaxURLs: [
-						$('#ajax-link').attr('data') + '/get_custom_log_frequency/1',
-						$('#ajax-link').attr('data') + '/get_custom_log_frequency/2'
-						],
+					ajaxURL: $('#ajax-link').attr('data') + '/compare_stats/logs',
 					canvas: $('#logs-chart'),
 					labels: ['Custom Stats 1', 'Custom Stats 2']
 				}),
-			 	new chartManager(
+			 	new dynamicChart(
 			 	{
 					chartType: 'hours',
 					intervalType: $('#interval_type2').val(),
-					ajaxURLs: [
-						$('#ajax-link').attr('data') + '/get_custom_hours/1',
-						$('#ajax-link').attr('data') + '/get_custom_hours/2'
-						],
+					ajaxURL: $('#ajax-link').attr('data') + '/compare_stats/hours',
 					canvas: $('#hours-chart'),
 					labels: ['Custom Stats 1', 'Custom Stats 2']
 				})
