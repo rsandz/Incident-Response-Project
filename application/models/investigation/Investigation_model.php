@@ -102,7 +102,7 @@ class Investigation_model extends MY_Model {
 	{
 		$total_incidents = $this->db->count_all('incidents');
 		$last_incident = $this->db
-							->order_by('created_on')
+							->order_by('created_on', 'DESC')
 							->select('CONCAT("Incident #", `incident_id`, ": ", `incident_name`) as last_incident')
 							->get('incidents')
 							->row()->last_incident;

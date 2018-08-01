@@ -40,11 +40,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			case 'date':
 				$sort_by = array('date' => $dir, 'time' => $dir);
 				break;
-			case 'id':
-				$sort_by = array('id' => $dir);
-				break;
 			default:
-				$sort_by = array('date' => 'desc', 'time' => 'desc');
+				$sort_by = array($field => $dir, 'date' => 'DESC');
 				break;
 		}
 
@@ -64,7 +61,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		$CI->load->helper('form');
 
 		//Get Possible dropdowns
-		$field_options = array('date' => 'Date', 'id' => 'Entry Order');
+		$field_options = array(
+			'date' => 'Date',
+			'id' => 'Entry Order', 
+			'action' => 'Action Name',
+			'hours' => 'Number of Hours',
+			'user' => 'User Name',
+			'team' => 'Team Name',
+			'project' => 'Project Name',
+			'type' => 'Action Type Name'
+		);
 		$direction_options = array('desc' => 'Descending', 'asc' => 'Ascending');
 		
 		//Get current settings (They will be set as default for dropdowns)

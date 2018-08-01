@@ -1,4 +1,6 @@
 <?php
+
+use function GuzzleHttp\json_decode;
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Test extends MY_Controller {
@@ -45,6 +47,25 @@ class Test extends MY_Controller {
 		$this->analytics->metrics('ga:bounceRate', 'bounceRate');
 		$report = $this->analytics->get_report();
 		echo json_encode($report);
+	}
+
+	public function stats()
+	{
+		$this->load->model('statistics_model');
+		$data = $this->statistics_model
+				->from_date('2018-07-01') //7 Days * 24 Hours * 60 mins * 60 sec
+				->to_date('now')
+				->metrics('hours')
+				->interval_type('yearly')
+				->get();
+		echo '<script> console.log('.json_encode($data).'); </script>';
+	}
+
+	public function stats_graph()
+	{
+		$this->load->helper('form');
+		$data['interval_options'] = $this->config->item('interval_options');
+		$this->load->view('stats/templates/chart-box', $data);
 	}
 
 }

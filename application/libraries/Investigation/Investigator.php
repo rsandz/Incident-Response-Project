@@ -2,16 +2,30 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 require_once('Investigate_base.php');
+use Carbon\Carbon;
 
+/**	
+ * Investigator Library
+ * ====================
+ * @author Ryan Sandoval
+ * @version 1.0
+ * @package Investigation
+ * 
+ * The Investigation Library handles incidents after they have 
+ * been created. Its main purpose is to create reports that
+ * will be displayed to the end user.
+ */
+
+ //TODO IMPLEMENT CARBON
 class Investigator extends Investigate_base
 {
+	/** @var int The incident's ID*/
 	protected $incident_id;
+
+	/** @var object The incident db result obj */
 	protected $incident;
 
-	/**
-	 * Timestamp of Date and Time of the incident
-	 * @var number
-	 */
+	/** @var int Timestamp of incident */
 	protected $date_time;
 
 	/**
@@ -26,6 +40,7 @@ class Investigator extends Investigate_base
 		$this->CI->load->model('Searching/search_model');
 		$this->CI->load->model('statistics_model');
 		$this->CI->load->library('table');
+		$this->CI->load->library('chart');
 	}
 
 	/**
@@ -50,34 +65,102 @@ class Investigator extends Investigate_base
 		$this->date_time = strtotime($this->incident->incident_date.$this->incident->incident_time);
 	}
 
+	/**
+	 * Creates the report and returns the report as a HTML
+	 * If you would like to style the report, go to:'application/views/incidents/templates'
+	 * 
+	 * @return string
+	 */
 	public function get_html_report()
 	{
-		$data['summary'] = $this->incident_summary();
-		$data['test'] = $this->CI->table->my_generate($this->past_week_logs());
+		$data['title'] = $this->incident_title($this->incident_id);
+		$data['summary'] = $this->incident_info($this->incident_id);
+		$data['last_10_table'] =$this->past_10_logs();
+		$data['past_week_search'] = $this->past_week_search();
+		$data['past_month_search'] = $this->past_month_search();
+		$data['past_3days_search'] = $this->past_3days_search();
+		$data['past_week_hrs_logs'] = $this->past_week_hrs_logs();
 
 		$html = $this->CI->load->view('incidents/templates/report', $data, TRUE);
+		$html .= $this->CI->load->view('stats/graph-search-form', $data, TRUE);
 		return $html;
 	}
 
 	/**
-	 * Modifies the superclass' summary method
-	 * @return string incident summary as a string
+	 * Gets the data for the last 10 logs before the incident and creates
+	 * an HTML table string out of them.
+	 * @return string
 	 */
-	public function incident_summary($incident_id = NUll)
+	public function past_10_logs()
 	{
-		if (!isset($incident_id))
-		{
-			$incident_id = $this->incident_id;
-		}
-		return parent::incident_summary($incident_id);
+		$table_data = $this->CI->search_model
+					->to_date(date('Y-m-d'), $this->date_time)
+					->pagination(10)
+					->user_lock(FALSE)
+					->select('name, action, time, date')
+					->search();
+		return $this->CI->table->my_generate($table_data);
 	}
 
-	public function past_week_logs()
+	/**	
+	 * 
+	 */
+	public function past_week_hrs_logs()
 	{
-		return $this->CI->search_model
-			->from_date(date('Y-m-d', $this->date_time - 604800)) //7 Days * 24 Hours * 60 mins * 60 sec
-			->to_date(date('Y-m-d'), $this->date_time)
-			->search();
+		$data = $this->CI->statistics_model
+				->from_date(date('Y-m-d', $this->date_time - 604800)) //7 Days * 24 Hours * 60 mins * 60 sec
+				->to_date(date('Y-m-d'), $this->date_time)
+				->metrics('hours')
+				->metrics('logs')
+				->interval_type('daily')
+				->get();
+		
+		return $this->CI->chart
+			->title('Past Week Logs and Hours')
+			->chart_data($data)
+			->generate_static();
+	}
+
+	/**
+	 * Gets a search query for a week before the incident and then
+	 * creates an HTML string that shows a link to the search.
+	 * Edit the style at 'application/views/incidents/templates/search-box.php'
+	 * @return string
+	 */
+	public function past_week_search()
+	{
+		$data['query'] = $this->CI->search_model
+				->from_date(date('Y-m-d', $this->date_time - 604800)) //7 Days * 24 Hours * 60 mins * 60 sec
+				->to_date(date('Y-m-d'), $this->date_time)
+				->export_query();
+		$data['title'] = 'Past Week';
+		return $this->CI->load->view('incidents/templates/search-box', $data, TRUE);
+	}
+	
+	/**
+	 * Gets a search query for a month before the incident and then
+	 * creates an HTML string that shows a link to the search.
+	 * Edit the style at 'application/views/incidents/templates/search-box.php'
+	 * @return string
+	 */
+	public function past_month_search()
+	{
+		$data['query'] = $this->CI->search_model
+				->from_date(date('Y-m-d', $this->date_time - 2678400 )) //31 Days * 24 Hours * 60 mins * 60 sec
+				->to_date(date('Y-m-d'), $this->date_time)
+				->export_query();
+		$data['title'] = 'Past Month';
+		return $this->CI->load->view('incidents/templates/search-box', $data, TRUE);
+	}
+	
+	public function past_3days_search()
+	{
+		$data['query'] = $this->CI->search_model
+				->from_date(date('Y-m-d', $this->date_time - 259200 )) //3 Days * 24 Hours * 60 mins * 60 sec
+				->to_date(date('Y-m-d'), $this->date_time)
+				->export_query();
+		$data['title'] = 'Past 3 Days';
+		return $this->CI->load->view('incidents/templates/search-box', $data, TRUE);
 	}
 
 }

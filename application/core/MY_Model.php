@@ -24,6 +24,7 @@ class MY_Model extends CI_Model {
 	{
 		parent::__construct();
 		$this->load->database();
+		$this->db->flush_cache();
 	}
 
 	/**
@@ -282,6 +283,7 @@ class MY_Model extends CI_Model {
 	public function error($new_error)
 	{
 		$this->errors[] = $new_error;
+		log_message('error', $new_error);
 	}
 
 }

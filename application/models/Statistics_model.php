@@ -2,6 +2,9 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 require_once('Searching/Search_model.php');
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
+use function GuzzleHttp\json_encode;
 
 /**
  * Statistics Model
@@ -20,35 +23,35 @@ require_once('Searching/Search_model.php');
  *
  * Since this model extends the search model, filters for the statistics can
  * be set using the standard search model methods. For example:
- * 		` ...->statistics_mode->keywords('Blue'); `
- * 	The above will show statistics on logs that contain the keyword 'Blue'
+ * 		` ...->statistics_model->keywords('Blue'); `
+ * The above will limit statistics to logs that contain the keyword 'Blue'
  *
  * For more information on the search_model's filters, @see Search_Model
- *
- * -------------------------------------------------------------------------
- *
- * Data Returns:
- *
- * The Statistics model follows the following conventions:
- * After calling a get_ command to get data (i.e. get_hours), the function 
- * should return an array containing the following:
- * 		- 'total' 	The total amount of data (# of logs, # of hours, etc.) that 	
- * 					that was retrieved.
- * 		- 'query' 	Should contain $this->export_query()
- * 					This is used for creating a search query when someone clicks 
- * 					on a graph. (You should do this even if you're not graphing
- * 					the data)
- * 		- 'stats'	This should contain the Data itself in a result array form.
- * 					(use ...->result() after a get statement)
- * 					Each element in the result array should contain:
- * 						x: The x-axis value (i.e. Day)
- * 						y: The y-axis value (i.e. Hours, # of Logs)
- * 					Example: `stats[15]->x` Should give the x-value of the 15 
- * 								row that matched the filters.
  * 
+ * --------------------------------------------------------------------------
+ * Getting the data:
+ * 
+ * statistics_model->get() returns the statistics data.
+ * 
+ * It contains:
+ *  dataSets - Array of datasets (a.k.a metrics)
+ *  dataSets[n][query] - The exported query for this metric
+ *  dataSets[n][total] - Total Data points
+ *  dataSets[n][y]     - Y values of the data set for graphing
+ *  range 			   - The date range of the stats
+ *  x				   - The x values of the stats for graphing
+ * --------------------------------------------------------------------------
+ * A note on years after 2038:
+ * Dut to the Y2038 bug, if the application is running on a 32-bit PHP and server,
+ * any date past 2038 will cause unexpected data to return
  *			
  */
 class Statistics_model extends Search_Model {
+
+	/**	@var string The Date intervals the data should follow */
+	protected $SM_interval_type;
+	/** @var string Log Frequency or Hours */
+	protected $SM_metrics = array();
 
 	/**
 	 * Loads the necessary resources to run the statistics model. 
@@ -59,100 +62,255 @@ class Statistics_model extends Search_Model {
 	}
 
 	/**
-	 * Gets the log frequency data
-	 * @param  string $type Time interval type (i.e. 'Daily, Weekly, Monthly, Yearly')
-	 * @return array        Array conaining data
+	 * Gets and returns the statistics data
 	 */
-	public function get_log_frequency($type)
+	public function get()
 	{
+		//--Cached Instructions -------//
+		$this->db->start_cache();
 		$this->join_tables();
 		$this->db->from('action_log');
+		$this->db->stop_cache();
+		//-----------------------------//
 
-		//Set the selection
-		$this->select_log_frequency_data($type);
-
-		//User lock sets user to current user
-		if($this->user_lock)
+		foreach($this->SM_metrics as $index => $metric)
 		{
-			$this->SB_users = $this->session->user_id;
+			//Apply where and like filters
+			$this->apply_filters();
+			
+			//Set the time interval
+			$this->apply_interval_type();
+			
+			$dataset =& $data['dataSets'][$index];
+
+			//Get total results
+			$dataset['total'] = $this->db->count_all_results('', FALSE);
+
+			//Sets the metric to get
+			$this->apply_metric($metric);
+			
+			//Export the query so it can be used in searching later
+			$dataset['query'] = $this->export_query();
+			
+			//Debug info
+			$this->set_debug(); //TODO: fix for 2+ metrics
+
+			//Get the data
+			$results = $this->parse_results($this->db->get());
+			$dataset['y'] = $results['y'];
+			$x = $results['x'];
 		}
 
-		//Apply where and like filters
-		$this->apply_filters();
+		//Sets the range of the data
+		$data['range'] = array(
+			'from' => $this->SB_from_date,
+			'to'   => $this->SB_to_date
+		);
 
-		//Get total logs
-		$data['total_logs'] = $this->db->count_all_results('', FALSE);
-
-		//Export the query so it can be used in searching later
-		$data['query'] = $this->export_query();
-
-		//Set Dubug info
-		$this->set_debug();
-
-		//Get the statistics data
-		$data['stats'] = $this->db->get()->result();
-
+		//Sets the X Values
+		$data['x'] = $x;
+		
+		$this->db->flush_cache();
 		$this->reset();
 
 		return $data;
 	}
 
-	/**
-	 * Gets the hours data
-	 * @param  string $type Time interval type (i.e. 'Daily, Weekly, Monthly, Yearly')
-	 * @return array        Array conaining data
+	/**	
+	 * Generates an x and y array for easy graphing
+	 * @param CI_DB_result $results 
 	 */
-	public function get_hours($type)
+	public function parse_results($results)
 	{
-		$this->join_tables();
-		$this->db->from('action_log');
+		while ($row = $results->unbuffered_row())
+		{
+			$raw_x[] = new Carbon($row->x);
+			$raw_y[] = $row->y;
+		}
 
-		//Apply where and like filters
-		$this->apply_filters();
+		//Fill in missing dates
+		switch ($this->SM_interval_type) {
+			case 'daily':
+				//Create date range of days
+				$date_range = new CarbonPeriod($this->SB_from_date, '1 day', $this->SB_to_date);
 
-		//Set the selection
-		$this->select_hours_data($type);
+				//If no Data
+				if (empty($raw_x))
+				{
+					foreach($date_range as $date)
+					{
+						$x[] = $date->format('Y-m-d');
+						$y[] = 0;
+					}
+					break;
+				}
 
-		//Export the query so it can be used in searching later
-		$data['query'] = $this->export_query();
+				foreach ($date_range as $key => $date)
+				{
+					$x[] = $date->format('Y-m-d');
 
-		//Debug info
-		$this->set_debug();
+					$index = array_search($date, $raw_x);
+					if ($index !== FALSE)
+					{
+						$y[] = $raw_y[$index];
+					}
+					else
+					{
+						$y[] = 0;
+					}
+				}
+				break;
+			case 'weekly':
+				//Create date range of Week
+				$date_range = new CarbonPeriod($this->SB_from_date, '1 week', $this->SB_to_date); 
 
-		//Get total hours
-		$data['total'] = $this->db->count_all_results('', FALSE);
+				//If no Data
+				if (empty($raw_x))
+				{
+					foreach($date_range as $date)
+					{
+						$x[] = $date->startOfWeek()->format('Y-m-d');
+						$y[] = 0;
+					}
+					break;
+				}
+				
+				//Modify raw x to represent start of week
+				$raw_x = array_map(function($x) {return $x->startOfWeek();}, $raw_x);
+				foreach ($date_range as $date)
+				{	
+					$x[] = $date->startOfWeek()->format('Y-m-d');
+					$index = array_search($date->startOfWeek(), $raw_x);
+					if ($index !== FALSE)
+					{
+						$y[] = $raw_y[$index];
+					}
+					else
+					{
+						$y[] = 0;
+					}
+				}
+				break;
+			case 'monthly':
+				//Create date range of Week
+				$date_range = new CarbonPeriod($this->SB_from_date, '1 month', $this->SB_to_date); 
 
-		//Get the data
-		$data['stats'] = $this->db->get()->result();
+				//If no Data
+				if (empty($raw_x))
+				{
+					foreach($date_range as $date)
+					{
+						$x[] = $date->startOfMonth()->format('F Y');
+						$y[] = 0;
+					}
+					break;
+				}
 
-		$this->reset();
+				//Modify raw x to represent start of month
+				$raw_x = array_map(function($x) {return $x->startOfMonth();}, $raw_x);
+				foreach ($date_range as $date)
+				{
+					$x[] = $date->startOfMonth()->format('F Y');
 
-		return $data;
+					$index = array_search($date->startOfMonth(), $raw_x);
+					if ($index !== FALSE)
+					{
+						$y[] = $raw_y[$index];
+					}
+					else
+					{
+						$y[] = 0;
+					}
+				}
+				break;
+			case 'yearly':
+				//Create date range of Week
+				$date_range = new CarbonPeriod($this->SB_from_date, '1 year', $this->SB_to_date); 
+
+				//If no Data
+				if (empty($raw_x))
+				{
+					foreach($date_range as $date)
+					{
+						log_message('error', $date->startOfYear()->format('Y'));
+						$x[] = $date->startOfYear()->format('Y');
+						$y[] = 0;
+					}
+					break;
+				}
+
+				//Modify raw x to represent start of month
+				$raw_x = array_map(function($x) {return $x->startOfYear();}, $raw_x);
+				foreach ($date_range as $date)
+				{
+					$x[] = $date->startOfYear()->format('Y');
+
+					$index = array_search($date->startOfYear(), $raw_x);
+					if ($index !== FALSE)
+					{
+						$y[] = $raw_y[$index];
+					}
+					else
+					{
+						$y[] = 0;
+					}
+				}
+			default:
+				$this->error('Invalid Time Interval');
+				break;
+		}
+
+		return array('x' => $x, 'y' => $y);
 	}
 
-
-	public function select_log_frequency_data($type)
+	/**	
+	 * Specifies which metric to measure.
+	 * Either Logs or Hours.
+	 * @return statistics_model Method Chaining
+	 */
+	public function metrics($metrics)
 	{
-		switch ($type)
+		$this->SM_metrics[] = $metrics;
+		return $this;
+	}
+
+	/**	
+	 * Specifies which time interval to use.
+	 * 'daily', 'weekly', 'monthly'
+	 * @return statistics_model Method Chaining
+	 */
+	public function interval_type($type)
+	{
+		$this->SM_interval_type = $type;
+		return $this;
+	}
+
+	/**	
+	 * Applies the Grouping and Selecting for the time interval
+	 * @return void;
+	 */
+	public function apply_interval_type()
+	{
+		switch ($this->SM_interval_type)
 		{
 			case 'daily':
 				$this->db
 					->group_by('log_date')
-					->select('log_date AS x, COUNT(*) AS y')
+					->select('log_date AS x')
 					->order_by('log_date', 'DESC');
-			break;
+				break;
 
 			case 'weekly':
 				$this->db
 					->group_by('WEEKOFYEAR(log_date)')
-					->select('DATE_SUB(log_date, INTERVAL (WEEKDAY(log_date) - 1) DAY) AS x, COUNT(*) AS y')
+					->select('DATE_SUB(log_date, INTERVAL (WEEKDAY(log_date)) DAY) AS x')
 					->order_by('log_date', 'DESC');
 				break;
 
 			case 'monthly':
 				$this->db
 					->group_by('MONTH(log_date)')
-					->select('CONCAT(MONTHNAME(log_date), " ", YEAR(log_date)) AS x, COUNT(*) AS y')
+					->select('CONCAT(MONTHNAME(log_date), " ", YEAR(log_date)) AS x')
 					->order_by('YEAR(log_date)', 'ASC')
 					->order_by('MONTH(log_date)', 'ASC');
 				break;
@@ -160,53 +318,43 @@ class Statistics_model extends Search_Model {
 			case 'yearly':
 				$this->db
 					->group_by('YEAR(log_date)')
-					->select('YEAR(log_date) AS x, COUNT(*) AS y')
+					->select('YEAR(log_date) AS x')
 					->order_by('YEAR(log_date)', 'ASC');
 				break;
 
 			default:
-				show_error('Incorrect date interval');
+				$this->error('Invalid Metric '.$this->SM_metric);
 				break;
 		}
 	}
 
-	public function select_hours_data($type)
+	/**	
+	 * Applies the select command that will get the proper metric
+	 */
+	public function apply_metric($metric)
 	{
-		switch ($type)
+		switch($metric)
 		{
-			case 'daily':
-				$this->db
-					->group_by('log_date')
-					->select('log_date AS x, SUM(hours) AS y')
-					->order_by('log_date', 'DESC');
+			case 'logs':
+				$this->db->select('COUNT(*) AS `y`');
 				break;
-
-			case 'weekly':
-				$this->db
-					->group_by('WEEKOFYEAR(log_date)')
-					->select('DATE_SUB(log_date, INTERVAL (WEEKDAY(log_date) - 1) DAY) AS x, SUM(hours) AS y')
-					->order_by('log_date', 'DESC');
+			case 'hours':
+				$this->db->select('SUM(hours) AS `y`');
 				break;
-
-			case 'monthly':
-				$this->db
-					->group_by('MONTH(log_date)')
-					->select('CONCAT(MONTHNAME(log_date), " ", YEAR(log_date)) AS x, SUM(hours) AS y')
-					->order_by('YEAR(log_date)', 'ASC')
-					->order_by('MONTH(log_date)', 'ASC');
-				break;
-
-			case 'yearly':
-				$this->db
-					->group_by('YEAR(log_date)')
-					->select('YEAR(log_date) AS x, SUM(hours) AS y')
-					->order_by('YEAR(log_date)', 'ASC');
-				break;
-
 			default:
-				show_error('Incorrect date interval');
+				$this->error('Invalid Metric '.$metric);
 				break;
 		}
+	}
+
+	/**	
+	 * Extends the functionality of the reset function
+	 */
+	public function reset()
+	{
+		parent::reset();
+		$this->SM_interval_type = '';
+		$this->SM_metrics = array();
 	}
 }
 /* End of file Statistics_model.php */
