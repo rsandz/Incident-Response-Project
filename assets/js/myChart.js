@@ -3,10 +3,15 @@ $(function() {
     staticCharts = [];
 
     //Initialize all elements with class 'static-chart'
-    $(".static-chart").each(function(index) {
-        console.log('Creating Chart' + index);
-        
+    $("canvas.static-chart").each(function(index) {
         staticCharts[index] = new staticChart(this);
+    });
+
+    //Array of Dynamic Charts
+    dynamicCharts = [];
+    $("canvas.dynamic-chart").each(function(index) {
+        console.log('Creating Chart ' + index);
+        dynamicCharts[index] = new dynamicChart(this);
     });
 });
 
@@ -93,7 +98,15 @@ class chartBase{
                                     min: 0,
                                 }
                             }
-                        ]
+                        ],
+                        xAxes:[
+                            {
+                                ticks:{
+                                    minRotation: 35,
+                                    maxRotation: 80
+                                }
+                            }
+                        ],
                     },
                     onClick: this.searchForData
                 }
@@ -125,35 +138,32 @@ class chartBase{
         }
 
         //Getting the date of the datapoint clicked
-        var fromDateObj = new Date(String(this.data.labels[pointIndex])); //Creating a date must use a string
-        var toDateObj = new Date(fromDateObj.getTime());
+        var fromDate = moment(String(this.data.labels[pointIndex])); //Creating a date must use a string
+        var toDate = moment(fromDate);
 
         //Create to date
         switch (this.chart.config.parent.type) {
             case "daily":
                 break;
             case "weekly":
-                toDateObj.setDate(toDateObj.getDate() + 6); //6 Days, as to not include the 1st day of the next week
+                //Since date search is inclusive, we only look up to 6 days ahead,
+                // as to not include next week
+                toDate.add(6, 'days');
                 break;
             case "monthly":
-                toDateObj.setMonth(toDateObj.getMonth() + 1, 0);
-                //The zero argument sets the day to the last day of the current month and not the first day of the next month
-                // i.e. If the 0 argument was not passed, the date range would be from Jan 01 to Feb 01 rather
+                toDate.add(1, 'month');
                 break;
             case "yearly":
-                toDateObj.setFullYear(toDateObj.getFullYear() + 1);
+                toDate.add(1, 'year');
                 break;
         }
 
-        let fromDate = dateObj.getFullYear() + "-" + (dateObj.getMonth() + 1) + "-" + dateObj.getDate();
-        let toDate = toDateObj.getFullYear() + "-" + (toDateObj.getMonth() + 1) + "-" + toDateObj.getDate();
-        //PLUS 1 for the month since js months go from 0-11 shile sql months go from 1-12
-        query: this.config.parent.dataSets[setIndex].query; // The search query
+        let query = this.config.parent.data.dataSets[setIndex].query; // The search query
 
         //Append to form and search
-        $("#to_date").val(elementData.toDate);
-        $("#from_date").val(elementData.fromDate);
-        $("#query").val(elementData.query);
+        $("#to_date").val(toDate.format('Y-MM-DD'));
+        $("#from_date").val(fromDate.format('Y-MM-DD'));
+        $("#query").val(query);
         $("#search-form").submit();
     }
 
@@ -161,16 +171,11 @@ class chartBase{
      * Updates the chart data and the canvas
      */
     updateChart() {
-        //TODO: readd the spinner
-
-        //Remove previous data
-        this.chart.config.data.labels = [];
-        this.chart.config.data.datasets = [];
-        this.chart.update();
 
         //Insert new Data
-        this.chart.data = this.generateDataObj();
-        this.chart.options.scales.yAxes[0].ticks.max;
+        console.log(this);
+        this.chart.config.data = this.generateDataObj();
+        this.chart.config.options.scales.yAxes[0].ticks.max;
         this.chart.update();
 
         //Debug mode
@@ -179,6 +184,14 @@ class chartBase{
         }
         return true;
     }
+    showSpinner()
+    {
+        $(this.canvas).parents('.chart-box').find('i.spinner').show();
+    }
+    hideSpinner()
+    {
+        $(this.canvas).parents('.chart-box').find('i.spinner').hide();
+    }
 }//---------------------- End of Chart Base --------------------
 
 
@@ -186,9 +199,11 @@ class staticChart extends chartBase{
     constructor(canvas) {
         super();
         this.canvas = canvas;
+        this.showSpinner();
         //Parse the data
         this.data = JSON.parse($(canvas).attr('data-chart'));
         this.renderChart();
+        this.hideSpinner();
     }
 
 
@@ -207,35 +222,41 @@ class staticChart extends chartBase{
 class dynamicChart extends chartBase{
     
     /**
-     * Constucts the chartManager class
-     *
-     * Provide a configuration such that:
-     * config = {
-     *      intervalType, //'daily', 'weekly', 'monthly', 'yearly' (Default Daily)
-     *      ajaxURL, //The Ajax URL to get data from
-     *      canvas, //Selector for the canvas
+     * Constucts the chartManager class.
+     * The chart element must contain the following attributes:
+     *  - data-ajaxurl      Contains the url to get the data from
      * 
-     *      //Optional
-     * 		limit, //Amount of Bars to show (Default 10). Can be changed by the user
-     * 		limitMax, //Maximum amount of bars to show. Ceiling of limit if limit was changed by the user (Default 365)
-     * 		limitMin, //Minimum amount of bars to show. Floor of limit if limit was changed by the user (Default 1)
-     * }
-     * 
-     * @param {object} config Configuration Obj
+     * @param {obj} canvas Where to display the chart
      */
-    constructor(config) {
+    constructor(canvas) {
         super();
 
-        this.canvas = config.canvas;
-        this.ajaxURL = config.ajaxURL;
-        this.limit = config.limit || 10; //Number of datapoints to show
-        this.type = config.intervalType || "daily";
+        this.canvas = canvas;
+        this.chartBox = $(canvas).parents('div.chart-box');
+        this.ajaxURL = $(canvas).attr('data-ajaxurl');
+        this.limit = this.chartBox.find('.limit-input').val() || 10; //Number of datapoints to show
+        this.type = this.chartBox.find('.interval-select').val() || "daily";
 
-        this.limitMax = config.limitMax || 365;
-        this.limitMin = config.limitMin || 1;
+        this.limitMax = 365;
+        this.limitMin = 1;
 
         this.offset = 0;
-        this.chart = "";
+        this.chart;
+
+        //Hookup Listeners to the buttons
+        this.chartBox.find('.chart-left').click(this.scrollLeft.bind(this));
+        this.chartBox.find('.chart-right').click(this.scrollRight.bind(this));
+        this.chartBox.find('.jump-button').click(() =>{
+            let jumpDate = this.chartBox.find('.jump-date').val();
+            this.jumpTo(jumpDate);
+        });
+        this.chartBox.find('.limit-button').click(() => {
+            let limitNum = this.chartBox.find('.limit-num').val();
+            this.changeLimit(limitNum);
+        });
+
+        //Validate Data
+        if (!this.ajaxURL) throw 'Invalid ajax URL received!';
 
         this.createChart(this.type);
     }
@@ -282,12 +303,15 @@ class dynamicChart extends chartBase{
      *
      */
     getData(callback) {
+        this.showSpinner();
         var [from_date, to_date] = this.dateFromOffset();
         if (this.debugMode) console.log(`Getting ${this.type} data from ${from_date} to ${to_date}`);
         $.get(this.ajaxURL, 
             { interval_type: this.type, from_date: from_date, to_date: to_date}, 
-            data => this.data = JSON.parse(data)
-        ).done(callback.bind(this));
+            (data) => {
+                this.data = JSON.parse(data); 
+                this.hideSpinner();
+            }).done(callback.bind(this));
     }
 
     dateFromOffset()
@@ -337,6 +361,7 @@ class dynamicChart extends chartBase{
      */
     scrollLeft(amount = 1) {
         this.offset -= 1;
+        console.log('click');
         this.getData(this.updateChart);
     }
 

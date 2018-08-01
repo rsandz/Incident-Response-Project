@@ -97,6 +97,7 @@ class Ajax extends MY_Controller
 			->interval_type($this->input->get('interval_type', TRUE))
 			->from_date($this->input->get('from_date', TRUE))
 			->to_date($this->input->get('to_date', TRUE))
+			->user_lock(TRUE)
 			->get();
 		//Give the data a name. Used for the graph legend
 		
@@ -115,7 +116,7 @@ class Ajax extends MY_Controller
 	 * @param int $project_id
 	 * @param string $type Metric to get
 	 */
-	public function get_project_stats($project_id, $type)
+	public function project_stats($project_id, $type)
 	{
 		$this->statistics_model->null_projects(FALSE);
 		$this->statistics_model->null_teams(FALSE);
@@ -143,7 +144,7 @@ class Ajax extends MY_Controller
 	 * @param int $team_id
 	 * @param string $type Metric to get
 	 */
-	public function get_team_stats($team_id, $type)
+	public function team_stats($team_id, $type)
 	{
 		$this->statistics_model->null_projects(FALSE);
 		$this->statistics_model->null_teams(FALSE);
@@ -167,7 +168,7 @@ class Ajax extends MY_Controller
 	 * @param $_Get string interval_type The interval type of the data ('daily', 'weekly', monthly', 'yearly')
 	 *                     				 @see $this->statistics_model->get_custom_log_frequency() for more info
 	 */
-	public function get_custom_stats($index, $type)
+	public function custom_stats($index, $type)
 	{
 		$indexed_query = $this->session->{'query_'.$index};
 		if (empty($indexed_query))

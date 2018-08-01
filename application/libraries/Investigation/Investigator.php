@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 require_once('Investigate_base.php');
+use Carbon\Carbon;
 
 /**	
  * Investigator Library
@@ -39,6 +40,7 @@ class Investigator extends Investigate_base
 		$this->CI->load->model('Searching/search_model');
 		$this->CI->load->model('statistics_model');
 		$this->CI->load->library('table');
+		$this->CI->load->library('chart');
 	}
 
 	/**
@@ -77,9 +79,10 @@ class Investigator extends Investigate_base
 		$data['past_week_search'] = $this->past_week_search();
 		$data['past_month_search'] = $this->past_month_search();
 		$data['past_3days_search'] = $this->past_3days_search();
-		$data['past_week_hours'] = $this->past_week_hours();
+		$data['past_week_hrs_logs'] = $this->past_week_hrs_logs();
 
 		$html = $this->CI->load->view('incidents/templates/report', $data, TRUE);
+		$html .= $this->CI->load->view('stats/graph-search-form', $data, TRUE);
 		return $html;
 	}
 
@@ -102,7 +105,7 @@ class Investigator extends Investigate_base
 	/**	
 	 * 
 	 */
-	public function past_week_hours()
+	public function past_week_hrs_logs()
 	{
 		$data = $this->CI->statistics_model
 				->from_date(date('Y-m-d', $this->date_time - 604800)) //7 Days * 24 Hours * 60 mins * 60 sec
@@ -111,8 +114,11 @@ class Investigator extends Investigate_base
 				->metrics('logs')
 				->interval_type('daily')
 				->get();
-		$data['label'] = 'Past Week Hours';
-		return $data;
+		
+		return $this->CI->chart
+			->title('Past Week Logs and Hours')
+			->chart_data($data)
+			->generate_static();
 	}
 
 	/**

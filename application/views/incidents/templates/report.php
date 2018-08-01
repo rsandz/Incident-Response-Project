@@ -9,8 +9,7 @@
 			<?php echo $last_10_table?>
 		</div>
 		<div class="column">
-			<h2 class="subtitle">Hour in the past week</h2>
-			<canvas class="static-chart" data-chart='<?php echo json_encode($past_week_hours)?>'></canvas>
+			<?php echo $past_week_hrs_logs?>
 		</div>
 	</div>
 	<h2 class="subtitle">Quick Searches</h2>
@@ -32,3 +31,4 @@
 <?php echo script_tag('js/myChart.js')?>
 <!-- Chart.js -->
 <?php echo script_tag('js/Chart.js')?>
+<?php echo script_tag('js/moment.js')?>

@@ -182,6 +182,9 @@ class Search extends MY_Controller {
 		$search_data = $this->search_model->search();
 		$data['num_rows'] = $this->search_model->unpaginated_rows;
 		
+		//Uncomment to show debug info on search page
+		//echo $this->search_model->get_debug();
+		
 		//Turn Data into Table
 		$data['table'] = $this->table->my_generate($search_data);
 

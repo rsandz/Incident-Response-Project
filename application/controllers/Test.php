@@ -61,6 +61,13 @@ class Test extends MY_Controller {
 		echo '<script> console.log('.json_encode($data).'); </script>';
 	}
 
+	public function stats_graph()
+	{
+		$this->load->helper('form');
+		$data['interval_options'] = $this->config->item('interval_options');
+		$this->load->view('stats/templates/chart-box', $data);
+	}
+
 }
 /* End of file Test.php */
 /* Location: ./application/controllers/Test.php */

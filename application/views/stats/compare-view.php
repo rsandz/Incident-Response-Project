@@ -34,7 +34,6 @@
 						</div>
 						<div class="level-right">
 							<p class="control"><?php echo form_dropdown('interval_type1', $interval_options, NULL,'class="select" id="interval_type1"');?></p>
-							<span class="icon"><img class="img is-hidden" id="interval_type_loading1" src="<?php echo base_url('img/loading.gif')?>"></span>
 						</div>
 					</div>
 				</div>
@@ -90,7 +89,6 @@
 							</div>
 							<div class="level-right">
 								<p class="control"><?php echo form_dropdown('interval_type2', $interval_options, NULL,'class="select" id="interval_type2"');?></p>
-								<span class="icon"><img class="img is-hidden" id="interval_type_loading" src="<?php echo base_url('img/loading.gif')?>"></span>
 							</div>
 						</div>
 					</div>

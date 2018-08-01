@@ -27,6 +27,7 @@ class Stats extends MY_Controller {
 		$this->load->model('statistics_model');
 		$this->load->model('search_model');
 		$this->load->helper('form');
+		$this->load->library('chart');
 		$this->config->load('stats_config');
 
 		$this->authentication->check_login(TRUE); //Redirect if not logged in.
@@ -66,14 +67,22 @@ class Stats extends MY_Controller {
 
 		$data['title'] = 'My Statistics';
 		$data['header']['text'] = "My Statistics";
+		
+		//Chart 1
+		$this->chart->title('My Logging Statistics');
+		$this->chart->ajax_url(site_url('Ajax/user_stats/logs'));
+		$data['charts'][] = $this->chart->generate_dynamic();
 
-		$data['interval_options'] = $this->config->item('interval_options');
+		//Chart 2
+		$this->chart->title('My Hours Statistics');
+		$this->chart->ajax_url(site_url('Ajax/user_stats/hours'));
+		$data['charts'][] = $this->chart->generate_dynamic();
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
 		$this->load->view('stats/tabs', $data);
-		$this->load->view('stats/mystats', $data);
+		$this->load->view('stats/chart-view', $data);
 		$this->load->view('stats/graph-search-form', $data);
 		$this->load->view('templates/footer');
 	}
@@ -93,13 +102,21 @@ class Stats extends MY_Controller {
 			$data['title'] = 'Project Statistics';
 			$data['header']['text'] = "Project Statistics";
 
-			$data['interval_options'] = $this->config->item('interval_options');
+			//Chart 1
+			$this->chart->title('Project Logging Statistics');
+			$this->chart->ajax_url(site_url("Ajax/project_stats/{$project_id}/logs"));
+			$data['charts'][] = $this->chart->generate_dynamic();
+
+			//Chart 2
+			$this->chart->title('Project Hours Statistics');
+			$this->chart->ajax_url(site_url("Ajax/project_stats/{$project_id}/hours"));
+			$data['charts'][] = $this->chart->generate_dynamic();
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
 			$this->load->view('stats/tabs', $data);
-			$this->load->view('stats/projectstats-view', $data);
+			$this->load->view('stats/chart-view', $data);
 			$this->load->view('stats/graph-search-form', $data);
 			$this->load->view('templates/footer');
 		}
@@ -160,13 +177,22 @@ class Stats extends MY_Controller {
 				'text' => 'Team Statistic',
 				'colour' => 'is-info');
 			$data['title'] = 'Team Statistic';
-			$data['interval_options'] = $this->config->item('interval_options');
+			
+			//Chart 1
+			$this->chart->title('Team Logging Statistics');
+			$this->chart->ajax_url(site_url("Ajax/team_stats/{$team_id}/logs"));
+			$data['charts'][] = $this->chart->generate_dynamic();
+
+			//Chart 2
+			$this->chart->title('Team Hours Statistics');
+			$this->chart->ajax_url(site_url("Ajax/team_stats/{$team_id}/hours"));
+			$data['charts'][] = $this->chart->generate_dynamic();
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
 			$this->load->view('stats/tabs', $data);
-			$this->load->view('stats/teamstats-view', $data);
+			$this->load->view('stats/chart-view', $data);
 			$this->load->view('stats/graph-search-form', $data);
 			$this->load->view('templates/footer', $data);
 		}
@@ -227,14 +253,24 @@ class Stats extends MY_Controller {
 			'text' => 'Custom Statistic '.$index,
 			'colour' => 'is-info');
 		$data['title'] = 'Custom Statistic '.$index;
-		$data['interval_options'] = $this->config->item('interval_options');
-		$data['index'] = $index; //The custom stat id number.
+		$data['index'] = $index;
+
+		//Chart 1
+		$this->chart->title('Custom Logging Statistics');
+		$this->chart->ajax_url(site_url("Ajax/custom_stats/{$index}/logs"));
+		$data['charts'][] = $this->chart->generate_dynamic();
+
+		//Chart 2
+		$this->chart->title('Custom Hours Statistics');
+		$this->chart->ajax_url(site_url("Ajax/custom_stats/{$index}/hours"));
+		$data['charts'][] = $this->chart->generate_dynamic();
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
 		$this->load->view('stats/tabs', $data);
 		$this->load->view('stats/custom_stats-view');
+		$this->load->view('stats/chart-view');
 		$this->load->view('stats/graph-search-form', $data);
 		$this->load->view('templates/footer', $data);
 	}
@@ -275,13 +311,22 @@ class Stats extends MY_Controller {
 			'text' => 'Compare Statistic ',
 			'colour' => 'is-info');
 		$data['title'] = 'Compare Statistic ';
-		$data['interval_options'] = $this->config->item('interval_options');
+
+		//Chart 1
+		$this->chart->title('Comparing Custom Stats Logs');
+		$this->chart->ajax_url(site_url("Ajax/compare_stats/logs"));
+		$data['charts'][] = $this->chart->generate_dynamic();
+
+		//Chart 2
+		$this->chart->title('Comparing Custom Stats Hours');
+		$this->chart->ajax_url(site_url("Ajax/compare_stats/hours"));
+		$data['charts'][] = $this->chart->generate_dynamic();
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
 		$this->load->view('stats/tabs', $data);
-		$this->load->view('stats/compare-view');
+		$this->load->view('stats/chart-view');
 		$this->load->view('stats/graph-search-form');
 		$this->load->view('templates/footer', $data);
 	}

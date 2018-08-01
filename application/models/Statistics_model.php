@@ -48,7 +48,10 @@ use function GuzzleHttp\json_encode;
  * 						y: The y-axis value (i.e. Hours, # of Logs)
  * 					Example: `stats[15]->x` Should give the x-value of the 15 
  * 								row that matched the filters.
- * 
+ * --------------------------------------------------------------------------
+ * A note on years after 2038:
+ * Dut to the Y2038 bug, if the application is running on a 32-bit PHP and server,
+ * any date past 2038 will cause unexpected data to return
  *			
  */
 class Statistics_model extends Search_Model {
@@ -236,6 +239,7 @@ class Statistics_model extends Search_Model {
 				{
 					foreach($date_range as $date)
 					{
+						log_message('error', $date->startOfYear()->format('Y'));
 						$x[] = $date->startOfYear()->format('Y');
 						$y[] = 0;
 					}
