@@ -2,18 +2,14 @@
 
 //----------------Start of Initialization Script -------------//
 $(function() {
-    //Array of the staticChart objects
-    staticCharts = [];
-
     //Initialize all elements with class 'static-chart'
+    staticCharts = [];
     $("canvas.static-chart").each(function(index) {
         staticCharts[index] = new staticChart(this);
     });
 
-    //Array of Dynamic Charts
-    dynamicCharts = [];
-
     //Initialize Dynamic Charts
+    dynamicCharts = [];
     $("canvas.dynamic-chart").each(function(index) {
         console.log("Creating Chart " + index);
         dynamicCharts[index] = new dynamicChart(this);
@@ -70,17 +66,14 @@ class chartBase {
         ];
 
         /** 
-         * @prop {obj} data Chart Data
-         * @see statistic_model
+         * @prop {obj} data 
+         * Chart Data
          * Needs: 
-         * {
-         *  dataSets : [{
-         *          query : {} // statistics_model exported query. Used for searching
-         *          y     : [], //Y value of the data set
-         *          total : 10,
-         *      }, ...More data sets here]
-         *  x : []              //X values of data
-         * }
+         * data.dataSets[n].query - Contains the search query
+         * data.dataSets[n].y     - Y vals to graph
+         * data.dataSets[n].total - Total data points
+         * x                      - X vals to graph
+         * * @see statistic_model
          */
         this.data;
 
@@ -120,7 +113,7 @@ class chartBase {
 
         //Append data to dataObj
         var dataObj = {
-            label: data.x,
+            labels: data.x,
             datasets: datasets
         };
         return dataObj;
@@ -169,8 +162,8 @@ class chartBase {
     }
 
     /**
-     * Processes a user click and runs a search query for the data that the user clicked on.
-     * This requires the graph-search-form be loaded in the view (See /application/view/stats/graph-search-form).
+     * Search for data user clicked on.
+     * Requires (/application/view/stats/graph-search-form).
      * 
      * This will submit a form containing 'from_date', 'to_date', and 'query' to site.com/search/results
      *      query comes from the statistic_model during the get_data() ajax call.
@@ -186,7 +179,7 @@ class chartBase {
                 //Type error usually means that the user did not click on a bar
                 return; //Just return if did not click on a bar
             } else {
-                throw err; // Throw the error again if it is not type error
+                throw err;
             }
         }
 
@@ -222,11 +215,9 @@ class chartBase {
     }
 
     /**
-     * Updates the chart canvas by recreating the
-     * chart's data property thorugh this.generateDataObj()
+     * Updates the chart canvas using this.generateDataObj() again
      * Note: This does not automatically fetch the new data from the server
-     *       You must run getData for that and then pass this as a callback
-     *       i.e. getData(updateChart)
+     *       Run for getData(updateChart) for that
      */
     updateChart() {
         //Insert new Data
@@ -235,7 +226,6 @@ class chartBase {
         this.chart.config.options.scales.yAxes[0].ticks.max;
         this.chart.update();
 
-        //Debug mode
         if (this.debugMode) {
             console.log(this);
         }
@@ -294,7 +284,6 @@ class dynamicChart extends chartBase {
      * Constucts the chartManager class.
      * The canvas element must contain the following attributes:
      *  - data-ajaxurl      Contains the url to get the data from
-     *
      * @param {obj} canvas Where to display the chart
      */
     constructor(canvas) {
@@ -326,7 +315,6 @@ class dynamicChart extends chartBase {
         //Validate Data
         if (!this.ajaxURL) throw "Invalid ajax URL received!";
 
-        //Off we go!
         this.getData(this.renderChart);
     }
 
@@ -343,7 +331,7 @@ class dynamicChart extends chartBase {
 
         $.get(
             this.ajaxURL,
-            { //Data to send over
+            {
                 interval_type: this.type,
                 from_date: from_date,
                 to_date: to_date
@@ -361,6 +349,7 @@ class dynamicChart extends chartBase {
      * The dates depend on the this.offset and this.type
      */
     dateFromOffset() {
+        //Note: Added one to limit so that different offsets don't have overlapping dates
         switch (this.type) {
             case "daily":
                 var toDate = moment().add((this.limit + 1) * this.offset, "d");

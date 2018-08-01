@@ -6,10 +6,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * ================
  * @author Ryan Sandoval, June 2018
  *
- * This controller handles the stats functionality of the app. This includes user and project stats
- *
- * Most of the stats display functionality is handles by javascript since I used chart.js to create graphs.
- * This controller mostly deals with displaying text data. 
+ * This controller handles the stats functionality of the app.
  */
 class Stats extends MY_Controller {
 
@@ -17,8 +14,6 @@ class Stats extends MY_Controller {
 	 * Constructs the Stats class.
 	 *
 	 * Loads all the necessary libraries, helpers and other resources.
-	 * Also sets the default timezone. To configure the time zone, see config/appconfig and 
-	 * 	refer to the PHP documentation for timezone values..
 	 */
 	public function __construct() 
 	{
@@ -56,9 +51,6 @@ class Stats extends MY_Controller {
 
 	/**
 	 * Controls the User Stats (My Stats) page.
-	 * 
-	 * Also sets the interval options available. 
-	 * 	 ==DO NOT CHANGE INTERVAL OPTIONS==
 	 */
 	public function my_stats()
 	{
@@ -202,12 +194,10 @@ class Stats extends MY_Controller {
 	 * Controller for custom stats pages
 	 *
 	 * The custom stats pages works like such:
-	 * 	1. The user sends in a custom query. This is saved in the session data.
+	 * 	1. The user sends in a custom query. This is saved in the session data using an index.
 	 * 	2. When the user returns to the custom stats page, the user is able to view the
 	 * 		stats about the custom querry they sent in.
-	 * 	3. The user is able to edit the search query they sent each time.
-	 * 	4. The user can send in multiple unrelated search queries. The queries are identified
-	 * 		by their index number.
+	 * 	3. The user is able to edit the search query they sent
 	 * @param int $index The index number of the custom stats. Used to select the correct query.
 	 */
 	public function custom_stats($index)
@@ -248,7 +238,6 @@ class Stats extends MY_Controller {
 		$this->load->helper('search_helper');
 		$data['query_string'] = query_summary($query);
 		
-		//Display the stats
 		$data['header'] = array(
 			'text' => 'Custom Statistic '.$index,
 			'colour' => 'is-info');

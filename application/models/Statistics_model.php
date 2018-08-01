@@ -24,30 +24,22 @@ use function GuzzleHttp\json_encode;
  * Since this model extends the search model, filters for the statistics can
  * be set using the standard search model methods. For example:
  * 		` ...->statistics_model->keywords('Blue'); `
- * 	The above will limit statistics to logs that contain the keyword 'Blue'
+ * The above will limit statistics to logs that contain the keyword 'Blue'
  *
  * For more information on the search_model's filters, @see Search_Model
- *
- * -------------------------------------------------------------------------
- *
- * Data Returns:
- *
- * The Statistics model follows the following conventions:
- * After calling a get method to get data, an array
- * containing the following will be returned:
- * 		- 'total' 	The total amount of data (# of logs, # of hours, etc.) that 	
- * 					that was retrieved.
- * 		- 'query' 	Should contain $this->export_query()
- * 					This is used for creating a search query when someone clicks 
- * 					on a graph. (You should do this even if you're not graphing
- * 					the data)
- * 		- 'stats'	This should contain the Data itself in a result array form.
- * 					(use ...->result() after a get statement)
- * 					Each element in the result array should contain:
- * 						x: The x-axis value (i.e. Day)
- * 						y: The y-axis value (i.e. Hours, # of Logs)
- * 					Example: `stats[15]->x` Should give the x-value of the 15 
- * 								row that matched the filters.
+ * 
+ * --------------------------------------------------------------------------
+ * Getting the data:
+ * 
+ * statistics_model->get() returns the statistics data.
+ * 
+ * It contains:
+ *  dataSets - Array of datasets (a.k.a metrics)
+ *  dataSets[n][query] - The exported query for this metric
+ *  dataSets[n][total] - Total Data points
+ *  dataSets[n][y]     - Y values of the data set for graphing
+ *  range 			   - The date range of the stats
+ *  x				   - The x values of the stats for graphing
  * --------------------------------------------------------------------------
  * A note on years after 2038:
  * Dut to the Y2038 bug, if the application is running on a 32-bit PHP and server,
@@ -101,7 +93,7 @@ class Statistics_model extends Search_Model {
 			$dataset['query'] = $this->export_query();
 			
 			//Debug info
-			$this->set_debug(); //TODO fix for 2+ metrics
+			$this->set_debug(); //TODO: fix for 2+ metrics
 
 			//Get the data
 			$results = $this->parse_results($this->db->get());
@@ -126,6 +118,7 @@ class Statistics_model extends Search_Model {
 
 	/**	
 	 * Generates an x and y array for easy graphing
+	 * @param CI_DB_result $results 
 	 */
 	public function parse_results($results)
 	{
