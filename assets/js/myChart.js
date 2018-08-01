@@ -301,8 +301,12 @@ class dynamicChart extends chartBase {
 
         //Hookup Listeners to the buttons.
         //These must be within the chartWrapper
-        this.chartWrapper.find(".chart-left").click(this.scrollLeft.bind(this));
-        this.chartWrapper.find(".chart-right").click(this.scrollRight.bind(this));
+        this.chartWrapper.find(".chart-left").click(() => this.scrollLeft());
+        this.chartWrapper.find(".chart-right").click(() => this.scrollRight());
+        this.chartWrapper.find('.interval-select').change(() => {
+            let newInterval = this.chartWrapper.find('.interval-select').val();
+            this.changeType(newInterval);
+        });
         this.chartWrapper.find(".jump-button").click(() => {
             let jumpDate = this.chartWrapper.find(".jump-date").val();
             this.jumpTo(jumpDate);
@@ -349,23 +353,23 @@ class dynamicChart extends chartBase {
      * The dates depend on the this.offset and this.type
      */
     dateFromOffset() {
-        //Note: Added one to limit so that different offsets don't have overlapping dates
+        //Note: Added one so that different offsets don't have overlapping dates
         switch (this.type) {
             case "daily":
-                var toDate = moment().add((this.limit + 1) * this.offset, "d");
-                var fromDate = moment(toDate).subtract(this.limit, "d");
+                var toDate = moment().add((this.limit * this.offset), "d");
+                var fromDate = moment(toDate).subtract(this.limit - 1, "d");
                 return [fromDate.format("Y-MM-DD"), toDate.format("Y-MM-DD")];
             case "weekly":
-                var toDate = moment().add((this.limit + 1) * this.offset, "w");
-                var fromDate = moment(toDate).subtract(this.limit, "w");
+                var toDate = moment().add((this.limit * this.offset), "w");
+                var fromDate = moment(toDate).subtract(this.limit - 1, "w");
                 return [fromDate.format("Y-MM-DD"), toDate.format("Y-MM-DD")];
             case "monthly":
-                var toDate = moment().add((this.limit + 1) * this.offset, "M");
-                var fromDate = moment(toDate).subtract(this.limit, "M");
+                var toDate = moment().add((this.limit * this.offset), "M");
+                var fromDate = moment(toDate).subtract(this.limit - 1, "M");
                 return [fromDate.format("Y-MM-DD"), toDate.format("Y-MM-DD")];
             case "yearly":
-                var toDate = moment().add((this.limit + 1) * this.offset, "y");
-                var fromDate = moment(toDate).subtract(this.limit, "y");
+                var toDate = moment().add((this.limit * this.offset), "y");
+                var fromDate = moment(toDate).subtract(this.limit - 1, "y");
                 return [fromDate.format("Y-MM-DD"), toDate.format("Y-MM-DD")];
             default:
                 break;

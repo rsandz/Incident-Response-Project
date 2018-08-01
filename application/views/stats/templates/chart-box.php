@@ -1,4 +1,4 @@
-<div class="chart-box">
+<div class="chart-wrapper">
     <h3 class="title is-3">
         <?php echo $title;?>
         <i class="spinner fa fa-spinner fa-pulse fa-fw"></i>
