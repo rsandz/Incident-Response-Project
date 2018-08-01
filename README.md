@@ -10,7 +10,7 @@
 - [Setup](#setup)
 
 Description
-==========
+===========
 This app is used to log actions to assist with the investigation, in the event that a security breech occurs.
 
 
@@ -24,7 +24,13 @@ This application was created with the following frameworks:
 If you plan to modify/work on this project, please consider reading the documentation for the above frameworks.
 
 This application usses the following libraries:
-1. JQuery
+**JavaScript**
+1. **JQuery**
+2. **Moment.js** - JavaScript Date and Time
+
+**PHP**
+1. **Carbon** - Date and Time Library
+	- __Note:__ This library can only handle dates up to 2038 if PHP and the server is 32-bit.
 
 Setup
 =====

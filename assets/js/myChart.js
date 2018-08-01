@@ -1,3 +1,6 @@
+//myChart.js - Created by Ryan Sandoval
+
+//----------------Start of Initialization Script -------------//
 $(function() {
     //Array of the staticChart objects
     staticCharts = [];
@@ -9,109 +12,156 @@ $(function() {
 
     //Array of Dynamic Charts
     dynamicCharts = [];
+
+    //Initialize Dynamic Charts
     $("canvas.dynamic-chart").each(function(index) {
-        console.log('Creating Chart ' + index);
+        console.log("Creating Chart " + index);
         dynamicCharts[index] = new dynamicChart(this);
     });
 });
 
-class chartBase{
-    constructor()
-    {
-        this.colorSets = [{
-            backgroundColor: "rgba(255, 58, 58, 0.5)",
-            borderColor : 'rgba(135, 13, 13, 0.5)',
-            hoverBackgroundColor : "rgba(255, 137, 137, 0.5)",
-            hoverBorderColor: "rgba(135, 13, 13, 0.5)",
-        },
-        {
-            backgroundColor : "rgba(50, 14, 200, 0.5)",
-            borderColor : "rgba(10,2,90,0.5)",
-            hoverBackgroundColor : "rgba(99,21,255,0.9)",
-            hoverBorderColor : "rgba(25, 4, 120, 1)"
-        },
-        {
-            backgroundColor : "rgba(13,240,13,0.5)",
-            borderColor : "rgba(13,100,13,0.5)",
-            hoverBackgroundColor : "rgba(26, 255, 26, 1)",
-            hoverBorderColor : "rgba(7, 50, 7, 1)"
-        },
-        {
-            backgroundColor : "rgba(240,240,0,0.5)",
-            borderColor : "rgba(120,120,0,0.5)",
-            hoverBackgroundColor : "rgba(250, 250, 0, 1)",
-            hoverBorderColor : "rgba(60, 60, 0, 1)"
-        }];
+//----------------End of Initialization Script -------------//
 
+/**
+ * Base Class for charts
+ * @author Ryan Sandoval
+ * @package Chart
+ * 
+ * This class is extended by other chart classes.
+ * It provides methods for rendering and data parsing.
+ *
+ * It also has a method for searching what a user clicked on,
+ * if 'views/stats/graph-search-template' is loaded.
+ * 
+ * @uses moment See moment.js docs
+ */
+class chartBase {
+    /**
+     * Creates the Chart base.
+     * Contains the property for setting debud mode on or off
+     */
+    constructor(canvas) {
+        //Colors for the DataSets. 1st dataset uses first in array, 2nd uses second in array...
+        this.colorSets = [
+            {
+                backgroundColor: "rgba(255, 58, 58, 0.5)",
+                borderColor: "rgba(135, 13, 13, 0.5)",
+                hoverBackgroundColor: "rgba(255, 137, 137, 0.5)",
+                hoverBorderColor: "rgba(135, 13, 13, 0.5)"
+            },
+            {
+                backgroundColor: "rgba(50, 14, 200, 0.5)",
+                borderColor: "rgba(10,2,90,0.5)",
+                hoverBackgroundColor: "rgba(99,21,255,0.9)",
+                hoverBorderColor: "rgba(25, 4, 120, 1)"
+            },
+            {
+                backgroundColor: "rgba(13,240,13,0.5)",
+                borderColor: "rgba(13,100,13,0.5)",
+                hoverBackgroundColor: "rgba(26, 255, 26, 1)",
+                hoverBorderColor: "rgba(7, 50, 7, 1)"
+            },
+            {
+                backgroundColor: "rgba(240,240,0,0.5)",
+                borderColor: "rgba(120,120,0,0.5)",
+                hoverBackgroundColor: "rgba(250, 250, 0, 1)",
+                hoverBorderColor: "rgba(60, 60, 0, 1)"
+            }
+        ];
+
+        /** 
+         * @prop {obj} data Chart Data
+         * @see statistic_model
+         * Needs: 
+         * {
+         *  dataSets : [{
+         *          query : {} // statistics_model exported query. Used for searching
+         *          y     : [], //Y value of the data set
+         *          total : 10,
+         *      }, ...More data sets here]
+         *  x : []              //X values of data
+         * }
+         */
         this.data;
-        this.canvas;
+
+        this.canvas = canvas;
+        this.chartWrapper = $(canvas).parents('.chart-wrapper');
+        this.chartWrapper;
         this.chart;
 
-        this.defaultType = 'bar';
+        this.defaultType = "bar";
 
+        /* Set to true to console.log() the chart object after rendering */
         this.debugMode = true;
     }
 
     /**
-     * Generates the data array for use in the chart 
-     * configuration
+     * Generates the data array for use in the chart
+     * configuration.
+     * @param {obj} data The chart data. @see data above for what this needs
+     * @return {obj} The data object to be inserted into chart.data
      */
-    generateDataObj(data = this.data)
-    {
-        var dataObj = {labels: data.x}; //Init dataObj and add x-labels
+    generateDataObj(data = this.data) {
         var datasets = []; //Contains the datasets
-        
+
         //Create Datasets
-        for (var [index, set] of data.dataSets.entries())
-        {
+        for (var [index, set] of data.dataSets.entries()) {
             datasets[index] = {
-                     label: set.label || 'Series '+ (index + 1),
-                     data : set.y,
-                     backgroundColor: this.colorSets[index].backgroundColor,
-                     borderColor : this.colorSets[index].borderColor,
-                     hoverBackgroundColor : this.colorSets[index].hoverBackgroundColor,
-                     hoverBorderColor: this.colorSets[index].hoverBorderColor,
-                     borderWidth : 1,
-                }
+                label: set.label || "Series " + (index + 1),
+                data: set.y,
+                backgroundColor: this.colorSets[index].backgroundColor,
+                borderColor: this.colorSets[index].borderColor,
+                hoverBackgroundColor: this.colorSets[index]
+                    .hoverBackgroundColor,
+                hoverBorderColor: this.colorSets[index].hoverBorderColor,
+                borderWidth: 1
+            };
         }
-        
+
         //Append data to dataObj
-        dataObj.datasets = datasets;
+        var dataObj = {
+            label: data.x,
+            datasets: datasets
+        };
         return dataObj;
     }
 
     /**
-     * Renders the chart on the canvas
+     * Renders the chart on the canvas using Chart.js
      */
     renderChart() {
-        if (this.canvas) {
-            this.chart = new Chart(this.canvas, {
-                parent: this,
-                type: this.defaultType,
-                data: this.generateDataObj(),
-                options: {
-                    scales: {
-                        yAxes: [
-                            {
-                                ticks: {
-                                    beginAtZero: true,
-                                    min: 0,
-                                }
-                            }
-                        ],
-                        xAxes:[
-                            {
-                                ticks:{
-                                    minRotation: 35,
-                                    maxRotation: 80
-                                }
-                            }
-                        ],
-                    },
-                    onClick: this.searchForData
-                }
-            });
+        if (!this.canvas) {
+            throw "Canvas is not Set!";
         }
+
+        //Refer to Chart.js docs for this
+        this.chart = new Chart(this.canvas, {
+            parent: this, //Refers to the chart object itself
+            type: this.defaultType,
+            data: this.generateDataObj(),
+            options: {
+                scales: {
+                    yAxes: [
+                        {
+                            ticks: {
+                                beginAtZero: true,
+                                min: 0
+                            }
+                        }
+                    ],
+                    xAxes: [
+                        {
+                            ticks: {
+                                minRotation: 35,
+                                maxRotation: 80
+                            }
+                        }
+                    ]
+                },
+                onClick: this.searchForData
+            }
+        });
+
         //Debug mode
         if (this.debugMode) {
             console.log(this);
@@ -119,16 +169,19 @@ class chartBase{
     }
 
     /**
-     * Processes a user click and then creates and runs a search query for the data that the user clicked on.
-     * The search data will come from the query array returned by the get data AJAX
+     * Processes a user click and runs a search query for the data that the user clicked on.
+     * This requires the graph-search-form be loaded in the view (See /application/view/stats/graph-search-form).
+     * 
+     * This will submit a form containing 'from_date', 'to_date', and 'query' to site.com/search/results
+     *      query comes from the statistic_model during the get_data() ajax call.
      * @param  {event} e The click event
      */
     searchForData(e) {
+        //We use a try block to see whether the user clicked on a datapoint or simply the background
         try {
-            var pointIndex = this.getElementAtEvent(e)[0]._index; //Index of the bar that was clicked on
-            var setIndex = this.getElementAtEvent(e)[0]._datasetIndex;
+            var pointIndex = this.getElementAtEvent(e)[0]._index;
+            var datasetIndex = this.getElementAtEvent(e)[0]._datasetIndex;
         } catch (err) {
-            console.log(err);
             if (err.name == "TypeError") {
                 //Type error usually means that the user did not click on a bar
                 return; //Just return if did not click on a bar
@@ -138,40 +191,44 @@ class chartBase{
         }
 
         //Getting the date of the datapoint clicked
-        var fromDate = moment(String(this.data.labels[pointIndex])); //Creating a date must use a string
+        var fromDate = moment(String(this.data.labels[pointIndex]));
+        
+        //Create toDate
         var toDate = moment(fromDate);
-
-        //Create to date
         switch (this.chart.config.parent.type) {
             case "daily":
                 break;
             case "weekly":
                 //Since date search is inclusive, we only look up to 6 days ahead,
                 // as to not include next week
-                toDate.add(6, 'days');
+                toDate.add(6, "days");
                 break;
             case "monthly":
-                toDate.add(1, 'month');
+                toDate.add(1, "month");
                 break;
             case "yearly":
-                toDate.add(1, 'year');
+                toDate.add(1, "year");
                 break;
         }
 
-        let query = this.config.parent.data.dataSets[setIndex].query; // The search query
+        // The search query export string received from statistics model
+        let query = this.config.parent.data.dataSets[datasetIndex].query; 
 
-        //Append to form and search
-        $("#to_date").val(toDate.format('Y-MM-DD'));
-        $("#from_date").val(fromDate.format('Y-MM-DD'));
+        //Update the form and search
+        $("#to_date").val(toDate.format("Y-MM-DD"));
+        $("#from_date").val(fromDate.format("Y-MM-DD"));
         $("#query").val(query);
         $("#search-form").submit();
     }
 
     /**
-     * Updates the chart data and the canvas
+     * Updates the chart canvas by recreating the
+     * chart's data property thorugh this.generateDataObj()
+     * Note: This does not automatically fetch the new data from the server
+     *       You must run getData for that and then pass this as a callback
+     *       i.e. getData(updateChart)
      */
     updateChart() {
-
         //Insert new Data
         console.log(this);
         this.chart.config.data = this.generateDataObj();
@@ -184,161 +241,150 @@ class chartBase{
         }
         return true;
     }
-    showSpinner()
-    {
-        $(this.canvas).parents('.chart-box').find('i.spinner').show();
-    }
-    hideSpinner()
-    {
-        $(this.canvas).parents('.chart-box').find('i.spinner').hide();
-    }
-}//---------------------- End of Chart Base --------------------
 
+    /**
+     * Shows the spinner (if it exists in the chart wrapper).
+     */
+    showSpinner() {
+        $(this.chartWrapper)
+            .find("i.spinner")
+            .show();
+    }
 
-class staticChart extends chartBase{
+    /**
+     * Hides the spinner
+     */
+    hideSpinner() {
+        $(this.chartWrapper)
+            .find("i.spinner")
+            .hide();
+    }
+} //---------------------- End of Chart Base --------------------
+
+/**
+ * Class for creating a static Chart
+ * @extends chartBase
+ */
+class staticChart extends chartBase {
+    
+    /**
+     * Constructs staticChart
+     * The canvas element must contain the attribute 'data-chart' with chart data within
+     * @param {selector} canvas Where to display Chart
+     */
     constructor(canvas) {
-        super();
-        this.canvas = canvas;
+        super(canvas);
         this.showSpinner();
+
         //Parse the data
-        this.data = JSON.parse($(canvas).attr('data-chart'));
+        this.data = JSON.parse($(canvas).attr("data-chart"));
+        if (!this.data) throw 'No chart data received!';
         this.renderChart();
         this.hideSpinner();
     }
-
-
-       
 } // ---------------- End of Static Chart -----------------------
 
-
 /**
- * The class that hadles chart creation and modification
- * Contains the chart object
- *
- * The chart can be modified by the user by calling the following methods:
- *  -
- *
+ * The class that hadles dynamic charts
+ * 
+ * @extends chartBase
  */
-class dynamicChart extends chartBase{
-    
+class dynamicChart extends chartBase {
     /**
      * Constucts the chartManager class.
-     * The chart element must contain the following attributes:
+     * The canvas element must contain the following attributes:
      *  - data-ajaxurl      Contains the url to get the data from
-     * 
+     *
      * @param {obj} canvas Where to display the chart
      */
     constructor(canvas) {
-        super();
+        super(canvas);
 
-        this.canvas = canvas;
-        this.chartBox = $(canvas).parents('div.chart-box');
-        this.ajaxURL = $(canvas).attr('data-ajaxurl');
-        this.limit = this.chartBox.find('.limit-input').val() || 10; //Number of datapoints to show
-        this.type = this.chartBox.find('.interval-select').val() || "daily";
+        this.ajaxURL = $(canvas).attr("data-ajaxurl");
+        this.limit = this.chartWrapper.find(".limit-input").val() || 10; //Number of datapoints to show
+        this.type = this.chartWrapper.find(".interval-select").val() || "daily"; //Time interval type
 
-        this.limitMax = 365;
-        this.limitMin = 1;
+        //Max and Min for datapoints
+        this.limitMax = 365; 
+        this.limitMin = 1; 
 
         this.offset = 0;
-        this.chart;
 
-        //Hookup Listeners to the buttons
-        this.chartBox.find('.chart-left').click(this.scrollLeft.bind(this));
-        this.chartBox.find('.chart-right').click(this.scrollRight.bind(this));
-        this.chartBox.find('.jump-button').click(() =>{
-            let jumpDate = this.chartBox.find('.jump-date').val();
+        //Hookup Listeners to the buttons.
+        //These must be within the chartWrapper
+        this.chartWrapper.find(".chart-left").click(this.scrollLeft.bind(this));
+        this.chartWrapper.find(".chart-right").click(this.scrollRight.bind(this));
+        this.chartWrapper.find(".jump-button").click(() => {
+            let jumpDate = this.chartWrapper.find(".jump-date").val();
             this.jumpTo(jumpDate);
         });
-        this.chartBox.find('.limit-button').click(() => {
-            let limitNum = this.chartBox.find('.limit-num').val();
+        this.chartWrapper.find(".limit-button").click(() => {
+            let limitNum = this.chartWrapper.find(".limit-num").val();
             this.changeLimit(limitNum);
         });
 
         //Validate Data
-        if (!this.ajaxURL) throw 'Invalid ajax URL received!';
+        if (!this.ajaxURL) throw "Invalid ajax URL received!";
 
-        this.createChart(this.type);
-    }
-
-    /**
-     * The initialization function for the chart.
-     * Gets the data from the server and renders the chart. 
-     * Call this to create the chart.
-     */
-    createChart() {
+        //Off we go!
         this.getData(this.renderChart);
     }
 
     /**
-     * Refreshes the maximum Y-axis value.
-     *
-     * Use when Data displayed is changing
-     *
-     * @return {boolean} TRUE if successful
-     */
-    refreshMaxY(chartData) {
-        //First must combine all chart data
-        var allData = [];
-        for (let data of chartData) {
-            allData.push(...data.dataArray.map(x => parseInt(x, 10)));
-        }
-        this.maxY =
-            allData.reduce(function(acc, curr) {
-                return Math.max(acc, curr);
-            }) + 2;
-        return true;
-    }
-
-    /*
-     * ======================
-     * Chart Making Functions
-     * ======================
-     */
-
-    /**
-     * Grabs chart data from the server based on the property 'type'
-     *
+     * Grabs chart data from the server using the AJAX URL
      * @param {function} callback - The callback when the data is recieved from the server
      *
      */
     getData(callback) {
         this.showSpinner();
         var [from_date, to_date] = this.dateFromOffset();
+
         if (this.debugMode) console.log(`Getting ${this.type} data from ${from_date} to ${to_date}`);
-        $.get(this.ajaxURL, 
-            { interval_type: this.type, from_date: from_date, to_date: to_date}, 
-            (data) => {
-                this.data = JSON.parse(data); 
+
+        $.get(
+            this.ajaxURL,
+            { //Data to send over
+                interval_type: this.type,
+                from_date: from_date,
+                to_date: to_date
+            },
+            data => {
+                this.data = JSON.parse(data);
                 this.hideSpinner();
-            }).done(callback.bind(this));
+            }
+        ).done(callback.bind(this));
     }
 
-    dateFromOffset()
-    {
+    /**
+     * Creates the toDate and the fromDate that is used to request
+     * the statistics data from the server.
+     * The dates depend on the this.offset and this.type
+     */
+    dateFromOffset() {
         switch (this.type) {
-            case 'daily':
-                var toDate = moment().add((this.limit + 1) * this.offset, 'd');
-                var fromDate = moment(toDate).subtract(this.limit, 'd');
-                return [fromDate.format('Y-MM-DD'), toDate.format('Y-MM-DD')];
-            case 'weekly':
-                var toDate = moment().add((this.limit + 1) * this.offset, 'w');
-                var fromDate = moment(toDate).subtract(this.limit, 'w');
-                return [fromDate.format('Y-MM-DD'), toDate.format('Y-MM-DD')];
-            case 'monthly':
-                var toDate = moment().add((this.limit + 1) * this.offset, 'M');
-                var fromDate = moment(toDate).subtract(this.limit, 'M');
-                return [fromDate.format('Y-MM-DD'), toDate.format('Y-MM-DD')];
-            case 'yearly':
-                var toDate = moment().add((this.limit + 1) * this.offset, 'y');
-                var fromDate = moment(toDate).subtract(this.limit, 'y');
-                return [fromDate.format('Y-MM-DD'), toDate.format('Y-MM-DD')];
+            case "daily":
+                var toDate = moment().add((this.limit + 1) * this.offset, "d");
+                var fromDate = moment(toDate).subtract(this.limit, "d");
+                return [fromDate.format("Y-MM-DD"), toDate.format("Y-MM-DD")];
+            case "weekly":
+                var toDate = moment().add((this.limit + 1) * this.offset, "w");
+                var fromDate = moment(toDate).subtract(this.limit, "w");
+                return [fromDate.format("Y-MM-DD"), toDate.format("Y-MM-DD")];
+            case "monthly":
+                var toDate = moment().add((this.limit + 1) * this.offset, "M");
+                var fromDate = moment(toDate).subtract(this.limit, "M");
+                return [fromDate.format("Y-MM-DD"), toDate.format("Y-MM-DD")];
+            case "yearly":
+                var toDate = moment().add((this.limit + 1) * this.offset, "y");
+                var fromDate = moment(toDate).subtract(this.limit, "y");
+                return [fromDate.format("Y-MM-DD"), toDate.format("Y-MM-DD")];
             default:
                 break;
         }
     }
 
-    
+    /* Chart Manipulation - i.e. The things that make it dynamic */
+
     /**
      * Changes the date interval type of the chart.
      * interval type can be: 'daily', 'weekly', monthly', 'yearly'
@@ -347,32 +393,27 @@ class dynamicChart extends chartBase{
         this.type = type;
         this.offset = 0;
         if (this.debugMode) console.log("Changing to: " + this.type);
-        
-        //Clear Data List
-        this.dataList = [];  
+
         this.getData(this.updateChart);
     }
 
     /**
      * Moves all the datapoints to the left
-     * For use with arrow buttons that can shift the graph
      *
-     * @Number {amount} The amount of x units to shift the graph by
+     * @param {number} amount The amount to shift offset by
      */
     scrollLeft(amount = 1) {
-        this.offset -= 1;
-        console.log('click');
+        this.offset -= amount;
         this.getData(this.updateChart);
     }
 
     /**
      * Moves all the datapoints to the right
-     * For use with arrow buttons that can shift the graph
      *
-     * @Number {amount} The amount of x units to shift the graph by
+     * @param {number} amount The amount to shift offset by
      */
     scrollRight(amount = 1) {
-        this.offset += 1;
+        this.offset += amount;
         this.getData(this.updateChart);
     }
 
@@ -383,37 +424,34 @@ class dynamicChart extends chartBase{
      */
     jumpTo(jumpDate) {
         if (jumpDate) {
-            //If it was set
-            var offset = 0;
             var now = moment();
-            jumpDate = moment(jumpDate); //Note, since there is no provided timezone, JavaScript assumes it is UTC. Use getUTC*() below
+            jumpDate = moment(jumpDate); 
 
             //Find the offset of the day - depends on type of date interval
-
             switch (this.type) {
                 case "daily":
                     var dateDiff = moment.duration(now.diff(jumpDate));
-                    offset = - Math.floor(dateDiff.asDays()/this.limit);
+                    this.offset = -Math.floor(dateDiff.asDays() / this.limit);
                     break;
                 case "weekly":
                     var dateDiff = moment.duration(now.diff(jumpDate));
-                    offset = - Math.floor(dateDiff.asWeeks()/this.limit);
+                    this.offset = -Math.floor(dateDiff.asWeeks() / this.limit);
                     break;
                 case "monthly":
                     var dateDiff = moment.duration(now.diff(jumpDate));
-                    offset = - Math.floor(dateDiff.asMonths()/this.limit);
+                    this.offset = -Math.floor(dateDiff.asMonths() / this.limit);
                     break;
                 case "yearly":
                     var dateDiff = moment.duration(now.diff(jumpDate));
-                    offset = - Math.floor(dateDiff.asYears()/this.limit);
+                    this.offset = -Math.floor(dateDiff.asYears() / this.limit);
                     break;
             }
-            this.offset = offset;
             return this.getData(this.updateChart);
         } else {
             return false; // i.e. Do nothing if the date was not set
         }
     }
+
     /**
      * Used to change the limit (Amount of bars in the graph.)
      *
@@ -431,3 +469,5 @@ class dynamicChart extends chartBase{
         return this.getData(this.updateChart);
     }
 }
+
+// ------------ End of myChart.js -----------------------------
