@@ -52,6 +52,8 @@ class Statistics_model extends Search_Model {
 	protected $SM_interval_type;
 	/** @var string Log Frequency or Hours */
 	protected $SM_metrics = array();
+	/** @var array Array of labels */
+	protected $SM_labels = array();
 
 	/**
 	 * Loads the necessary resources to run the statistics model. 
@@ -94,6 +96,9 @@ class Statistics_model extends Search_Model {
 			
 			//Debug info
 			$this->set_debug(); //TODO: fix for 2+ metrics
+
+			//Apply Labels
+			$dataset['label'] = isset($this->SM_labels[$index]) ? $this->SM_labels[$index] : NULL;
 
 			//Get the data
 			$results = $this->parse_results($this->db->get());
@@ -285,6 +290,26 @@ class Statistics_model extends Search_Model {
 		return $this;
 	}
 
+	/**
+	 * Chart.js will use this to label the datasets
+	 * @param array|string $labels An array of labels for the metrics (Same size as metric array)
+	 * 							   If a string, the first passed in will correspond
+	 * 							    to the first dataset, 2nd to the 2nd data set, etc.
+	 * @return statistics_model Method Chaining
+	 */
+	public function labels($labels)
+	{
+		if (is_array($labels))
+		{
+			$this->SM_labels = array_merge($labels, $this->SM_labels);
+		}
+		else
+		{
+			$this->SM_labels[] = $labels;
+		}
+		return $this;
+	}
+
 	/**	
 	 * Applies the Grouping and Selecting for the time interval
 	 * @return void;
@@ -355,6 +380,7 @@ class Statistics_model extends Search_Model {
 		parent::reset();
 		$this->SM_interval_type = '';
 		$this->SM_metrics = array();
+		$this->SM_labels = array();
 	}
 }
 /* End of file Statistics_model.php */

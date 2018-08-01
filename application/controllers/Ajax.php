@@ -98,10 +98,9 @@ class Ajax extends MY_Controller
 			->from_date($this->input->get('from_date', TRUE))
 			->to_date($this->input->get('to_date', TRUE))
 			->user_lock(TRUE)
+			->labels("User {$type} Statistics")
 			->get();
 		//Give the data a name. Used for the graph legend
-		
-		$data['label'] = 'User Log Frequency';
 		echo json_encode($data);
 	}
 
@@ -127,10 +126,10 @@ class Ajax extends MY_Controller
 			->interval_type($this->input->get('interval_type', TRUE))
 			->from_date($this->input->get('from_date', TRUE))
 			->to_date($this->input->get('to_date', TRUE))
+			->labels("Project {$type} Statistics")
 			->get();
 
 		//Give the data a name. Used for the graph legend
-		$data['label'] = 'Project Log Frequency';
 		echo json_encode($data);
 	}
 
@@ -155,10 +154,10 @@ class Ajax extends MY_Controller
 			->interval_type($this->input->get('interval_type', TRUE))
 			->from_date($this->input->get('from_date', TRUE))
 			->to_date($this->input->get('to_date', TRUE))
+			->labels("Team {$type} Statistics")
 			->get();
 
 		//Give the data a name. Used for the graph legend
-		$data['label'] = 'Team Log Frequency';
 		echo json_encode($data);
 	}
 
@@ -187,6 +186,7 @@ class Ajax extends MY_Controller
 		$data = $this->statistics_model
 			->metrics($type)
 			->interval_type($this->input->get('interval_type', TRUE))
+			->labels("Custom Stats #{$index} {$type} Statistics")
 			->get();
 
 		//Give the data a name. Used for the graph legend
@@ -206,6 +206,7 @@ class Ajax extends MY_Controller
 			->interval_type($this->input->get('interval_type', TRUE))
 			->from_date($this->input->get('from_date', TRUE))
 			->to_date($this->input->get('to_date', TRUE))
+			->labels("Custom Stats 1 {$type} Statistics")
 			->get();
 
 		//Get Data 2
@@ -215,6 +216,7 @@ class Ajax extends MY_Controller
 			->interval_type($this->input->get('interval_type', TRUE))
 			->from_date($this->input->get('from_date', TRUE))
 			->to_date($this->input->get('to_date', TRUE))
+			->labels("Custom Stats 2 {$type} Statistics")
 			->get();
 		
 		//Merge Data Sets
