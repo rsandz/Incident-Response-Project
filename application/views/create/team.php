@@ -15,7 +15,7 @@
 			<div class="field">
 				<label class="label">Team Description:</label>
 				<div class="control">
-					<textarea name="team_desc" type="textarea" class="textarea" value="<?=set_value('team_desc')?>"></textarea>
+					<textarea name="team_desc" type="textarea" class="textarea"><?=set_value('team_desc')?></textarea>
 					<p class="has-text-right">Supports some HTML Markups. Click <?php echo anchor('Help/markups', 'here');?> to learn more.</p>
 				</div>
 			</div>

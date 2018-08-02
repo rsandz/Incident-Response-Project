@@ -1,4 +1,5 @@
 <?php echo script_tag('js/descriptions.js');?>
+<?php echo css_tag('css/bulma-tooltip.min.css')?>
 
 <div class="content section">
 	<div class="container">
@@ -35,7 +36,7 @@
 						<select name="action_type" id="type-selector">
 							<?php foreach ($types as $type): ?>
 								<?php echo '<option value="'.$type->type_id.'">'.$type->type_name.'</option><br>' ?>
-							<?php endforeach ?>
+							<?php endforeach; ?>
 						</select>
 					</div>
 				</div>
@@ -48,8 +49,12 @@
 				</div>
 			</div>
 			<div class="label field">
-				<label class="checkbox"><input name="is_global" type="checkbox" value="1"> Is Global? (Will show regardless of Project)
-					
+				<label class="checkbox"><input name="is_global" type="checkbox" value="1"> 
+					Is Global?
+					<span style="padding-right: 10px" class="tooltip is-tooltip-right"
+                        data-tooltip="Allows Usage Regardless of Project">
+                            <i class="far fa-question-circle"></i>
+                    </span>
 				</label>
 			</div>
 			<hr>

@@ -39,3 +39,14 @@ if (!function_exists('script_tag'))
         return "<script type='text/javascript' src='{$path}'></script>";
     }
 }
+
+if (!function_exists('css_tag'))
+{
+    function css_tag($assets_path)
+    {
+        $path = assets_url($assets_path);
+        $CI =& get_instance();
+        $CI->load->helper('html');
+        return link_tag($path);
+    }
+}

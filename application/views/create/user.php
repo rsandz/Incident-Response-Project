@@ -10,12 +10,12 @@
 					<div class="field-body">
 						<div class="field">
 							<div class="control">
-								<input name="first_name" type="text" class="input" value="<?=set_value('name')?>" placeholder="First Name">
+								<input name="first_name" type="text" class="input" value="<?=set_value('first_name')?>" placeholder="First Name">
 							</div>
 						</div>
 						<div class="field">
 							<div class="control">
-								<input name="last_name" type="text" class="input" value="<?=set_value('name')?>" placeholder="Last Name">
+								<input name="last_name" type="text" class="input" value="<?=set_value('last_name')?>" placeholder="Last Name">
 							</div>
 						</div>
 					</div>
