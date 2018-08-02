@@ -8,14 +8,6 @@
 */
 
 /*
-| Timezone Config
-|
-| Refer to PHP documentation for the possible values.
-*/
-
-$config['timezone'] = 'America/Edmonton';
-
-/*
 | Per Page
 |
 | The amount of rows to display in various tables in the website

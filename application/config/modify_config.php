@@ -46,6 +46,14 @@ $config['modify_rules'] = array(
 		'project_name' => 'required',
 		'project_id' => 'required'
 	),
+	'action_log' => array(
+		'action_id' => 'required',
+		'hours' => 'required',
+		'user_id' => 'required',
+		'log_date' => 'required',
+		'log_time' => 'required',
+		'log_id' => 'required'
+	)
 
 );
 
@@ -85,5 +93,9 @@ $config['foreign_keys'] = array(
   	'project_leader' => array(
   		'FK_table' => 'users',
   		'display_column' => 'CONCAT(first_name, " ", last_name)'
-  	),
+	  ),
+	'team_id' => array(
+		'FK_table' => 'teams',
+		'display_column' => 'team_name'
+	)
  );

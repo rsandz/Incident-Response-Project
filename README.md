@@ -34,7 +34,8 @@ This application usses the following libraries:
 
 Setup
 =====
-Before deploying, go to index.php (in root folder) and change the environment variable to production
+Before deploying, go to index.php (in root folder) and change the environment variable to `production` or if you are developing this app, change it to `development`.
+Example: `define('ENVIRONMENT', 'production');`
 
 A copy of the database has been provided in the setup folder. Import this into a database.
 Edit the configuration files in:
@@ -42,8 +43,10 @@ Edit the configuration files in:
 	- The following are the config values that you should take a look at.
 		1. log_threshold -> Verbosity of logs at application/logs
 		2. base_url -> Change to your website.
+		3. date_default_timezone_set -> Change to your timezone.
 2. application/config/appconfig.php --> Configuration for application
 3. application/config/database.php --> Database credentials and config
+4. application/config/email.php --> Configuration for Emails.
 
 
 If there are no users in the database, aquire the SETUP.php in the setup folder. Open it and edit the fields to match your desired admin credentials. Run the setup in your borwser by going to:

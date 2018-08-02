@@ -224,7 +224,7 @@ $config['allow_get_array'] = TRUE;
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 1;
+$config['log_threshold'] = 4;
 
 /*
 |--------------------------------------------------------------------------
@@ -522,3 +522,15 @@ $config['rewrite_short_tags'] = FALSE;
 | Array:		array('10.0.1.200', '192.168.5.0/24')
 */
 $config['proxy_ips'] = '';
+
+/*
+|-----------------------------------------------------------------------------
+| Default Timezone
+|-----------------------------------------------------------------------------
+|
+| Sets the default Timezone for the app.
+| Refer to PHP documentation for the values.
+|
+*/
+
+date_default_timezone_set('America/Edmonton');

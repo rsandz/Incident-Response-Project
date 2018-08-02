@@ -93,19 +93,18 @@ class Modify extends MY_Controller {
 	 */
 	public function modify_form($table, $key)
 	{
+		$this->config->load('modify_config');
+
 		//Get field Data (Columns of the table)
-		$field_data = $this->modify_model->get_field_data($table);
+		$field_data = $this->modify_model->get_field_data($table, TRUE);
 
 		$this->form_validation->set_rules('modify', 'Modify', 'required'); //Modify button needs to be clicked
 
-		//Get the validation rules for the form
-		//Required form validations per table are set in the configurations
-		$this->config->load('modify_config');
-		$modify_rules = @$this->config->item('modify_rules')[$table]; //Error supressed
-
+		//Get the validation rules for the form (Located in Config) 
+		$modify_rules = @$this->config->item('modify_rules')[$table];
 		if(!isset($modify_rules))
 		{
-			log_message('error', "The validation rules for $table could not be found. Setting all fields to required");
+			log_message('error', "The validation rules for {$table} could not be found. Setting all fields to required");
 			foreach ($field_data as $field)
 			{
 				$this->form_validation->set_rules($field->name, humanize($field->name), 'required');
@@ -132,12 +131,13 @@ class Modify extends MY_Controller {
 			foreach ($field_data as $field)
 			{
 				$update_data[$field->name] = $this->input->post($field->name, TRUE); //Gets the corrseponding updated values in the post array
+				if ($update_data[$field->name] == '') $update_data[$field->name] = NULL;
 			}
 
 			//Update the table
 			if ($this->modify_model->update($table, $update_data, $key))
 			{
-				//Sucess!
+				//Success!
 				
 				//Log it
 				$this->lb
@@ -158,7 +158,7 @@ class Modify extends MY_Controller {
 				//Make the Success Page
 				$data['success_msg'] = "Item #{$key} in Table `{$table}` has been updated with the following:" ;
 				$data['success_body'] = $update_table;
-				$data['success_back_url'] = site_url('modify/table/'.$table);
+				$data['success_back_url'] = site_url('Modify/table/'.$table);
 
 				$this->load->view('templates/header', $data);
 				$this->load->view('templates/hero-head', $data);
