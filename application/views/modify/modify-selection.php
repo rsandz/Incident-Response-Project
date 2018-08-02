@@ -15,7 +15,7 @@
 								</div>
 								<div class="level-right">
 									<div class="level-item">
-										<?php echo anchor("modify/table/{$table}", 'Modify', 'class="button is-info"');?>
+										<?php echo anchor("Modify/table/{$table}", 'Modify', 'class="button is-info"');?>
 									</div>
 								</div>
 							</div>

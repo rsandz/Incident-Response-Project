@@ -148,10 +148,10 @@ $route['manage_teams/(:any)'] = 'Manage/manage_teams/$1';
 $route['manage_teams/add_users/(:any)'] = 'Manage/add_users/$1';
 $route['manage_teams/remove_users/(:any)'] = 'Manage/remove_users/$1';
 
-$route['modify/view_tables'] = 'Modify/index';
-$route['modify/table/(:any)'] = 'Modify/modify_selection/$1'; //For table selection
-$route['modify/table/(:any)/(:any)'] = 'Modify/modify_selection/$1/$2'; //For pagination
-$route['modify/(:any)/(:any)'] = 'Modify/modify_form/$1/$2'; //For the modify form
+$route['Modify/view_tables'] = 'Modify/index';
+$route['Modify/table/(:any)'] = 'Modify/modify_selection/$1'; //For table selection
+$route['Modify/table/(:any)/(:any)'] = 'Modify/modify_selection/$1/$2'; //For pagination
+$route['Modify/(:any)/(:any)'] = 'Modify/modify_form/$1/$2'; //For the modify form
 
 
 /*

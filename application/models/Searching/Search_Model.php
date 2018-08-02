@@ -888,23 +888,26 @@ class Search_model extends MY_Model {
 	 */
 	public function reset()
 	{
-		$this->SB_keywords      = array();
+		$this->SB_keywords       = array();
 		$this->keywords_in('all');
 		$this->keywords_type('any');
 		
-		$this->SB_from_date     = NULL;
-		$this->SB_to_date       = NULL;
-		$this->SB_action_types  = array();
-		$this->SB_projects      = array();
-		$this->SB_teams         = array();
-		$this->SB_users         = array();
+		$this->SB_from_date      = NULL;
+		$this->SB_to_date        = NULL;
+		$this->SB_action_types   = array();
+		$this->SB_projects       = array();
+		$this->SB_teams          = array();
+		$this->SB_users          = array();
 		
-		$this->SB_null_projects = TRUE;
-		$this->SB_null_teams    = TRUE;
+		$this->SB_null_projects  = TRUE;
+		$this->SB_null_teams     = TRUE;
 
-		$this->SB_select 		= array();
+		$this->SB_select 	     = array();
+
+		$this->pagination_limit  = 0;
+		$this->pagination_offset = 0;
 		
-		$this->sort_array		= array('log_date' => 'DESC', 'log_time' => 'DESC');
+		$this->sort_array	     = array('log_date' => 'DESC', 'log_time' => 'DESC');
 	}
 	
 }

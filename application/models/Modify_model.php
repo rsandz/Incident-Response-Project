@@ -13,6 +13,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class Modify_model extends MY_Model {
 
+	/** @var int Rows of the last modify table, before pagination */
+	protected $total_rows;
+	/** @var array The headings for the last table */
+	protected $headings = array();
+
 	/**
 	 * Constructor for the modify model.
 	 *
@@ -50,32 +55,36 @@ class Modify_model extends MY_Model {
 		//Conditions and data formatting for certain tables
 		//Get Table DATA
 		$data['primary_key'] = $this->get_primary_key_name($table);
-		$query = $this->db->get($table);
-		$table_data = array_slice($query->result_array(), $offset, $per_page); //Offset for pagination
+		
+		$this->db->from($table);
 
-		//Censoring Password Hashes - See configuration 'appconfig' for disabling this
-		if (!$this->config->item('show_hashes') && $this->db->field_exists('password', $table)) 
+		//Get Total Rows without pagination
+		$this->total_rows = $this->db->count_all_results('', FALSE);
+		$this->db->limit($per_page, $offset);
+
+		$query = $this->db->get();
+
+		
+		foreach ($query->result() as &$row)
 		{
-			foreach ($table_data as &$row)
+			//Censoring Password Hashes - See configuration 'appconfig' for disabling this
+			if (!$this->config->item('show_hashes') && $this->db->field_exists('password', $table)) 
 			{
-				$row['password'] = '***********';
+				$row->password = '***********';
 			}
+
+			//Push Edit button to each row
+			$row->edit_button = anchor("Modify/{$table}/{$row->{$data['primary_key']}}", 'Edit');
 		}
 
-		//Format the table
-		$heading = array_map(function($x) {return humanize($x);}, $query->list_fields());
-		array_push($heading, ''); //Add a column for edit button
-
-		//Push an edit button onto each row
-		foreach ($table_data as &$row)
-		{
-			$row = array_merge($row, array('Edit' => anchor("modify/{$table}/{$row[$data['primary_key']]}", 'Edit')));
-		}
+		//Make Table headings
+		$this->headings = array_map(function($x) {return humanize($x);}, $query->list_fields());
+		array_push($this->headings, ''); //Add a column for edit button
 
 		//Create The table
 		$this->load->library('table');
-		$data['table'] = $this->table->my_generate($table_data, $heading);
-		$data['num_rows'] = $query->num_rows();
+		$data['table'] = $this->table->my_generate($query, $this->headings);
+		$data['num_rows'] = $this->total_rows;
 		$data['table_name'] = humanize($table);
 
 		return $data;
