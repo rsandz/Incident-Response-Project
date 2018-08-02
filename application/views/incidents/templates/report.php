@@ -25,6 +25,14 @@
 			<?php echo $past_3days_search?>
 		</div>
 	</div>
+	<hr>
+	<div class="level">
+		<div class="level-left">
+			<?php echo anchor('Incidents/report/select', 'Go Back', 'class="button is-info is-medium"')?>
+		</div>
+		<div class="level-right">
+		</div>
+	</div>
 </div>
 
 <!-- Static chart JS-->

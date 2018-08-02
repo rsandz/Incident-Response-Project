@@ -62,7 +62,7 @@ class Investigator extends Investigate_base
 
 		$this->incident = $this->CI->investigation_model->get_incident($this->incident_id);
 
-		$this->date_time = strtotime($this->incident->incident_date.$this->incident->incident_time);
+		$this->date_time = new Carbon($this->incident->incident_date.$this->incident->incident_time);
 	}
 
 	/**
@@ -94,7 +94,7 @@ class Investigator extends Investigate_base
 	public function past_10_logs()
 	{
 		$table_data = $this->CI->search_model
-					->to_date(date('Y-m-d'), $this->date_time)
+					->to_date($this->date_time->format('Y-m-d'))
 					->pagination(10)
 					->user_lock(FALSE)
 					->select('name, action, time, date')
@@ -107,11 +107,15 @@ class Investigator extends Investigate_base
 	 */
 	public function past_week_hrs_logs()
 	{
+		//Make a clone so we can modify without afecting original
+		$dateTime = clone $this->date_time; 
 		$data = $this->CI->statistics_model
-				->from_date(date('Y-m-d', $this->date_time - 604800)) //7 Days * 24 Hours * 60 mins * 60 sec
-				->to_date(date('Y-m-d'), $this->date_time)
+				->to_date($dateTime->format('Y-m-d'))
+				->from_date($dateTime->subWeek()->format('Y-m-d')) 
 				->metrics('hours')
+				->labels('Hours')
 				->metrics('logs')
+				->labels('Logs')
 				->interval_type('daily')
 				->get();
 		
@@ -129,10 +133,12 @@ class Investigator extends Investigate_base
 	 */
 	public function past_week_search()
 	{
+		//Make a clone so we can modify without afecting original
+		$dateTime = clone $this->date_time; 
 		$data['query'] = $this->CI->search_model
-				->from_date(date('Y-m-d', $this->date_time - 604800)) //7 Days * 24 Hours * 60 mins * 60 sec
-				->to_date(date('Y-m-d'), $this->date_time)
-				->export_query();
+			->to_date($dateTime->format('Y-m-d'))
+			->from_date($dateTime->subWeek()->format('Y-m-d')) 
+			->export_query();
 		$data['title'] = 'Past Week';
 		return $this->CI->load->view('incidents/templates/search-box', $data, TRUE);
 	}
@@ -145,9 +151,11 @@ class Investigator extends Investigate_base
 	 */
 	public function past_month_search()
 	{
+		//Make a clone so we can modify without afecting original
+		$dateTime = clone $this->date_time; 
 		$data['query'] = $this->CI->search_model
-				->from_date(date('Y-m-d', $this->date_time - 2678400 )) //31 Days * 24 Hours * 60 mins * 60 sec
-				->to_date(date('Y-m-d'), $this->date_time)
+				->to_date($dateTime->format('Y-m-d'))
+				->from_date($dateTime->subWeek()->format('Y-m-d'))
 				->export_query();
 		$data['title'] = 'Past Month';
 		return $this->CI->load->view('incidents/templates/search-box', $data, TRUE);
@@ -155,9 +163,11 @@ class Investigator extends Investigate_base
 	
 	public function past_3days_search()
 	{
+		//Make a clone so we can modify without afecting original
+		$dateTime = clone $this->date_time; 
 		$data['query'] = $this->CI->search_model
-				->from_date(date('Y-m-d', $this->date_time - 259200 )) //3 Days * 24 Hours * 60 mins * 60 sec
-				->to_date(date('Y-m-d'), $this->date_time)
+				->to_date($dateTime->format('Y-m-d'))
+				->from_date($dateTime->subDays(3)->format('Y-m-d')) 
 				->export_query();
 		$data['title'] = 'Past 3 Days';
 		return $this->CI->load->view('incidents/templates/search-box', $data, TRUE);
