@@ -1,4 +1,4 @@
-<script type="text/javascript" src="<?php echo base_url('js/descriptions.js')?>"></script>
+<?php echo script_tag('js/descriptions.js');?>
 
 <div class="content section">
 	<div class="container">

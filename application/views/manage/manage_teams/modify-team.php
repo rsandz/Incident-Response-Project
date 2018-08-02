@@ -85,4 +85,4 @@
 </div>
 </form>
 
-<script type="text/javascript" src="<?php echo base_url('js/modal-confirm.js')?>"></script>
+<?php echo script_tag('js/modal-confirm.js')?>

@@ -3,7 +3,7 @@
 		<?php echo isset($errors) ? $errors : NULL?>
 		<h2 class="title">Create a New Incident</h2>
 		<hr>
-		<!-- Form --->
+		<!-- Form -->
 		<?php echo form_open('Incidents/create');?>
 			<div class="field">
 				<div class="control">
@@ -28,7 +28,8 @@
 				<div class="control">
 					<label class="label">Description:</label>
 					<textarea class="textarea" placeholder="Description" name="incident_desc"></textarea>
-					<p class="has-text-right">Supports HTML Markups. Click here for more Information</p> <!-- TODO: add the link-->
+					<p class="has-text-right">Supports HTML Markups. Click here for more Information</p> 
+					<!-- TODO: add the link-->
 				</div>
 			</div>
 			<div class="level">
@@ -43,19 +44,16 @@
 	</div>
 </div>
 
+<?php echo script_tag('js/moment.js')?>
 <script>
+
+	//Sets the date and time inputs to now
 	$(function()
 	{
 		$('#now').click(function()
 			{
-				let now = new Date();
-				let nowDate = now.getFullYear() 
-					+ '-' + (now.getMonth() + 1).toString().padStart(2, '0') 
-					+ '-' + now.getDate().toString().padStart(2, '0');
-				let nowTime = now.getHours().toString().padStart(2, '0') 
-					+ ':' + now.getMinutes().toString().padStart(2, '0') 
-				$('#date').val(nowDate);
-				$('#time').val(nowTime);
+				$('#date').val(moment().format('YYYY-MM-DD'));
+				$('#time').val(moment().format('HH:mm'));
 			});
 	});
 </script>

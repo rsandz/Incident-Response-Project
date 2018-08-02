@@ -46,4 +46,4 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="<?php echo base_url('js/selection-search.js')?>"></script>
+<?php echo script_tag('js/selection-search.js')?>

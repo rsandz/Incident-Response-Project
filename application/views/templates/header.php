@@ -12,8 +12,8 @@
 	  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 	  crossorigin="anonymous"></script>
 
-	<script id='ajax-link' data="<?php echo site_url('Ajax')?>"></script>	
 	<script id='site-link' data="<?php echo site_url()?>"></script>	
+	<script id='ajax-link' data="<?php echo site_url('Ajax')?>"></script>	
 
 	<title><?php echo $title; ?></title>
 

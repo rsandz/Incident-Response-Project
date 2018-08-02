@@ -98,6 +98,7 @@
 
 
 <script>
+    //Function for making the metric creation gui work
     $(function() {
         //On Page load
         $('.metric-delete').click(metricDelete);
@@ -105,12 +106,19 @@
 
     });
 
+    /**
+     * Delete a metric condition that the clicked element was 
+     * wrapped in
+     */
     function metricDelete()
     {
         let parentField = $(this).parentsUntil('#metrics-wrapper').last();
         parentField.remove();
     }
 
+    /**
+     * Adds a new metric condition to the metrics wrapper
+     */
     function newMetric()
     {
         console.log('click');
