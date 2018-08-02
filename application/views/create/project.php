@@ -2,6 +2,7 @@
 	<div class="container">
 		<h1>Project Creation Form</h1>
 		<hr>
+		<?=$errors?>
 		<?php echo form_open('Create/index/project', 'class="form"'); ?>
 			<div class="field">
 				<label class="label">Project Name: <span class="has-text-danger">(Required)</span></label>
@@ -18,7 +19,6 @@
 					<p class="has-text-right">Supports some HTML Markups. Click <?php echo anchor('Help/markups', 'here');?> to learn more.</p>
 				</div>
 			</div>
-			<?=$errors?>
 			<hr>
 			<?=form_submit('submit', 'Create', 'class="button is-info is-medium"');?>
 		</form>

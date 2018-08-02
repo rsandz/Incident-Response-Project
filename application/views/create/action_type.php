@@ -2,6 +2,7 @@
 	<div class="container">
 		<h1>Action Type Creation Form</h1>
 		<hr>
+		<?=$errors?>
 		<?php echo form_open('Create/index/action_type', 'class="form"'); ?>
 			<div class="field">
 				<div class="control">
@@ -24,7 +25,6 @@
 					</label>
 				</div>
 			</div>
-			<?=$errors?>
 			<hr>
 			<?=form_submit('submit', 'Create', 'class="button is-primary is-medium"');?>
 		</form>

@@ -2,6 +2,7 @@
 	<div class="container">
 		<h1>User Creation Form</h1>
 		<hr>
+		<?=$errors?>
 		<?php echo form_open('Create/index/user', 'class="form"'); ?>
 			<div class="field">
 				<label class="label">Name: <span class="has-text-danger">(Required)</span></label>
@@ -32,7 +33,6 @@
 				<label class="label">Confirm Password: <span class="has-text-danger">(Required)</span></label>
 				<div class="control"><input name="password-confirm" type="password" class="input"></div>
 			</div>
-			<?=$errors?>
 			<hr>
 			<?=form_submit('submit', 'Create', 'class="button is-info is-medium"');?>
 		</form>

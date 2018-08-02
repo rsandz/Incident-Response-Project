@@ -60,6 +60,9 @@ class Logging extends MY_controller {
 		{	
 			$data['title'] = 'Logging Form';
 
+			//Get Errors
+			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);

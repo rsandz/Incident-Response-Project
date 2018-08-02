@@ -4,6 +4,7 @@
 	<div class="container">
 		<h1>Action Creation Form</h1>
 		<hr>
+		<?=$errors?>
 		<?php echo form_open('Create/index/action', 'class="form"'); ?>
 			<div class="field">
 				<div class="columns">
@@ -51,7 +52,6 @@
 					
 				</label>
 			</div>
-			<?=$errors?>
 			<hr>
 			<?=form_submit('submit', 'Create', 'class="button is-info is-medium"');?>
 		</form>

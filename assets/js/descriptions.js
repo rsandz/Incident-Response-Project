@@ -20,6 +20,7 @@ $(function() {
  */
 function setActionInfo() {
     if ($("#action-selector").val() !== "NULL") {
+        $('#action-desc').html('<i class="spinner fa fa-spinner fa-pulse fa-fw"></i>'); 
         $.get(
             $("#ajax-link").attr("data") + "/get_info",
             {
@@ -43,6 +44,7 @@ function setActionInfo() {
  * @return void
  */
 function setProjectInfo() {
+    $('#project-desc').html('<i class="spinner fa fa-spinner fa-pulse fa-fw"></i>'); 
     $.get(
         $("#ajax-link").attr("data") + "/get_info",
         { id: $("#project-selector").val(), table: "projects" },
@@ -60,6 +62,8 @@ function setProjectInfo() {
  * @return void
  */
 function setActions() {
+    $('#action-div').html('<i class="spinner fa fa-spinner fa-pulse fa-fw"></i>'); 
+    $('#action-div').toggleClass('select'); // Fixes misplaced arrow issue
     selectedProject_id = $("#project-selector").val();
     $.get(
         $("#ajax-link").attr("data") + "/get_action_items",
@@ -72,6 +76,7 @@ function setActions() {
             $("#action-div").html(data);
 
             $("#action-selector").change(setActionInfo); //Re-add the even listener
+            $('#action-div').toggleClass('select');
             setActionInfo();
         }
     ).fail(promptError);
