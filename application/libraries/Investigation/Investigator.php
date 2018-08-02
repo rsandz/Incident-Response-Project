@@ -8,24 +8,27 @@ use Carbon\Carbon;
  * Investigator Library
  * ====================
  * @author Ryan Sandoval
- * @version 1.0
+ * @version 1.1
  * @package Investigation
  * 
  * The Investigation Library handles incidents after they have 
  * been created. Its main purpose is to create reports that
  * will be displayed to the end user.
+ * 
  */
 
- //TODO IMPLEMENT CARBON
 class Investigator extends Investigate_base
 {
 	/** @var int The incident's ID*/
 	protected $incident_id;
 
-	/** @var object The incident db result obj */
+	/** @var CI_DB_result The incident db result obj */
 	protected $incident;
 
-	/** @var int Timestamp of incident */
+	/** 
+	 * @var Carbon Carbon Object of the dateTime of the incident 
+	 * NOTE: Do not call add() or subtract() directly on this property.
+	 */
 	protected $date_time;
 
 	/**
@@ -79,12 +82,18 @@ class Investigator extends Investigate_base
 		$data['past_week_search'] = $this->past_week_search();
 		$data['past_month_search'] = $this->past_month_search();
 		$data['past_3days_search'] = $this->past_3days_search();
-		$data['past_week_hrs_logs'] = $this->past_week_hrs_logs();
+		$data['past_week_all_stats'] = $this->past_week_all_stats();
 
 		$html = $this->CI->load->view('incidents/templates/report', $data, TRUE);
 		$html .= $this->CI->load->view('stats/graph-search-form', $data, TRUE);
 		return $html;
 	}
+
+	// -------------------------------------------------------------
+
+	/*
+		Statistics Tables Methods
+	*/
 
 	/**
 	 * Gets the data for the last 10 logs before the incident and creates
@@ -102,10 +111,18 @@ class Investigator extends Investigate_base
 		return $this->CI->table->my_generate($table_data);
 	}
 
+	// -------------------------------------------------------------
+
+	/*
+		Chart Methods
+		========================
+	*/
+
 	/**	
-	 * 
+	 * Creates the HTML chart string for the past week
+	 * logs and hours.
 	 */
-	public function past_week_hrs_logs()
+	public function past_week_all_stats()
 	{
 		//Make a clone so we can modify without afecting original
 		$dateTime = clone $this->date_time; 
@@ -124,11 +141,18 @@ class Investigator extends Investigate_base
 			->chart_data($data)
 			->generate_static();
 	}
+	
+	//----------------------------------------------------------------------
+	
+	/* 
+		Quick Search Methods
+		====================
+		Edit style at 'application/views/incidents/templates/search-box.php'
+	*/
 
 	/**
 	 * Gets a search query for a week before the incident and then
 	 * creates an HTML string that shows a link to the search.
-	 * Edit the style at 'application/views/incidents/templates/search-box.php'
 	 * @return string
 	 */
 	public function past_week_search()
@@ -146,7 +170,6 @@ class Investigator extends Investigate_base
 	/**
 	 * Gets a search query for a month before the incident and then
 	 * creates an HTML string that shows a link to the search.
-	 * Edit the style at 'application/views/incidents/templates/search-box.php'
 	 * @return string
 	 */
 	public function past_month_search()
@@ -161,6 +184,11 @@ class Investigator extends Investigate_base
 		return $this->CI->load->view('incidents/templates/search-box', $data, TRUE);
 	}
 	
+	/**
+	 * Gets a search query for 3 days before the incident and then
+	 * creates an HTML string that shows a link to the search.
+	 * @return string
+	 */
 	public function past_3days_search()
 	{
 		//Make a clone so we can modify without afecting original

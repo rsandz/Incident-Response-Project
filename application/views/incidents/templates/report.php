@@ -9,7 +9,7 @@
 			<?php echo $last_10_table?>
 		</div>
 		<div class="column">
-			<?php echo $past_week_hrs_logs?>
+			<?php echo $past_week_all_stats?>
 		</div>
 	</div>
 	<h2 class="subtitle">Quick Searches</h2>
