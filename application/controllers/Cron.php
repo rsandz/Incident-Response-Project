@@ -12,6 +12,7 @@ class Cron extends MY_Controller {
         $this->load->model('Investigation/analytics_model');
         $this->load->library('Google/analytics');
         $this->load->library('Investigation/Incident_builder', NULL, 'ib');
+        $this->load->config('analytics');
 
         // //Check CLI
         // if (!is_cli())
@@ -21,7 +22,7 @@ class Cron extends MY_Controller {
     }
     
     /**
-     * Checks for any Incidents that may have occured
+     * Checks for any Incidents that may have occurred
      * according to the Google Analytics settings
      */
     public function incident_check()
@@ -73,11 +74,12 @@ class Cron extends MY_Controller {
             else
             {
                 echo $cond['metric_name'].' Failed';
+                $humanized_metric_name = $this->config->item('valid_metrics')[$cond['metric_name']];
                 $this->ib
                     ->auto(1)
-                    ->name("{$cond['metric_name']} met Incident Condition")
+                    ->name("{$humanized_metric_name} Metric met Incident Condition")
                     ->date('now')
-                    ->desc("The previous Google analytic report showed that {$cond['metric_name']} {$cond['metric_operator']} {$cond['metric_value']}.")
+                    ->desc("The previous Google analytic report showed that {$humanized_metric_name} {$cond['metric_operator']} {$cond['metric_value']}.")
                     ->create();
             }
                 

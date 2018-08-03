@@ -264,14 +264,14 @@ class Incident_builder extends Investigate_base
 			$message = str_replace('{link}', site_url('Incidents/report/'.$incident_id), $message);
 			$message = str_replace('{summary}', $incident_summary, $message);
 			$message = str_replace('{title}', $incident_title, $message);
-
+			
 			$this->CI->email->message($message);
-
+			
 			//Send it out!
+			log_message('info', 'Sending Incident Notification to '.$user->email);
 			$this->CI->email->send();
-
-			return TRUE;
 		}
+		return TRUE;
 	}
 }
 

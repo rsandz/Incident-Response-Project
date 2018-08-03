@@ -52,7 +52,7 @@ class Admin_model extends MY_Model {
 	public function get_notify_new_incidents()
 	{
 		$this->db
-			->join('users', 'users.user_id = admin_settings.user_id')
+			->join('users', 'users.user_id = admin_settings.user_id', 'left')
 			->select('users.email, CONCAT(users.first_name, " ", users.last_name) AS name')
 			->where('notify_new_incident', 1);
 		return $this->db->get('admin_settings')->result();

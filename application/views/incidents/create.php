@@ -7,17 +7,17 @@
 		<?php echo form_open('Incidents/create');?>
 			<div class="field">
 				<div class="control">
-					<label class="label">Name: </label>
+					<label class="label">Name: <span class="has-text-danger">(Required)</span></label>
 					<input type="text" class="input" name="incident_name" required>
 				</div>
 			</div>
 			<div class="field is-grouped">
 				<div class="control is-expanded">
-					<label class="label">Date: </label>
+					<label class="label">Date: <span class="has-text-danger">(Required)</span></label>
 					<input type="date" class="input is-fullwidth" name="incident_date" id='date' required>
 				</div>
 				<div class="control is-expanded">
-					<label class="label">Time: </label>
+					<label class="label">Time: <span class="has-text-danger">(Required)</span></label>
 					<input type="time" class="input is-fullwidth" id='time' name="incident_time" >
 				</div>
 				<div class="control" style="margin-top: auto">
