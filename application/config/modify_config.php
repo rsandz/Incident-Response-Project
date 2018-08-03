@@ -62,16 +62,25 @@ $config['modify_rules'] = array(
  *	======================
  *
  *	This will declare which fields are foreign Keys and will subsequently turn them into
- *	dropdown selection boxes.
+ *	dropdown selection boxes in the modify forms.
  *
- * 	This is so that the user can select fields like project by name, instead of by id
+ * 	This is so that the user can select fields like project by name, rather than by id
  *
+ * Format:
  * $config['foreign_key'] = array(
- * 	'foreign_key' => array(
- * 		'FK_table' => 'Name of the table that the foreign key maps to'
- * 		'display_column' => 'Name of the column from the reference/foreign table that the user will see (i.e. type_name)'
- * 	)
+ * 		'foreign_key' => array(
+ * 			'FK_table' => 'Name of the table that the foreign key maps to'
+ * 			'display_column' => 'Name of the column from the reference/foreign table that the user will see (i.e. type_name)'
+ * 		)
  * );
+ * 
+ * Example:
+ * 	The following will replace any fields called 'project_id' with a dropdown of 'project_name's
+ *  corresponding to the 'project_id'
+ * 'project_id' => array(
+ *		'FK_table' => 'projects',
+ *		'display_column' => 'project_name',
+  * )
  */
 
 $config['foreign_keys'] = array(

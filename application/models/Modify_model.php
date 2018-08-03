@@ -132,7 +132,7 @@ class Modify_model extends MY_Model {
 			{
 				case $primary_key: //Prevent changing of primary key
 				case 'password': //Prevent Direct edit of password
-					$field->form = form_input($column->name, $query->{$column->name}, 'class="input is-light" disabled'); 
+					$field->form = form_input($column->name, $query->{$column->name}, 'class="input is-light" readonly'); 
 					continue(2);
 				default:
 					continue;
@@ -160,9 +160,10 @@ class Modify_model extends MY_Model {
 				$options = array();
 				foreach ($foreign_data as $item)
 				{
-					//$options[value] = display_name
 					$options[$item->value] = $item->display_name;
 				}
+				//Add a null option
+				$options[NULL] = 'None';
 				$field->form = '<div class="select">';
 				$field->form .= form_dropdown($column->name, $options, $query->{$column->name}, 'class="select"');
 				$field->form .= '</div>';
@@ -209,8 +210,8 @@ class Modify_model extends MY_Model {
 				case 'timestamp': //User shouldn't be able to edit this
 					$datetime = new Carbon($query->{$column->name});
 					$field->form = "<div class='field is-grouped'>";
-					$field->form .= "<input class='input' value='{$datetime->format('Y-m-d')}' type='Date' name='{$column->name}-date' disabled>";
-					$field->form .= "<input class='input' value='{$datetime->format('H:i')}' type='Time' name='{$column->name}-time' disabled>";
+					$field->form .= "<input class='input' value='{$datetime->format('Y-m-d')}' type='Date' name='{$column->name}-date' readonly>";
+					$field->form .= "<input class='input' value='{$datetime->format('H:i')}' type='Time' name='{$column->name}-time' readonly>";
 					$field->form .= "</div>";
 					break;	
 				default:

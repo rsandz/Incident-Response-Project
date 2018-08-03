@@ -1,6 +1,15 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Form Get Model
+ * ==============
+ * @author Ryan Sandoval
+ * 
+ * This contains various get methods for forms.
+ * Used in displaying descriptions for form fields or creating
+ * some fields based on data currently stored in the database
+ */
 class Form_get_model extends MY_Model {
 
 	/**
@@ -18,9 +27,13 @@ class Form_get_model extends MY_Model {
 		return $data;
 	}
 
+	/**	
+	 * Gets the description of a specified item within 
+	 * a specified table.
+	 */
 	public function get_item_desc($table, $id)
 	{
-		//Get Description column
+		//Get Description column name
 		$fields = $this->db->list_fields($table);
 		foreach($fields as $index => $field)
 		{
@@ -36,10 +49,11 @@ class Form_get_model extends MY_Model {
 			return NULL;
 		}
 
+		//Get description itself
 		$query = $this->db->where($this->get_primary_key_name($table), $id)
 				->get($table)->row();
 		
-		//Validate $query. If its empty, then return null
+		//Validate $query. If it's empty, then return null
 		if (!isset($query))
 		{
 			return NULL;
