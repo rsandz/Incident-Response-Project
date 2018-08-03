@@ -42,6 +42,7 @@ class Investigator extends Investigate_base
 
 		$this->CI->load->model('Searching/search_model');
 		$this->CI->load->model('statistics_model');
+		$this->CI->load->model('Investigation/investigator_model');
 		$this->CI->load->library('table');
 		$this->CI->load->library('chart');
 	}
@@ -83,6 +84,7 @@ class Investigator extends Investigate_base
 		$data['past_month_search'] = $this->past_month_search();
 		$data['past_3days_search'] = $this->past_3days_search();
 		$data['past_week_all_stats'] = $this->past_week_all_stats();
+		$data['test'] = $this->relevant_logs();
 
 		$html = $this->CI->load->view('incidents/templates/report', $data, TRUE);
 		$html .= $this->CI->load->view('stats/graph-search-form', $data, TRUE);
@@ -162,7 +164,7 @@ class Investigator extends Investigate_base
 		$data['query'] = $this->CI->search_model
 			->to_date($dateTime->format('Y-m-d'))
 			->from_date($dateTime->subWeek()->format('Y-m-d')) 
-			->export_query();
+			->export_query(TRUE);
 		$data['title'] = 'Past Week';
 		return $this->CI->load->view('incidents/templates/search-box', $data, TRUE);
 	}
@@ -179,7 +181,7 @@ class Investigator extends Investigate_base
 		$data['query'] = $this->CI->search_model
 				->to_date($dateTime->format('Y-m-d'))
 				->from_date($dateTime->subWeek()->format('Y-m-d'))
-				->export_query();
+				->export_query(TRUE);
 		$data['title'] = 'Past Month';
 		return $this->CI->load->view('incidents/templates/search-box', $data, TRUE);
 	}
@@ -196,9 +198,33 @@ class Investigator extends Investigate_base
 		$data['query'] = $this->CI->search_model
 				->to_date($dateTime->format('Y-m-d'))
 				->from_date($dateTime->subDays(3)->format('Y-m-d')) 
-				->export_query();
+				->export_query(TRUE);
 		$data['title'] = 'Past 3 Days';
 		return $this->CI->load->view('incidents/templates/search-box', $data, TRUE);
+	}
+
+	//-------------------------------------------------------------------------
+
+	/*
+		Log Relevance Algo
+	*/
+
+	public function relevant_logs()
+	{
+		$scored_logs = $this->CI->investigator_model->score_logs_relevancy();
+		//Get top 5 relevant Logs
+		$relevant_log_ids = array();
+		foreach ($scored_logs->result() as $log)
+		{
+			$relevant_log_ids[] = $log->log_id;
+		}
+		$imploded_log_id = implode(', ', $relevant_log_ids);
+		$result = $this->CI->search_model
+			->pagination(5)
+			->custom_sort("FIELD(`log_id`, {$imploded_log_id})")
+			->search_for_logs($relevant_log_ids);
+		echo $this->CI->search_model->get_debug();
+		return $this->CI->table->my_generate($result);
 	}
 
 }

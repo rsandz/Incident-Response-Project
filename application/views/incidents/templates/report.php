@@ -3,6 +3,7 @@
 	<hr>
 	<?php echo $summary?>
 	<hr>
+	<?php echo $test?>
 	<div class="columns">
 		<div class="column">
 			<h2 class="subtitle">Recent Logs (Past 10 Logs)</h2>

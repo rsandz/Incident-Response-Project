@@ -5,7 +5,7 @@
 		}
 	],
 	"settings": {
-		"cSpell.enabled": true,
+		"cSpell.enabled": false,
 		"cSpell.enabledLanguageIds": [
 			"asciidoc",
 			"c",

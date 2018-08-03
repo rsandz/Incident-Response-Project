@@ -406,6 +406,11 @@ class Search_model extends MY_Model {
 		//Clear Defaul Sort
 		$this->sort_array = array();
 
+		if (empty($sort_array))
+		{
+			return $this;
+		}
+
 		foreach ($sort_array as $param => $direction)
 		{
 			//Validation//
@@ -466,6 +471,23 @@ class Search_model extends MY_Model {
 		return $this;
 	}
 
+	/**
+	 * Simply sorts by the received string. 
+	 * No validations
+	 * @param array $sort_string The sql sort strng
+	 * @return Search_model      Method Chaining
+	 */
+	public function custom_sort($sort_string)
+	{
+		if (empty($sort_string))
+		{
+			return $this;
+		}
+
+		$this->sort_array = $sort_string;
+		return $this;
+	}
+
 	/**	
 	 * Use this to change what columns to select
 	 * The possible columns are:
@@ -518,8 +540,8 @@ class Search_model extends MY_Model {
 
 	/**
 	 * Runs the query based on the stored data
-	 * @param boolean $reset Clears the stored data if TRUE
-	 * @return object DB result object containing the matching logs.
+	 * @param boolean $reset Clears the stored search parameters if TRUE
+	 * @return CI_DB_result DB result object containing the matching logs.
 	 */
 	public function search($reset = TRUE)
 	{
@@ -547,6 +569,21 @@ class Search_model extends MY_Model {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Same as the normal search method, but will limit the results to the
+	 * log ids selected.
+	 * Usefuless for checking if the logs match filters or for extracting certain 
+	 * logs to tabulate them
+	 * @param array $log_ids The log ids
+	 * @param boolean $reset Whether to reset the stored search parameters
+	 * @return CI_DB_result DB result object containing the matching logs.
+	 */
+	public function search_for_logs($log_ids = array(), $reset = TRUE)
+	{
+		$this->db->where_in('log_id', $log_ids);
+		return $this->search($reset);
 	}
 
 	/**
@@ -708,6 +745,12 @@ class Search_model extends MY_Model {
 	 */
 	public function apply_sort()
 	{
+		if (is_string($this->sort_array)) 
+		{
+			$this->db->order_by($this->sort_array);
+			return; 
+		}
+
 		foreach($this->sort_array as $param => $direction)
 		{
 			$this->db->order_by($param, $direction);
@@ -805,9 +848,10 @@ class Search_model extends MY_Model {
 
 	/**
 	 * Exports the currently stored query data into a json string.
+	 * @param boolean $reset Reset Stored Search Parameters if TRUE
 	 * @return string JSON containing the exported data
 	 */
-	public function export_query()
+	public function export_query($reset = FALSE)
 	{
 		$to_export = array(
 			'SB_keywords',
@@ -828,6 +872,7 @@ class Search_model extends MY_Model {
 			$export[$property_name] = $this->{$property_name};
 		}
 
+		if ($reset) $this->reset();
 		return json_encode($export);
 	}
 

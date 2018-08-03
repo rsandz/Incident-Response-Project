@@ -109,6 +109,7 @@ class Investigation_model extends MY_Model {
 		return array('total_incidents' => $total_incidents, 'last_incident' => $last_incident);
 	}
 
+
 }
 
 /* End of file Investigation_model.php */
