@@ -131,6 +131,7 @@ class Modify extends MY_Controller {
 			foreach ($field_data as $field)
 			{
 				$update_data[$field->name] = $this->input->post($field->name, TRUE); //Gets the corrseponding updated values in the post array
+
 				if ($update_data[$field->name] == '') $update_data[$field->name] = NULL;
 			}
 

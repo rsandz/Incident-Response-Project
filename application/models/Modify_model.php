@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+use Carbon\Carbon;
 /**
  * MODIFY MODEL
  * ============
@@ -129,16 +130,16 @@ class Modify_model extends MY_Model {
 			//Conditions for certain fields. i.e. Passwords, relational ids (e.g. team_id)
 			switch ($column->name)
 			{
-				case $primary_key: //Prevent chagning of primary key
+				case $primary_key: //Prevent changing of primary key
 				case 'password': //Prevent Direct edit of password
-					$field->form = form_input($column->name, $query->{$column->name}, 'class="input is-light" readonly'); 
+					$field->form = form_input($column->name, $query->{$column->name}, 'class="input is-light" disabled'); 
 					continue(2);
 				default:
 					continue;
 			}
 
 			//If the current field is a foreign key, we will replace it with 
-			//a dropdown selection as configured in the config
+			//a dropdown selection containing the humanized name as configured in the config
 			if (isset($this->config->item('foreign_keys')[$column->name])) 
 			{
 				//Get the config for this foreign_key
@@ -205,6 +206,13 @@ class Modify_model extends MY_Model {
 				case 'time':
 					$field->form = "<input class='input' value='{$query->{$column->name}}' type='time' name='$column->name'>";
 					break;
+				case 'timestamp': //User shouldn't be able to edit this
+					$datetime = new Carbon($query->{$column->name});
+					$field->form = "<div class='field is-grouped'>";
+					$field->form .= "<input class='input' value='{$datetime->format('Y-m-d')}' type='Date' name='{$column->name}-date' disabled>";
+					$field->form .= "<input class='input' value='{$datetime->format('H:i')}' type='Time' name='{$column->name}-time' disabled>";
+					$field->form .= "</div>";
+					break;	
 				default:
 					$field->form = form_input($column->name, 'error', 'class="input"');
 					break;

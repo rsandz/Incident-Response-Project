@@ -24,7 +24,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 
  * 2. Dynamic Charts
  *  - Specify the title and the URL were to get the data by AJAX.
- *  - See myChart.js located in `/assets/js` for what the URL needs to provide
+ *      - The Chart sends new date ranges and time intervals as Post data.
+ *        For more info, see myChart.js in assets/js.
  *  - Call generate_dynamic()
  *  - Put the returned string into an HTML file
  * 
@@ -61,7 +62,7 @@ class Chart
     private $interval_items;
 
     /**
-     * Constrcutor fot eh Charting Library
+     * Constructor for the charting Library
      * Initialization and Resource loading
      */
     public function __construct()

@@ -46,7 +46,7 @@ class Admin_model extends MY_Model {
 
 	/**
 	 * Gets all the user's names and emails for the admins that
-	 * have chosen to recieve emails for new incidents.
+	 * have chosen to receive emails for new incidents.
 	 * @return array Database result array containing user's name and email
 	 */
 	public function get_notify_new_incidents()
