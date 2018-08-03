@@ -22,6 +22,7 @@ class MY_Table extends CI_Table {
 	 * Takes template from the 'view_tables' config file
 	 * Can also take headings in as an argument
 	 * @param  mixed $table_data The table data that will be passed into the normal generate() method
+	 * 							 Examples: 2D array. CI_db_result
 	 * @param  array $heading    The custom headings that you would like to use.
 	 * @return string            The HTML string of the table
 	 */

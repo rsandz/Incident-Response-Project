@@ -130,8 +130,9 @@ class Modify extends MY_Controller {
 
 			foreach ($field_data as $field)
 			{
-				$update_data[$field->name] = $this->input->post($field->name, TRUE); //Gets the corrseponding updated values in the post array
-
+				//Gets the corresponding updated values in the post array
+				$update_data[$field->name] = $this->input->post($field->name, TRUE); 
+				//Check if empty string and set it to NULL. This way, db won't set value as '';
 				if ($update_data[$field->name] == '') $update_data[$field->name] = NULL;
 			}
 
@@ -152,7 +153,7 @@ class Modify extends MY_Controller {
 				//Make a table to display changes
 				$this->load->library('table');
 				$update_table = $this->table->my_generate(
-						array(array_values($update_data)), //2D Array. An array of columns (update_data) within array of rows;
+						array(array_values($update_data)), //Table Data needs to be 2D array (Even for 1 row only), so wrap in another array
 						array_map(function($x) {return humanize($x);}, array_keys($update_data))
 					);
 

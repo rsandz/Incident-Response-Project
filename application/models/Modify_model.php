@@ -125,6 +125,17 @@ class Modify_model extends MY_Model {
 
 			$field->name = $column->name;
 
+			//Is field required? If so, add required to input attributes
+			$table_rules = $this->config->item('modify_rules');
+			if (isset($table_rules[$table][$column->name]) && preg_match('/required/i', $table_rules[$table][$column->name]))
+			{
+				$required = 'required';
+			}
+			else
+			{
+				$required = NULL;
+			}
+
 			//Now create the correct form
 			
 			//Conditions for certain fields. i.e. Passwords, relational ids (e.g. team_id)
@@ -173,15 +184,15 @@ class Modify_model extends MY_Model {
 			switch ($column->type) 
 			{
 				case 'varchar':
-					$field->form = form_input($column->name, $query->{$column->name}, 'class="input"');
+					$field->form = form_input($column->name, $query->{$column->name}, 'class="input" '.$required);
 					break;
 				case 'binary':
 					$field->form = '<div class="field is-horizontal">';
 					$field->form .= '<label class="radio">';
-					$field->form .= form_radio($column->name, 1,  $query->{$column->name} == 1, 'class="radio"');
+					$field->form .= form_radio($column->name, 1,  $query->{$column->name} == 1, 'class="radio" '.$required);
 					$field->form .= 'True</label>';
 					$field->form .= '<label class="radio">';
-					$field->form .= form_radio($column->name, 0,  $query->{$column->name} != 1, 'class="radio"');
+					$field->form .= form_radio($column->name, 0,  $query->{$column->name} != 1, 'class="radio" '.$required);
 					$field->form .= 'False</label>';
 					$field->form .= '</div>';
 
@@ -192,20 +203,20 @@ class Modify_model extends MY_Model {
 					foreach ($column->enum_vals as $enum_val)
 					{
 						$field->form .= '<label class="radio">';
-						$field->form .= form_radio($column->name, $enum_val, $query->{$column->name} == $enum_val,'class="radio"');
+						$field->form .= form_radio($column->name, $enum_val, $query->{$column->name} == $enum_val,'class="radio" '.$required);
 						$field->form .= humanize($enum_val).'</label>';
 					}
 					$field->form .= '</div>';
 					break;
 				case 'smallint':
 				case 'int':
-					$field->form = "<input class='input' value='{$query->{$column->name}}' type='number' name='$column->name'>";
+					$field->form = "<input class='input' value='{$query->{$column->name}}' type='number' name='$column->name' {$required}>";
 					break;
 				case 'date':
-					$field->form = "<input class='input' value='{$query->{$column->name}}' type='date' name='$column->name'>";
+					$field->form = "<input class='input' value='{$query->{$column->name}}' type='date' name='$column->name' {$required}>";
 					break;
 				case 'time':
-					$field->form = "<input class='input' value='{$query->{$column->name}}' type='time' name='$column->name'>";
+					$field->form = "<input class='input' value='{$query->{$column->name}}' type='time' name='$column->name' {$required}>";
 					break;
 				case 'timestamp': //User shouldn't be able to edit this
 					$datetime = new Carbon($query->{$column->name});

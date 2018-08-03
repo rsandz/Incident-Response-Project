@@ -16,12 +16,23 @@
 		<?php endforeach;?>
 		<hr>
 
-		<div class="field is-grouped">
-			<div class="control">
-				<?php echo anchor("Modify/table/{$table}", 'Cancel', 'class="button is-danger is-medium"');?>
+		<div class="level">
+			<div class="level-left">
+				<div class="level-item">
+					<div class="field is-grouped">
+						<div class="control">
+							<?php echo anchor("Modify/table/{$table}", 'Cancel', 'class="button is-danger is-medium"');?>
+						</div>
+						<div class="control">
+							<?php echo form_submit('modify', 'Modify', 'class="button is-info is-medium"');?>
+						</div>
+					</div>
+				</div>
 			</div>
-			<div class="control">
-				<?php echo form_submit('modify', 'Modify', 'class="button is-info is-medium"');?>
+			<div class="level-right">
+				<div class="level-item">
+					<input type="reset" class="button is-danger">
+				</div>
 			</div>
 		</div>
 
