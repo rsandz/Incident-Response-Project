@@ -20,13 +20,13 @@
 						<?php echo anchor('Incidents/report/select', 'View Reports', 'class="button is-light is-fullwidth"');?>
 					</div>
 					<div class="panel-block">
-						<?php echo anchor('Incidents/run', 'Manually Run/Rerun', 'class="button is-light is-fullwidth"');?>
-					</div>
-					<div class="panel-block">
 						<?php echo anchor('Account/admin-settings', 'Your Incident Settings', 'class="button is-light is-fullwidth"');?>
 					</div>
 					<div class="panel-block">
 						<?php echo anchor('Incidents/analytics-settings', 'Google Analytics Settings', 'class="button is-light is-fullwidth"');?>
+					</div>
+					<div class="panel-block">
+						<?php echo anchor('Cron/incident_check', 'Manually Run Analytics', 'class="button is-light is-fullwidth"');?>
 					</div>
 				</nav>
 				<nav class="panel">

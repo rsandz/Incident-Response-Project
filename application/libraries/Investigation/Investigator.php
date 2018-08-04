@@ -31,6 +31,9 @@ class Investigator extends Investigate_base
 	 */
 	protected $date_time;
 
+	/** @var int The amount of relevant logs to display */
+	protected $relevant_logs_amount = 10;
+
 	/**
 	 * Constructor for the Investigator library
 	 * 
@@ -84,7 +87,7 @@ class Investigator extends Investigate_base
 		$data['past_month_search'] = $this->past_month_search();
 		$data['past_3days_search'] = $this->past_3days_search();
 		$data['past_week_all_stats'] = $this->past_week_all_stats();
-		$data['test'] = $this->relevant_logs();
+		$data['relevant_logs'] = $this->relevant_logs();
 
 		$html = $this->CI->load->view('incidents/templates/report', $data, TRUE);
 		$html .= $this->CI->load->view('stats/graph-search-form', $data, TRUE);
@@ -211,19 +214,22 @@ class Investigator extends Investigate_base
 
 	public function relevant_logs()
 	{
+		$dateTime = clone $this->date_time;
 		$scored_logs = $this->CI->investigator_model->score_logs_relevancy();
-		//Get top 5 relevant Logs
+
+		//Get top relevant Logs
 		$relevant_log_ids = array();
 		foreach ($scored_logs->result() as $log)
 		{
 			$relevant_log_ids[] = $log->log_id;
 		}
-		$imploded_log_id = implode(', ', $relevant_log_ids);
+		$imploded_log_ids = implode(', ', $relevant_log_ids);
+		
 		$result = $this->CI->search_model
-			->pagination(5)
-			->custom_sort("FIELD(`log_id`, {$imploded_log_id})")
+			->pagination($this->relevant_logs_amount)
+			->to_date($dateTime->format('Y-m-d'))
+			->custom_sort("FIELD(`log_id`, {$imploded_log_ids})")
 			->search_for_logs($relevant_log_ids);
-		echo $this->CI->search_model->get_debug();
 		return $this->CI->table->my_generate($result);
 	}
 

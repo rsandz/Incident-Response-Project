@@ -3,7 +3,9 @@
 	<hr>
 	<?php echo $summary?>
 	<hr>
-	<?php echo $test?>
+	<h2 class="subtitle">Relevant Logs</h2>	
+	<?php echo $relevant_logs?>
+	<hr>
 	<div class="columns">
 		<div class="column">
 			<h2 class="subtitle">Recent Logs (Past 10 Logs)</h2>
