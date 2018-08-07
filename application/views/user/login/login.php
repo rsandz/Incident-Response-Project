@@ -1,21 +1,19 @@
-<body>
-
-	<div class="section">
-		<div class="container">
-			<div class="columns is-centered">
-				<div class="column is-half">
-					<div class="box">
-						<div class="box has-background-info ">
-								<h1 class="title has-text-white">Login to your Account</h1>
-						</div>
-						<?php echo form_open('login');?>
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered">
+			<div class="column is-half">
+				<div class="box">
+					<div class="box has-background-info ">
+							<h1 class="title has-text-white">Login to your Account</h1>
+					</div>
+					<?php echo form_open('login');?>
 						<div class="field">
 							<label class="label">Email:</label>
 							<div class="control has-icons-left">
 								<input class="input" type="text" name="email" value="<?php echo set_value('email'); ?>">
 								<span class="icon is-small is-left">
-							      <i class="fas fa-envelope"></i>
-							    </span>
+									<i class="fas fa-envelope"></i>
+								</span>
 							</div>
 						</div>
 				
@@ -46,17 +44,13 @@
 								</div>
 							</div>
 						</div>
-					</div>
-
-					<!--Errors-->
-					<?php if (isset($errors)) echo $errors;?>
-
 					</form>
 				</div>
+
+				<!--Errors-->
+				<?php if (isset($errors)) echo $errors;?>
+
 			</div>
 		</div>
 	</div>
-		
-	
-</body>
-</html>
+</section>

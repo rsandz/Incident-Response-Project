@@ -1,4 +1,4 @@
-<div class="section">
+<section class="section">
 	<div class="container">
 		<?php echo isset($errors) ? $errors : NULL?>
 		<h2 class="title">Create a New Incident</h2>
@@ -42,11 +42,10 @@
 			</div>
 		</form>
 	</div>
-</div>
+</section>
 
 <?php echo script_tag('js/moment.js')?>
 <script>
-
 	//Sets the date and time inputs to now
 	$(function()
 	{

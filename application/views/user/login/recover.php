@@ -1,4 +1,4 @@
-<div class="section">
+<section class="section">
 	<div class="container">
 		<div class="columns is-centered">
 			<div class="box column is-half">
@@ -36,4 +36,4 @@
 			</div>
 		</div>
 	</div>
-</div>
+</section>

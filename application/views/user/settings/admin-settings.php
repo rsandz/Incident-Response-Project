@@ -1,6 +1,6 @@
 <!-- Admin Settings -->
 
-<div class="section">
+<section class="section">
 	<div class="container">
 		<?php echo form_open('Account/admin-settings');?>
 			<h1 class="title">Incident Notification Settings</h2>
@@ -34,5 +34,5 @@
 			</div>
 		</form>
 	</div>
-</div>
+</section>
 

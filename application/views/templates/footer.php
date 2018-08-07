@@ -3,4 +3,5 @@
 		<p>Incident Response Project - 2018</p>
 	</div>
 </footer>
+</body>
 </html>

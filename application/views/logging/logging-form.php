@@ -1,6 +1,5 @@
 <?php echo script_tag('js/descriptions.js') ?>
-<body>
-	<div class="section">
+<section class="section">
 	<div class="container">
 		<?php echo $errors?>
 		<?php echo form_open('logging/log'); ?>
@@ -171,6 +170,6 @@
 			</div>
 		</form>
 	</div>
-	</div>
+</section>
 
-</body>
+

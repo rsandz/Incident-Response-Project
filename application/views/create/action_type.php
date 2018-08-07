@@ -1,6 +1,6 @@
 <!-- Load Tooltips -->
 <?php echo css_tag('css/bulma-tooltip.min.css')?>
-<div class="content section">
+<section class="content section">
 	<div class="container">
 		<h1>Action Type Creation Form</h1>
 		<hr>
@@ -35,4 +35,4 @@
 			<?=form_submit('submit', 'Create', 'class="button is-primary is-medium"');?>
 		</form>
 	</div>
-</div>
+</section>

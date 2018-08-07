@@ -1,4 +1,4 @@
-<div class="section">
+<section class="section">
 	<div class="container">
 		<div class="box">
 			<div class="content">
@@ -11,4 +11,4 @@
 			</div>
 		</div>
 	</div>
-</div>
+</section>

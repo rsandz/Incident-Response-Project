@@ -1,4 +1,4 @@
-<div class="section">
+<section class="section">
 	<div class="container">
 		<h2 class="subtitle is-2">View Incident Reports</h2>
 		<hr>
@@ -12,4 +12,4 @@
 			<div class="level-right"></div>
 		</div>
 	</div>
-</div>
+</section>

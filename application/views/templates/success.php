@@ -1,4 +1,4 @@
-<div class="section">
+<section class="section">
 	<div class="content">
 		<div class="columns is-centered">
 			<div class="box column is-half has-text-centered">
@@ -18,4 +18,4 @@
 			</div>
 		</div>
 	</div>
-</div>
+</section>

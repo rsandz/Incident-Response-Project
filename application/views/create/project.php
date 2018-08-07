@@ -1,4 +1,4 @@
-<div class="content section">
+<section class="content section">
 	<div class="container">
 		<h1>Project Creation Form</h1>
 		<hr>
@@ -23,4 +23,4 @@
 			<?=form_submit('submit', 'Create', 'class="button is-info is-medium"');?>
 		</form>
 	</div>
-</div>
+</section>

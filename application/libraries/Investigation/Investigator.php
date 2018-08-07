@@ -208,10 +208,10 @@ class Investigator extends Investigate_base
 
 	//-------------------------------------------------------------------------
 
-	/*
-		Log Relevance Algo
-	*/
-
+	/**
+	 * Gets the logs relevant to the incident.
+	 * @return string HTML string to display the table
+	 */
 	public function relevant_logs()
 	{
 		$dateTime = clone $this->date_time;
@@ -225,11 +225,13 @@ class Investigator extends Investigate_base
 		}
 		$imploded_log_ids = implode(', ', $relevant_log_ids);
 		
+		//Get the log data to tabulate
 		$result = $this->CI->search_model
 			->pagination($this->relevant_logs_amount)
 			->to_date($dateTime->format('Y-m-d'))
 			->custom_sort("FIELD(`log_id`, {$imploded_log_ids})")
 			->search_for_logs($relevant_log_ids);
+
 		return $this->CI->table->my_generate($result);
 	}
 

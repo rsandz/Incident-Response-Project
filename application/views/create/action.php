@@ -1,7 +1,7 @@
 <?php echo script_tag('js/descriptions.js');?>
 <?php echo css_tag('css/bulma-tooltip.min.css')?>
 
-<div class="content section">
+<section class="content section">
 	<div class="container">
 		<h1>Action Creation Form</h1>
 		<hr>
@@ -61,4 +61,4 @@
 			<?=form_submit('submit', 'Create', 'class="button is-info is-medium"');?>
 		</form>
 	</div>
-</div>
+</section>

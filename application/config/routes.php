@@ -127,9 +127,11 @@ $route['Create/(:any)'] = 'Create/index/$1';
 /*
 	Stats Routes
  */
-$route['Stats/my_stats'] = 'Stats/my_stats';
-$route['Stats/project_stats/(:any)'] = 'Stats/project_stats/$1';
-$route['Stats/team_stats/(:any)'] = 'Stats/team_stats/$1';
+$route['Stats/my-stats'] = 'Stats/my_stats';
+$route['Stats/project-stats'] = 'Stats/project_stats';
+$route['Stats/project-stats/(:any)'] = 'Stats/project_stats/$1';
+$route['Stats/team-stats'] = 'Stats/team_stats';
+$route['Stats/team-stats/(:any)'] = 'Stats/team_stats/$1';
 $route['Stats/custom/create/(:any)'] = 'Stats/create_custom/$1';
 $route['Stats/custom/(:any)'] = 'Stats/custom_stats/$1';
 

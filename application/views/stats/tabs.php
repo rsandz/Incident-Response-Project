@@ -1,13 +1,13 @@
 <div class="tabs">
 	<ul>
 		<li class="<?php if ($title == 'My Statistics') {echo 'is-active';}?>">
-			<?php echo anchor('Stats/my_stats', 'My Statistics');?>
+			<?php echo anchor('Stats/my-stats', 'My Statistics');?>
 		</li>
 		<li class="<?php if ($title == 'Project Statistics') {echo 'is-active';}?>">
-			<?php echo anchor('Stats/project_stats', 'Project Statistics');?>
+			<?php echo anchor('Stats/project-stats', 'Project Statistics');?>
 		</li>
 		<li class="<?php if ($title == 'Team Statistics') {echo 'is-active';}?>">
-			<?php echo anchor('Stats/team_stats', 'Team Statistics');?>
+			<?php echo anchor('Stats/team-stats', 'Team Statistics');?>
 		</li>
 		<li class="<?php if ($title == 'Custom Statistics 1') {echo 'is-active';}?>">
 			<?php echo anchor('Stats/custom/1', 'Custom Statistics 1');?>

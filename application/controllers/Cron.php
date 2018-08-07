@@ -13,12 +13,6 @@ class Cron extends MY_Controller {
         $this->load->library('Google/analytics');
         $this->load->library('Investigation/Incident_builder', NULL, 'ib');
         $this->load->config('analytics');
-
-        // //Check CLI
-        // if (!is_cli())
-        // {
-        //     exit('Sorry, cli only.')
-        // }
     }
     
     /**

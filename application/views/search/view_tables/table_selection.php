@@ -1,4 +1,4 @@
-<div class="section">
+<section class="section">
 	<div class="container">
 		<?php foreach ($tables as $table):?>
 			<div class="box content">
@@ -13,7 +13,7 @@
 			</div>
 		<?php endforeach;?>
 	</div>
-</div>
+</section>
 
 <div class="notification is-info">
 	<p>To view the log, use the search tab without any filter parameters.</p>

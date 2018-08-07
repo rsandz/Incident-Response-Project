@@ -1,4 +1,4 @@
-<div class="section">
+<section class="section">
 	<div class="container">
 		<h1 class="title">Select which users to add:</h1>
 		<!--User Selection--> 

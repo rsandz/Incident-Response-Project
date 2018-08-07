@@ -1,4 +1,4 @@
-<div class="section">
+<section class="section">
 	<div class="container">
 		<div class="content">
 			<h2 class="subtitle">Choose a table to modify</h2>
@@ -28,4 +28,4 @@
 			<?php echo anchor('admin', 'Return to Admin', 'class="button is-info"');?>
 		</div>
 	</div>
-</div>
+</section>

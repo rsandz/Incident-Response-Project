@@ -34,19 +34,7 @@ class Stats extends MY_Controller {
 	 */
 	public function index()
 	{
-
-		$data['header'] = array(
-			'text' => 'Statistics',
-			'colour' => 'is-info'
-		);
-		$data['title'] = 'Statistics';
-
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
-		$this->load->view('templates/navbar', $data);
-		$this->load->view('stats/tabs', $data);
-		$this->load->view('stats/main.php', $data);
-		$this->load->view('templates/footer');
+		redirect('Stats/my_stats','refresh');
 	}
 
 	/**

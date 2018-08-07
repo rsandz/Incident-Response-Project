@@ -1,4 +1,4 @@
-<div class="section" style="padding-top:0">
+<section class="section is-top-marginless">
 	<div class="container">
 		<div class="content">
 			<div class="level">
@@ -58,6 +58,6 @@
 			<?php endif;?>
 		</div>
 	</div>
-</div>
+</section>
 
 <?php echo script_tag('js/selection-search.js')?>

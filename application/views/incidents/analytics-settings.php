@@ -1,4 +1,4 @@
-<div class="section is-small">
+<section class="section is-small">
     <div class="container">
         <h1 class="title is-2">Google Analytics Settings</h1>  
         <hr>
@@ -64,7 +64,7 @@
             </div>
         </form>
     </div>
-</div>
+</section>
 <!--Load Tooltips-->
 <?php $this->load->helper('html');?>
 <?php echo link_tag('assets/css/bulma-tooltip.min.css')?>
@@ -95,8 +95,6 @@
         </div>
     </div>
 </template>
-
-
 <script>
     //Function for making the metric creation gui work
     $(function() {

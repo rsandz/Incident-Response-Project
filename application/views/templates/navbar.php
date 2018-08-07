@@ -24,7 +24,7 @@
 				</div>				
 			</div>
 			<?php echo anchor('manage_teams', 'Manage', 'class="navbar-item"'); ?>
-			<?php echo anchor('Stats', 'Statistics', 'class="navbar-item"'); ?>
+			<?php echo anchor('Stats/my-stats', 'Statistics', 'class="navbar-item"'); ?>
 			<?php if ($this->session->privileges == 'admin') echo anchor('Admin', 'Admin', 'class="navbar-item"'); ?>
 		</div>
 		<div class="navbar-end">

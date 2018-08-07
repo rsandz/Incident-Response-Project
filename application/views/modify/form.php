@@ -1,4 +1,4 @@
-<div class="section">
+<section class="section">
 	<div class="container">
 		<h1 class="title"><?php echo "You are Modifying Item #{$key} in the ".humanize($table).' table'?></h1>
 		<hr>
@@ -37,4 +37,4 @@
 		</div>
 
 	</div>
-</div>
+</section>

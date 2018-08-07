@@ -1,5 +1,4 @@
-<div class="section content">
-
+<section class="section content">
 	<!-- Form Errors -->
 	<div class="columns is-centered">
 		<div class="column is-three-quarters">
@@ -177,7 +176,7 @@
 			</div>
 		</div>
 	</form>
-</div>
+</section>
 
 <script type="text/javascript">
 	$(function() 

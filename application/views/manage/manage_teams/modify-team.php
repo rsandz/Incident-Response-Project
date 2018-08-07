@@ -1,5 +1,5 @@
 <?php echo form_open('manage_teams/remove_users/'.$team_id);?>
-<div class="section" style="padding-top:0">
+<section class="section is-top-marginless">
 	<div class="container">
 		<div class="content">
 			<h2>You are Viewing: <?php echo $team_name?></h2>
@@ -63,7 +63,7 @@
 			<?php echo anchor('manage_teams', 'Back', 'class="button is-info"');?>
 		</div>
 	</div>
-</div>
+</section>
 
 
 <div class="modal" id="delete-confirm">

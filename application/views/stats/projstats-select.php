@@ -1,4 +1,4 @@
-<div class="section">
+<section class="section">
 	<div class="container">
 		<div class="level">
 			<div class="level-left">
@@ -44,6 +44,6 @@
 			<?php endforeach;?>
 		</div>
 	</div>
-</div>
+</section>
 
 <?php echo script_tag('js/selection-search.js')?>

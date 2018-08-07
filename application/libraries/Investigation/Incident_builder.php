@@ -39,23 +39,17 @@ require_once('Investigate_base.php');
 class Incident_builder extends Investigate_base
 {
 	protected $IL_name = NULL;
-	protected $IL_date = NUll;
-	protected $IL_time = NUll;
+	protected $IL_date = NULL;
+	protected $IL_time = NULL;
 	protected $IL_desc = '';
 	protected $IL_auto = TRUE;
-	protected $IL_user = NUll;
+	protected $IL_user = NULL;
 
 	/** 
 	 * User ID for creating new incidents and logging.
 	 * @var int
 	 */
 	protected $user_id;
-
-	/**
-	 * Logs incident creation into action log if set to TRUE
-	 * @var boolean
-	 */
-	protected $logging;
 
 	/**
 	 * Initializes the Investigation Library
@@ -223,8 +217,7 @@ class Incident_builder extends Investigate_base
 		$this->CI->investigation_model->insert_incident($insert_data);
 
 		$this->notify_admin_new($this->CI->investigation_model->insert_id);
-		//Put into Log
-		//TODO: Hook up to logging lib
+		$this->reset();
 
 		return TRUE;
 
@@ -272,6 +265,28 @@ class Incident_builder extends Investigate_base
 			$this->CI->email->send();
 		}
 		return TRUE;
+	}
+
+	/**
+	 * Resets the stored incident data to their defaults
+	 * @return void
+	 */
+	public function reset()
+	{
+		$to_reset = array(
+			'IL_name' => NULL,
+			'IL_date' => NULL,
+			'IL_time' => NULL,
+			'IL_desc' => '',
+			'IL_auto' => TRUE,
+			'IL_user' => NULL,
+			'user_id' => NULL,
+		);
+
+		foreach ($to_reset as $item => $default)
+		{
+			$this->{$item} = $default;
+		}
 	}
 }
 
