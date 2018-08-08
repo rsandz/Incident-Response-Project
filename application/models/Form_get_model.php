@@ -86,40 +86,35 @@ class Form_get_model extends MY_Model {
 		}
 	}
 
-	public function get_active_actions($type_id, $project_id)
+	public function get_active_actions($type_id, $project_id, $term)
 	{
 		$this->db->where('type_id', $type_id)
 				->group_start()
 					->or_where('project_id', $project_id)
 					->or_where('is_global', 1)
 				->group_end()
+				->like('action_name', $term)
 				->where('is_active', 1)
 				->select(array('action_name', 'action_id'));
 
-		$results = $this->db->get('actions')->result();
+		$actions = $this->db->get('actions')->result();
 
 		//Validate $query. If its empty, then return null
-		if (!isset($results))
+		if (empty($actions))
 		{
-			return NULL;
+			return array('results' => NULL);
 		}
 
-		$actions = array(); //array(action_id => action_name)
-		foreach($results as $result)
+		//Format for select2 to parse
+		foreach ($actions as $action)
 		{
-			$actions[$result->action_id] = $result->action_name;
+			$data['results'][] = array(
+				'id' => $action->action_id,
+				'text' => $action->action_name
+			);
 		}
 
-		return $actions;
-	}
-
-	public function active_actions_form($type_id, $project_id)
-	{
-		$action_options = $this->get_active_actions($type_id,  $project_id);
-		
-		if (empty($action_options)) $action_options[''] = 'No Actions';
-
-		return form_dropdown('action', $action_options, NULL, 'id = "action-selector"');
+		return $data;
 	}
 
 	public function team_leaders_select($is_admin = NULL)
@@ -150,7 +145,7 @@ class Form_get_model extends MY_Model {
 			$options[$user->user_id] = $user->name;
 		}
 
-		return form_dropdown('team_leader', $options, NULL, 'class="select"');
+		return form_dropdown('team_leader', $options, NULL, 'class="select init-select2"');
 	}
 }
 

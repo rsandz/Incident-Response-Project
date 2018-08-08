@@ -4,14 +4,13 @@
 		<?php echo $errors?>
 		<?php echo form_open('logging/log'); ?>
 			<div class="columns">
-				
 				<div class="column is-one-third">
 					<div class="field">
 						<label class="label">Project: <span class="has-text-danger">(Required)</span></label>
 						<!-- Creates the selection for Projects -->
 						<div class="control">
-							<div class="select"> 
-								<select name="project" id="project-selector">
+							<div class="select">
+								<select class="init-select2" name="project" id="project-selector">
 									<?php 
 									if (!empty($projects))
 									{
@@ -47,7 +46,7 @@
 				<!-- Creates the selection for Teams -->
 				<div class="control">
 					<div class="select"> 
-						<select name="team">
+						<select class="init-select2" name="team">
 							<?php 
 								if (!empty($teams))
 								{
@@ -71,10 +70,9 @@
 			<hr>
 				
 			<!-- Action Type -->
-			
 			<label class="label">Action Type: <span class="has-text-danger">(Required)</span></label>
 			<div class="select">
-				<select name="action_type" class="select" id="type-selector">
+				<select class="init-select2" name="action_type" id="type-selector" required>
 					<?php 
 						if (!empty($types))
 						{
@@ -101,7 +99,9 @@
 						<label class="label">Actions: <span class="has-text-danger">(Required)</span></label>
 						<!-- Creates the selection for actions -->
 						<div class="control">
-							<div class="select" id="action-div"> 
+							<div class="select">
+								<select name="action" id="action" required>
+								</select>
 							</div>
 						</div>
 					</div>

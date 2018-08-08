@@ -165,6 +165,7 @@ class Create extends MY_Controller
 			//Get errors
 			$data['errors'] = $this->load->view('templates/errors', $data, true);
 
+
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');

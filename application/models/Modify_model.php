@@ -176,7 +176,7 @@ class Modify_model extends MY_Model {
 				//Add a null option
 				$options[NULL] = 'None';
 				$field->form = '<div class="select">';
-				$field->form .= form_dropdown($column->name, $options, $query->{$column->name}, 'class="select"');
+				$field->form .= form_dropdown($column->name, $options, $query->{$column->name}, 'class="init-select2"');
 				$field->form .= '</div>';
 				continue;
 			}

@@ -5,7 +5,7 @@
 		}
 	],
 	"settings": {
-		"cSpell.enabled": false,
+		"cSpell.enabled": true,
 		"cSpell.enabledLanguageIds": [
 			"asciidoc",
 			"c",
@@ -34,5 +34,6 @@
 			"typescriptreact",
 			"yml"
 		]
-	}
+	},
+	
 }

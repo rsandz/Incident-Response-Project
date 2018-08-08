@@ -68,6 +68,11 @@ class Test extends MY_Controller {
 		$this->load->view('stats/templates/chart-box', $data);
 	}
 
+	public function box()
+	{
+		$this->load->view('test');
+	}
+
 }
 /* End of file Test.php */
 /* Location: ./application/controllers/Test.php */

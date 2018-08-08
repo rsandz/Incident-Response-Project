@@ -65,19 +65,21 @@ class Ajax extends MY_Controller
 	}
 
 	/**
-	 * Gets the value items in the action table to be displayed in a form.
-	 * For use with $.ajax(). Uses $_Get array to get information
+	 * Gets the data to send back to the select2 action dropbox.
 	 *
 	 * @param  $_Get string type_id
 	 * @param  $_Get string project_id
+	 * @param  $_Get string term
 	 * 
 	 */
 	public function get_action_items()
 	{
 		$type_id = $this->input->get('type_id', TRUE);
 		$project_id = $this->input->get('project_id', TRUE);
+		$term = $this->input->get('term', TRUE);
 
-		echo json_encode($this->Form_get_model->active_actions_form($type_id, $project_id));
+		$actions = $this->Form_get_model->get_active_actions($type_id, $project_id, $term);
+		echo json_encode($actions);
 	}
 
 	/**

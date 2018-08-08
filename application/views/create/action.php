@@ -33,7 +33,7 @@
 				<label class="label">Action Type: <span class="has-text-danger">(Required)</span></label>
 				<div class="control">
 					<div class="select">
-						<select name="action_type" id="type-selector">
+						<select class="init-select2" name="action_type" id="type-selector">
 							<?php foreach ($types as $type): ?>
 								<?php echo '<option value="'.$type->type_id.'">'.$type->type_name.'</option><br>' ?>
 							<?php endforeach; ?>

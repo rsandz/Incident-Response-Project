@@ -68,12 +68,19 @@ class Search extends MY_Controller {
 		} else {
 			//Get form Data
 			$is_admin = $this->authentication->check_admin();
+			if (!$is_admin)
+			{
+				$user_id = $this->session->user_id;
+			}
+			else
+			{
+				$user_id = NULL;
+			}
 			
 			$data['action_types'] = $this->get_model->get_action_types($is_admin);
 			$data['teams'] = $this->get_model->get_teams($is_admin);
 			$data['projects'] = $this->get_model->get_projects($is_admin);
-			$data['users'] = $this->get_model->get_users($is_admin);
-
+			$data['users'] = $this->get_model->get_users($user_id);
 			//Load the form
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/hero-head', $data);
@@ -254,39 +261,6 @@ class Search extends MY_Controller {
 			$this->load->view('search/view_tables/view-table', $data);
 		}
 
-	}
-	
-	
-
-	/**
-	 * Returns True if the give '$to_date' is after the '$from_date'.
-	 * '$from_date' is retrieved using the post array while '$to_date' must be recieved as an argument
-	 * 
-	 * Function used in the code igniter form validation. 
-	 * @see https://www.codeigniter.com/userguide3/libraries/form_validation.html#callbacks-your-own-validation-methods doc
-	 * for more information on custom callbacks
-	 * 
-	 * @param  string $to_date Date to check
-	 * @return Boolean         True if valid, False if not
-	 */
-	public function validate_date($to_date)
-	{
-		$from_date = strtotime($this->input->post('from_date', TRUE));
-		$to_date = strtotime($to_date);
-
-		$date_diff = $to_date - $from_date;
-
-		if ($date_diff < 0)
-		{
-			$this->form_validation->set_message(
-				'validate_date', 'Invalid Date Interval - <strong>From Date</strong> is greater than <strong>To Date</strong>'
-			);
-			return FALSE;
-		}
-		else
-		{
-			return TRUE;
-		}
 	}
 }
 

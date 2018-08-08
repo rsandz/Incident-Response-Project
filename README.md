@@ -14,8 +14,8 @@ Description
 This app is used to log actions to assist with the investigation, in the event that a security breech occurs.
 
 
-Frameworks and Libraries
-========================
+Dependencies, Frameworks and Libraries
+======================================
 
 This application was created with the following frameworks:
 1. Code igniter -> PHP Framework
@@ -23,14 +23,24 @@ This application was created with the following frameworks:
 3. Composer -> Gets nice PHP Lib
 If you plan to modify/work on this project, please consider reading the documentation for the above frameworks.
 
-This application usses the following libraries:
+This application uses the following libraries:
 **JavaScript**
 1. **JQuery**
 2. **Moment.js** - JavaScript Date and Time
+3. **Select2** - Javascript Selection Input Library
 
 **PHP**
 1. **Carbon** - Date and Time Library
 	- __Note:__ This library can only handle dates up to 2038 if PHP and the server is 32-bit.
+
+**CSS**
+Although you may make changes to the css file directly, we do not recommend doing so.
+
+To increase readability and maintainability, this app uses SASS. To change the styling of the app:
+1. Download and install SASS from (this page)[https://sass-lang.com/].
+2. Make Edits at 'assets/css/sass'.
+3. Use SASS to compile the scss files to their respective css counterparts.
+Please note that we use the scss syntax and not the sass syntax.
 
 Setup
 =====
@@ -44,16 +54,18 @@ Edit the configuration files in:
 		1. log_threshold -> Verbosity of logs at application/logs
 		2. base_url -> Change to your website.
 		3. date_default_timezone_set -> Change to your timezone.
-2. application/config/appconfig.php --> Configuration for application
-3. application/config/database.php --> Database credentials and config
-4. application/config/email.php --> Configuration for Emails.
+1. `application/config/database.php` --> Database credentials and config
+1. `application/config/email.php` --> Configuration for Emails.
+1. `application/config/appconfig.php` --> Configuration for application
 
 
-If there are no users in the database, aquire the SETUP.php in the setup folder. Open it and edit the fields to match your desired admin credentials. Run the setup in your borwser by going to:
+If there are no users in the database, acquire the SETUP.php in the setup folder. Open it in a text editor and edit the fields to match your desired admin credentials. Run the setup in your browser by going to:
 
 > https://yourwebsiteurl.com/Setup
 
 The setup file should automatically insert the admin account into the 'users' table in the database.
+
+Go to the dashboard of the site and login with the credentials that you entered. For security reasons, delete `Setup.php` when done.
 
 Password Recovery Mail
 ======================
@@ -61,4 +73,4 @@ Password Recovery Mail
 You must set up SMTP on your server or use other servers like google.
 1. Ensure that openssl is allowed.
    - In XAMPP, this means allowing extension=openssl
-2. Configure config/email
+2. Configure `config/email`

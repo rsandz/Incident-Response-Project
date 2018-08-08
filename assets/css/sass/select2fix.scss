@@ -1,0 +1,70 @@
+/* 
+    Select Box Fix (SInce we are using Select2) 
+    Courtesy of thadeu from https://github.com/jgthms/bulma/issues/1555
+*/
+.select2-container {
+  
+    .select2-selection--single {
+        box-shadow: rgba(10, 10, 10, 0.1) 0px 1px 2px inset;
+        height: auto !important;
+        padding: 3px 0 !important;
+        border: 1px solid #dbdbdb;
+    
+        .select2-selection__arrow{
+          top: 5px !important;
+        }
+    
+        .select2-selection__placeholder {
+          color: #dbdbdb;
+        }
+      }
+    
+    .select2-selection--multiple {
+      box-shadow: rgba(10, 10, 10, 0.1) 0px 1px 2px inset;
+      height: auto !important;
+      padding: 3px 0 !important;
+      border: 1px solid #dbdbdb;
+      &:focus-within {
+        outline: 1px auto $info;
+        border-color: $blue;
+      }
+    }
+    
+    .select2-dropdown {
+  
+      .select2-search {
+        margin: 5px;
+  
+        .select2-search__field {
+          padding: 10px !important;
+          border-radius: 3px !important;
+          font-size: 1rem;
+          height: 2.25em;
+          box-shadow: inset 0 1px 2px rgba(10,10,10,.1);
+          max-width: 100%;
+          width: 100%;
+          border-radius: 3px !important;
+        }
+      }
+      
+      .select2-results__options {
+        max-height: 200px !important;
+  
+        .select2-results__option {
+          padding: 0.37em 0.75em !important;
+          font-size: 1rem;
+  
+        }
+      }
+    }
+  }
+
+/* Remove the dropdown arrow from Select2 */
+b[role=presentation] {
+  border: none !important;
+}
+
+/* Fix Select Boxes being too small when empty */
+.select2-container {
+  min-width: 200px;
+}

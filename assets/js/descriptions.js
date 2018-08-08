@@ -3,14 +3,44 @@
 */
 
 $(function() {
-    setActions();
+    //Initializes selection for action
+    $('select#action').select2({
+        ajax: {
+            url: $('#ajax-link').attr('data') + '/get_action_items',
+            dataType: 'json',
+            data: function(params) {
+                let query = {
+                    term: params.term,
+                    project_id: $("#project-selector").val(),
+                    type_id: $("#type-selector").val()
+                }
+                return query;
+            },
+            processResults: function(data) {
+                if (!data.results) {
+                    data.results = [{
+                        text: 'No Actions Found',
+                        id:   'null',
+                        disabled: 'disabled'
+                    }];
+                    console.log(data);
+                }
+                return data;
+            }
+        },
+        placeholder: 'Select an Action...'
+    });
+    $('select#action').change(setActionInfo);
+
 	setProjectInfo();
-	
+	$('#action').trigger('change');
 	//Bind event listeners
     $("#project-selector")
         .change(setProjectInfo)
-        .change(setActions);
-    $("#type-selector").change(setActions);
+        .change(() => $('#action').val(null).trigger('change'));
+    $("#type-selector").change(() => $('#action').val(null).trigger('change'));
+
+
 });
 
 /**
@@ -19,12 +49,12 @@ $(function() {
  * @return void
  */
 function setActionInfo() {
-    if ($("#action-selector").val() !== "NULL") {
+    if ($("#action").val() !== "NULL") {
         $('#action-desc').html('<i class="spinner fa fa-spinner fa-pulse fa-fw"></i>'); 
         $.get(
             $("#ajax-link").attr("data") + "/get_info",
             {
-                id: $("#action-selector").val(),
+                id: $("#action").val(),
                 table: "actions"
             },
             function(data) {
@@ -33,7 +63,7 @@ function setActionInfo() {
                     "<strong>Action Description</strong>: </br>" + data.desc
                 );
             }
-        ).fail(promptError);
+        )
     } else {
         $("#action-desc").html("<strong>No Description</strong>");
     }
@@ -54,44 +84,5 @@ function setProjectInfo() {
                 "<strong>Project Description</strong>: </br>" + data.desc
             );
         }
-    ).fail(promptError);
-}
-
-/**
- * Sets the actions based on the currently selected project and team
- * @return void
- */
-function setActions() {
-    $('#action-div').html('<i class="spinner fa fa-spinner fa-pulse fa-fw"></i>'); 
-    $('#action-div').toggleClass('select'); // Fixes misplaced arrow issue
-    selectedProject_id = $("#project-selector").val();
-    $.get(
-        $("#ajax-link").attr("data") + "/get_action_items",
-        {
-            project_id: selectedProject_id,
-            type_id: $("#type-selector").val()
-        },
-        function(data) {
-            data = $.parseJSON(data);
-            $("#action-div").html(data);
-
-            $("#action-selector").change(setActionInfo); //Re-add the even listener
-            $('#action-div').toggleClass('select');
-            setActionInfo();
-        }
-    ).fail(promptError);
-}
-
-/**
- * Notify the user if an AJAX error occured.
- * @return void
- */
-function promptError() {
-    if ($("#errors").length > 0) {
-        $("#errors").html(
-            '<div class="notification is-danger">An AJAX Error has occured. Try reloading the page or tyrying again later.</div>'
-        );
-    } else {
-        alert("An AJAX Error has occured. Try reloading the page or tyrying again later.");
-    }
+    )
 }

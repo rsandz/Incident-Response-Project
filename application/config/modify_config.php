@@ -103,6 +103,10 @@ $config['foreign_keys'] = array(
   		'FK_table' => 'users',
   		'display_column' => 'CONCAT(first_name, " ", last_name)'
 	  ),
+	'team_leader' => array(
+		'FK_table' => 'users',
+		'display_column' => 'CONCAT(first_name, " ", last_name)'
+	),
 	'team_id' => array(
 		'FK_table' => 'teams',
 		'display_column' => 'team_name'

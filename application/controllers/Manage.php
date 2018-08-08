@@ -87,8 +87,9 @@ class Manage extends MY_Controller {
 
 	public function add_users($team_id)
 	{
+		$data['team_id'] = $team_id;
+
 		//Set form Validation
-		
 		$this->form_validation->set_rules('users[]', 'Users', 'required');
 
 		if ($this->form_validation->run())

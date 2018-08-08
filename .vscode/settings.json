@@ -27,4 +27,12 @@
         "typescriptreact",
         "yml"
     ],
+    "files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+        "**/.DS_Store": true,
+        "application/vendor/[!n]*": true,
+    },
 }

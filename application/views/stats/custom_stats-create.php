@@ -74,7 +74,7 @@
 		<!-- Filter Content -->
 		<div class="columns is-centered">
 			<div class="column is-three-quarters">
-				<div class="box" id="filterBox" style="display:none"> 
+				<div class="box" id="filterBox"> 
 					<div class="columns">
 						<div class="column">
 							<h3>Action Types:</h3>
@@ -110,7 +110,7 @@
 					</div>
 					<hr>
 					<div class="columns">
-						<div class="column is-narrow">
+						<div class="column">
 							<h3>Teams:</h3>
 							<div class="field">
 								<?php if(!empty($teams)): ?>
@@ -133,19 +133,14 @@
 						</div>
 						<!--User Selection--> 
 						<div class="column">
-							<h3>Users:</h3>
-							<div class="control">
-								<input class="input" type="text" name="user_search" id="user_search" placeholder="Search for Specific User" style="width:40%">
+							<label class="label" for="users">Users:</label>
+							<div class="select is-multiple is-expanded">
+								<select name="users[]" id="users" multiple="multiple">
+									<?php foreach($users as $user): ?>
+										<option value="<?=$user->user_id?>"><?=$user->name?></option>
+									<?php endforeach;?>
+								</select>
 							</div>
-							<div class="column" id="selectedUsers">
-							</div>
-							<hr style="margin : 1px">
-							<div class="column" id="users">
-								<?php foreach ($users as $user):?>
-									<span class="tag button is-light unselectedUser is-medium" style="margin : 2px" data="<?php echo $user->user_id?>"><?=$user->name?></span>
-								<?php endforeach; ?>
-							</div>
-
 						</div>
 					</div>
 					<div class="notification is-info">
@@ -158,69 +153,22 @@
 	</form>
 </section>
 
-<script type="text/javascript">
+<script>
 	$(function() 
 	{	
+		//User Selection dropbox
+		$('#users').select2({
+			placeholder: "Select Users..",
+			multiple: true,
+			width: '100%'
+		});
+		console.log($('#users').val());
+
 		//For Filter Box
+		$('#filterBox').hide(); // Need to hide filter box AFTER select 2
 		$('#filterBtn').click(function() 
 		{	
 			$('#filterBox').slideToggle('fast');
 		});
-
-		//User Selection
-		$('.unselectedUser').click(function()
-		{	
-			if ($(this).hasClass('unselectedUser'))
-			{
-				$(this).appendTo('#selectedUsers');
-				
-				//Add the input so that it gets into Post Array
-				var inputStr = '<input name ="users[]" id="'+ $(this).html() +'_select" value="'+ $(this).attr('data') +'" hidden>';
-				$(inputStr).appendTo('#selectedUsers');
-
-				//Add Delete button
-				$(this).append('<span class="delete"></span>');
-
-				$(this).toggleClass('unselectedUser selectedUser is-info is-light');
-			}
-			else
-			{
-				$(this).appendTo('#users');
-
-				//Remove from post array
-				inputId = '#'+$(this).text() +'_select';
-				$(inputId).remove();
-
-				//Remove Delete button
-				$(this).children('.delete').remove();
-
-				$(this).toggleClass('unselectedUser selectedUser is-info is-light');
-			}
-		});
-
-		//User Search
-
-		$('#user_search').keyup(function()
-		{
-			$('.unselectedUser').each(function(){
-				var user_keyword = $('#user_search').val();
-				if ($(this).html().search(new RegExp(user_keyword,'i')) == -1)
-				{
-					$(this).hide();
-				}
-				else
-				{
-					$(this).show();
-				}
-			});
-		});
-
-		//Delete Function
-
-		$('.delete:not(.tag)').click(function()
-		{
-			$(this).parent().remove();
-		});
-		
 	});
 </script>

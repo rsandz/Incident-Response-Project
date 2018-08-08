@@ -19,7 +19,10 @@
 			<div class="level">
 				<div class="level-right">
 					<div class="level-item">
-						<input type="Submit" name="submit" value="Add Users" class="button is-medium is-info">
+						<?php echo anchor('manage_teams/'.$team_id, 'Back', 'class="button is-danger"');?>
+					</div>
+					<div class="level-item">
+						<input type="Submit" name="submit" value="Add Users" class="button is-info">
 					</div>
 				</div>
 			</div>

@@ -24,12 +24,10 @@
                     Chart Controls
                 </p>
                 <div class="panel-block">
-                    <div class="level">
-                        <div class="level-left">
-                            <label class="label" style="margin-right: 5px">Date Interval: </label>
-                        </div>
-                        <div class="level-right">
-                            <p class="control"><?php echo form_dropdown('interval_type', $interval_options, 'daily', 'class="select interval-select"'); ?></p>
+                    <label class="label">Date Interval: </label>
+                    <div class="control">
+                        <div class="select">
+                            <?php echo form_dropdown('interval_type', $interval_options, 'daily', 'class="select interval-select"'); ?>
                         </div>
                     </div>
                 </div>
