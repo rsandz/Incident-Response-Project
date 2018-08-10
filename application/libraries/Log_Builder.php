@@ -99,9 +99,6 @@ class Log_builder
         $this->CI->load->model('Tables/action_type_model');
         $this->CI->load->model('Tables/action_model');
 
-        //Set the time zone
-        date_default_timezone_set($this->CI->config->item('timezone')); //SETS DEFAULT TIME ZONE
-
         //Load the System Action Type
         $this->sys_type_id = $this->CI->action_type_model->get_sys_type();
 

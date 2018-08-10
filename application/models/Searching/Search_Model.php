@@ -582,6 +582,14 @@ class Search_model extends MY_Model {
 	 */
 	public function search_for_logs($log_ids = array(), $reset = TRUE)
 	{
+		if (empty($log_ids)) 
+		{
+			//Return Empty Data set
+			$this->reset();
+			$this->db->where('1 = 0');
+			return $this->search();
+		}	
+		
 		$this->db->where_in('log_id', $log_ids);
 		return $this->search($reset);
 	}

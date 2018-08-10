@@ -8491,6 +8491,12 @@ b[role=presentation] {
   min-width: 200px;
 }
 
+/* Select 2 Fixes */
+.select2-selection {
+  min-height: 2.25em;
+  line-height: 28px;
+}
+
 /* Helper CSS */
 .is-top-marginless {
   margin-top: 0;

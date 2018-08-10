@@ -68,10 +68,11 @@ class Create extends MY_Controller
 	public function action_form($data)
 	{
 		$projects = $this->get_model->get_projects();
-
 		foreach ($projects as $project) {
 			$data['projects'][$project->project_id] = $project->project_name;
 		}
+		//Fix no project errors
+		if (empty($data['projects']))  $data['projects'] = array();
 
 		//Form Validation Rules
 		$this->form_validation->set_rules('action_name', 'Action Name', 'trim|required');
@@ -139,6 +140,7 @@ class Create extends MY_Controller
 				'project_name' => $this->input->post('project_name', true),
 				'project_desc' => $this->input->post('project_desc', true),
 				'project_leader' => $this->input->post('project_leader', true),
+				'is_active' => 1
 			);
 
 			$this->load->model('Tables/project_model');

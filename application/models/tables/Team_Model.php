@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Team_Model extends MY_Model {
+class Team_model extends MY_Model {
 
 	/**
 	 * Makes a team based on the inserted data
@@ -64,5 +64,5 @@ class Team_Model extends MY_Model {
 
 }
 
-/* End of file Team_Model.php */
-/* Location: ./application/models/tables/Team_Model.php */
+/* End of file Team_model.php */
+/* Location: ./application/models/tables/Team_model.php */

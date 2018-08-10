@@ -101,11 +101,19 @@ class Investigation_model extends MY_Model {
 	public function get_incident_stats()
 	{
 		$total_incidents = $this->db->count_all('incidents');
-		$last_incident = $this->db
+		$last_incident_raw = $this->db
 							->order_by('created_on', 'DESC')
 							->select('CONCAT("Incident #", `incident_id`, ": ", `incident_name`) as last_incident')
 							->get('incidents')
-							->row()->last_incident;
+							->row();
+		if (empty($last_incident_raw))
+		{
+			$last_incident = 'None. Hooray!';
+		}
+		else
+		{
+			$last_incident = $last_incident_raw->last_incident;
+		}
 		return array('total_incidents' => $total_incidents, 'last_incident' => $last_incident);
 	}
 

@@ -68,3 +68,9 @@ b[role=presentation] {
 .select2-container {
   min-width: 200px;
 }
+
+/* Select 2 Fixes */
+.select2-selection {
+  min-height: 2.25em; //Prevent squished boxes
+  line-height: 28px;
+} 
