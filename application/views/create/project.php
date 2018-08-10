@@ -15,8 +15,7 @@
 			<label class="label" for="project-leader">Project Leader: </label>
 			<div class="control">
 				<div class="select">
-					<?php echo form_dropdown('project_leader', $project_leaders, NULL, 
-						'class="init-select2" id="project-leader"');?>
+					<?php echo form_dropdown('project_leader', $project_leaders, NULL, 'id="project-leader"');?>
 				</div>
 			</div>
 		</div>
@@ -33,3 +32,12 @@
 		<?=form_submit('submit', 'Create', 'class="button is-info is-medium"');?>
 	</form>
 </section>
+
+<script>
+	//Init project leader select
+	$(function(){
+		$('#project-leader').select2({
+			placeholder: 'Select a User..'
+		});
+	});
+</script>

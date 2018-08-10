@@ -43,13 +43,14 @@ class Account extends MY_Controller {
 	{
 		$data['user_teams'] = $this->get_model->get_user_teams($this->session->user_id, FALSE);
 		$data['title'] = 'Account';
+		
+		//Content
+		$data['content'] = $this->load->view('user/my-info', $data, TRUE);
 
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('user/my-info', $data);
-
-		$this->load->view('templates/footer');
+		$this->load->view('templates/content-wrapper', $data);
+		$this->load->view('templates/footer', $data);
 	}
 
 	public function settings()

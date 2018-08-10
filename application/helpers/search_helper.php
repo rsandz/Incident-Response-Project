@@ -107,6 +107,8 @@ if (!function_exists('export_summary'))
 
 		foreach($query as $label => $filters)
 		{
+			if (empty($filters)) continue;
+			
 			//For some data (i.e. 'users') we have to get the real name and not just the id
 			switch ($label) 
 			{

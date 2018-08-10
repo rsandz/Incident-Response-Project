@@ -85,7 +85,7 @@ class Create extends MY_Controller
 			$insert_data = array(
 				'action_name' => $this->input->post('action_name', true),
 				'type_id' => $this->input->post('action_type', true),
-				'action_desc' => $this->input->post('action_desc') == "" ? null : $this->input->post('action_desc', true),
+				'action_desc' => $this->input->post('action_desc', true),
 				'project_id' => $this->input->post('project_id', true),
 				'is_active' => 1,
 				'is_global' => $this->input->post('is_global', true) == 1 ? 1 : 0,
@@ -143,7 +143,7 @@ class Create extends MY_Controller
 
 			$this->load->model('Tables/project_model');
 			$this->project_model->make($insert_data);
-
+			
 			//Create the log
 			$this->lb
 				->sys_action('Created Project')
@@ -161,6 +161,7 @@ class Create extends MY_Controller
 		}
 		//Get Users for project leaders
 		$users = $this->get_model->get_users();
+		$data['project_leaders'][''] = ''; //Need an empty option for select2 to display placeholder
 		foreach($users as $user)
 		{
 			$data['project_leaders'][$user->user_id] = $user->name;
