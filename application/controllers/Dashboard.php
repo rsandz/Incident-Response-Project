@@ -33,26 +33,22 @@ class Dashboard extends MY_Controller {
 	 */
 	public function index()
 	{
-		$data['title']='Dashboard';
-		$data['header'] = array(
-			'text' => 'Hello '.$this->session->name.', Welcome to your Dashboard',
-			'colour' => 'is-info');
-
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
-		$this->load->view('templates/navbar', $data);
-		
-		//Loads table for previous entries
 		$this->load->model('Searching/search_model');
 		$this->load->library('table');
+
+		$data['title']='Dashboard';
+
+		//Loads table for previous entries
 		$this->search_model->pagination($this->config->item('per_page'));
 		$previous_logs = $this->search_model->search();
 
 		$data['entries_table'] = $this->table->my_generate($previous_logs);
+		$data['content'] = $this->load->view('logging/user-entries', $data, TRUE); 
 
-		$this->load->view('logging/user-entries', $data); 
-
-		$this->load->view('templates/footer');
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('templates/content-wrapper', $data);
+		$this->load->view('templates/footer', $data);
 	}
 }
 

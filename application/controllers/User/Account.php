@@ -80,28 +80,22 @@ class Account extends MY_Controller {
 				$this->session->user_id, $this->input->post('notify_investigated', TRUE)
 			);
 
-			$data['success_msg'] = 'Your Settings have been updated';
-			$data['success_back_url'] = site_url('Account/admin-settings');
-
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar', $data);
-			$this->load->view('templates/success', $data);
-			$this->load->view('templates/footer');
+			set_notification('Your Settings have been updated');
+			redirect(current_url(),'refresh');
+		
 		}
 		else
 		{
 			//Create form
 			$data['current_settings'] = $this->admin_settings->get_current_settings($this->session->user_id);
+			$data['notifications'] = $this->session->notifications;
+			$data['content'] = $this->load->view('user/settings/admin-settings', $data, TRUE);
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('user/settings/admin-settings', $data);
-			$this->load->view('templates/footer');
+			$this->load->view('templates/content-wrapper', $data);
+			$this->load->view('templates/footer', $data);
 		}
-
-		
 	}
 }
 

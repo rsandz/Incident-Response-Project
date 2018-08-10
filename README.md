@@ -58,6 +58,8 @@ Edit the configuration files in:
 1. `application/config/email.php` --> Configuration for Emails.
 1. `application/config/appconfig.php` --> Configuration for application
 
+**Note: If the production environment is 'DEVELOPMENT' then edit the configs in the development folder.**
+
 
 If there are no users in the database, acquire the SETUP.php in the setup folder. Open it in a text editor and edit the fields to match your desired admin credentials. Run the setup in your browser by going to:
 

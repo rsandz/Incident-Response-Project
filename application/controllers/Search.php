@@ -81,18 +81,20 @@ class Search extends MY_Controller {
 			$data['teams'] = $this->get_model->get_teams($is_admin);
 			$data['projects'] = $this->get_model->get_projects($is_admin);
 			$data['users'] = $this->get_model->get_users($user_id);
-			//Load the form
+
+			$data['content'] = $this->load->view('search/tabs', $data, TRUE);
+			$data['content'] .= $this->load->view('search/search-form', $data, TRUE);
+			
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar');
-			$this->load->view('search/tabs');
-			$this->load->view('search/search-form', $data);
+			$this->load->view('templates/navbar', $data);
+			$this->load->view('templates/content-wrapper', $data);
+			$this->load->view('templates/footer', $data);
 		}
 		
 	}
 
 	/**
-	 * Shows the results of a search querry
+	 * Shows the results of a search query
 	 * @param  integer $offset Offset for pagination. @see search_model->get_table_data() and codeigniter pagination documentation 
 	 */
 	public function search($offset = 0)
@@ -165,7 +167,7 @@ class Search extends MY_Controller {
 		$query = $this->search_model->export_query();
 		$this->session->set_userdata('last_search_query', $query);
 
-		//Getting the back URL
+		//Getting the back URL from Session data, unless in post data
 		if (!empty($this->input->post('back_url', TRUE)))
 		{
 			$back_url = $this->input->post('back_url', TRUE);
@@ -202,15 +204,13 @@ class Search extends MY_Controller {
 		$data['page_links'] = $this->pagination->my_create_links($data['num_rows'], 'Search/result/');
 
 		$data['title'] = 'Search Results';
-		$data['header'] = array(
-			'colour' => 'is-info',
-			'text'   => 'Results'
-		);
+		
+		/* Load the Page*/
+		$data['content'] = $this->load->view('search/view-logs', $data, TRUE);
 		
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('search/view-logs', $data);
+		$this->load->view('templates/content-wrapper', $data);
 		$this->load->view('templates/footer', $data);
 
 	}
@@ -235,12 +235,13 @@ class Search extends MY_Controller {
 					),
 				'tables' => array('actions', 'action_types', 'teams', 'projects', 'users', 'user_teams')
 			);
-
+			
+			$data['content'] = $this->load->view('search/view_tables/table_selection', $data, TRUE);
+			
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('search/tabs', $data);
-			$this->load->view('search/view_tables/table_selection');
+			$this->load->view('templates/content-wrapper', $data);
+			$this->load->view('templates/footer', $data);
 		}
 		else
 		{
@@ -253,12 +254,13 @@ class Search extends MY_Controller {
 
 			$data['title'] = 'View Tables';
 			$data['header']['text'] = 'View Table';
-
+			
+			$data['content'] = $this->load->view('search/view_tables/view-table', $data, TRUE);
+			
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('search/tabs', $data);
-			$this->load->view('search/view_tables/view-table', $data);
+			$this->load->view('templates/content-wrapper', $data);
+			$this->load->view('templates/footer', $data);
 		}
 
 	}

@@ -9,8 +9,10 @@ $this->view('templates/errors', $data, TRUE)
 
 <!--Errors-->
 <?php if (!empty(validation_errors()) OR !empty($errors)): ?>
-	<div class="notification is-danger">
-		<?php echo validation_errors()?>
-		<?php if (isset($errors)) echo $errors;?>
+	<div class="column">
+		<div class="notification is-danger">
+			<?php echo validation_errors()?>
+			<?php if (isset($errors)) echo $errors;?>
+		</div>
 	</div>
 <?php endif;?>

@@ -8,7 +8,7 @@
 ?>
 
 <?php if (!empty($notification)):?>
-    <div class="container">
+    <div class="column">
         <div class="notification <?php echo isset($notification_colour) ? $notification_colour : 'is-primary'?>">
             <i class="delete notify-delete"></i>
             <p class="has-text-weight-bold"><?php echo $notification?></p>
@@ -19,7 +19,7 @@
         $(function(){
             $('.notify-delete').click(function() 
             {
-                $(this).parent().hide();
+                $(this).parent().parent().hide();
             });
         })
     </script>

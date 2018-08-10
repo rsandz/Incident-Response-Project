@@ -47,6 +47,7 @@ class Logging extends MY_controller {
 		$this->load->library('form_validation');
 		$this->load->helper('url');
 
+		$data['title'] = 'Logging Form';
         $data['projects'] = $this->get_model->get_projects();
         $data['types'] = $this->get_model->get_action_types(); // Only displays active action types
         $data['teams'] = $this->get_model->get_teams();
@@ -58,19 +59,18 @@ class Logging extends MY_controller {
 
 		if ($this->form_validation->run() === FALSE) 
 		{	
-			$data['title'] = 'Logging Form';
-
-			//Get Errors
+			//Get Errors and content
 			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+			$data['content'] = $this->load->view('logging/logging-form', $data, TRUE);
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('logging/logging-form', $data);
+			$this->load->view('templates/content-wrapper', $data);
+			$this->load->view('templates/footer', $data);
+			
 		}
 		else 
 		{
-			//Show the logging form
 			$result = $this->lb
 				->action($this->input->post('action', TRUE))
 				->desc($this->input->post('desc', TRUE))
@@ -84,21 +84,21 @@ class Logging extends MY_controller {
 
 			if (!$result) //Unsuccessful log
 			{
-				$data['title'] = 'An Error Occured';
-				$data['success_msg'] = 'Your activity was not successfully logged.';
-				$data['success_back_url'] = site_url('Logging');
+				$data['notification'] = 'Your activity was not successfully logged.';
+				$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
 			}
 			else
 			{
-				$data['title'] = 'Success';
-				$data['success_msg'] = 'Your Activity has been inserted into the log table';
-				$data['success_back_url'] = site_url('Logging');
+				$data['notification'] = 'Your Activity has been inserted into the log table';
+				$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
 			}
 
+			$data['content'] = $this->load->view('logging/logging-form', $data, TRUE);
+
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('templates/success');
+			$this->load->view('templates/content-wrapper', $data);
+			$this->load->view('templates/footer', $data);
 		}
 	}
 }

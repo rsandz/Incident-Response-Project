@@ -101,27 +101,25 @@ class Create extends MY_Controller
 				->desc("Action `{$insert_data['action_name']}` was inserted into the Action Table.")
 				->log();
 			
-			//Create Success Data for Success page
-			$data = array_merge($data, $this->success_data($data['type']));
+			//Success Notification
+			$data['notification'] = "Your Action `{$insert_data['action_name']}` has been created.";
+			$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
 
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar');
-			$this->load->view('templates/success', $data);
-			$this->load->view('templates/footer');
-		} else {
-
-			$data['types'] = $this->get_model->get_action_types();
-			//Get errors
-			$data['errors'] = $this->load->view('templates/errors', $data, true);
-
-			// Make the Form
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar');
-			$this->load->view('create/action', $data);
-			$this->load->view('templates/footer');
+			//Reset Validation
+			$this->form_validation->reset_validation();
+			$_POST = array();
 		}
+
+		$data['types'] = $this->get_model->get_action_types();
+		
+		$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+		$data['content'] = $this->load->view('create/action', $data, TRUE);
+
+		// Make the Form
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar');
+		$this->load->view('templates/content-wrapper');
+		$this->load->view('templates/footer');
 	}
 
 	/**
@@ -154,24 +152,21 @@ class Create extends MY_Controller
 				->log();
 			
 			//Create Success Data for success page
-			$data = array_merge($data, $this->success_data($data['type']));
+			$data['notification'] = "Project `{$insert_data['project_name']} has been created`";
+			$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
 
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar');
-			$this->load->view('templates/success', $data);
-			$this->load->view('templates/footer');
-		} else {
-			//Get errors
-			$data['errors'] = $this->load->view('templates/errors', $data, true);
-
-
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar');
-			$this->load->view('create/project', $data);
-			$this->load->view('templates/footer');
+			//Reset Validation
+			$this->form_validation->reset_validation();
+			$_POST = array();
 		}
+		//Get errors
+		$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+		$data['content'] = $this->load->view('create/project', $data, TRUE);
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('templates/content-wrapper', $data);
+		$this->load->view('templates/footer', $data);
 
 	}
 
@@ -212,24 +207,21 @@ class Create extends MY_Controller
 				->log();
 
 			//Success data for the success page
-			$data = array_merge($data, $this->success_data($data['type']));
+			$data['notification'] = "User `{$full_name}` has been created.";
+			$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
 
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar');
-			$this->load->view('templates/success', $data);
-			$this->load->view('templates/footer');
-		} else {
+			//Reset Validation
+			$this->form_validation->reset_validation();
+			$_POST = array();
+		}
 			//Get errors
 			$data['errors'] = $this->load->view('templates/errors', $data, true);
+			$data['content'] = $this->load->view('create/user', $data, TRUE);
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar');
-			$this->load->view('create/user', $data);
+			$this->load->view('templates/content-wrapper');
 			$this->load->view('templates/footer');
-		}
-
 	}
 
 	/**
@@ -263,30 +255,24 @@ class Create extends MY_Controller
 				->log();
 
 			//Success Data for the success page
-			$data = array_merge($data, $this->success_data($data['type']));
+			$data['notification'] = "Team `{$insert_data['team_name']}` has been created.";
+			$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
 
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar');
-			$this->load->view('templates/success', $data);
-			$this->load->view('templates/footer');
-		} else {
+			//Reset Validation
+			$this->form_validation->reset_validation();
+			$_POST = array();
+		}
 			//Get Team Leaders
-			if ($this->authentication->check_admin()) {
-				$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select(true);
-			} else {
-				$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select();
-			}
+			$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select($this->authentication->check_admin());
 
 			//Get errors
-			$data['errors'] = $this->load->view('templates/errors', $data, true);
+			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+			$data['content'] = $this->load->view('create/team', $data, TRUE);
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar');
-			$this->load->view('create/team', $data);
-			$this->load->view('templates/footer');
-		}
+			$this->load->view('templates/navbar', $data);
+			$this->load->view('templates/content-wrapper', $data);
+			$this->load->view('templates/footer', $data);
 	}
 
 	/**
@@ -317,56 +303,23 @@ class Create extends MY_Controller
 				->date('now')
 				->desc("Type `{$insert_data['type_name']}` was inserted into the Action Types table.")
 				->log();
-			
-			//Success
-			$data = array_merge($data, $this->success_data($data['type']));
 
-			$data['title'] = 'Created ' . $data['type'];
-			$data['header'] = array(
-				'text' => 'Success',
-				'colour' => 'is-success'
-			);
-
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar');
-			$this->load->view('templates/success', $data);
-			$this->load->view('templates/footer');
-		} else {
-			//Get errors
-			$data['errors'] = $this->load->view('templates/errors', $data, true);
-
-			// Make the Form
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar');
-			$this->load->view('create/action_type', $data);
-			$this->load->view('templates/footer');
+			$data['notification'] = "Action Type `{$insert_data['type_name']}` has been created.";
+			$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
+		
+			//Reset Validation
+			$this->form_validation->reset_validation();
+			$_POST = array();
 		}
-	}
+		//Get errors
+		$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+		$data['content'] = $this->load->view('create/action_type', $data, TRUE);
 
-	/**
-	 * Creates the success data and returns it.
-	 * @param  type $type The type of item created
-	 * @return array       Array containing data for templates/success
-	 */
-	public function success_data($type)
-	{
-		//URL for back button
-		$data['success_back_url'] = site_url("Create/{$type}");
-
-		//Humanize $type
-		$type = humanize($type);
-
-		$data['title'] = 'Created ' . $type;
-		$data['header'] = array(
-			'text' => 'Success',
-			'colour' => 'is-success'
-		);
-
-		$data['success_msg'] = "Your {$type} has been created";
-
-		return $data;
+		// Make the Form
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('templates/content-wrapper', $data);
+		$this->load->view('templates/footer', $data);
 	}
 
 }
