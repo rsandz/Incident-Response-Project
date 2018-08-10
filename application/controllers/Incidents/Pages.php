@@ -7,7 +7,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author Ryan Sandoval
  * @package Investigation
  * 
- * This is the controller for the pages in the incidents functinalilty.
+ * This is the controller for the pages in the incidents functionality.
  * It will be able to handle:
  * 	- New Incident creation
  * 	- Historical Incidents
@@ -38,7 +38,7 @@ class Pages extends MY_Controller {
 	 */
 	public function index()
 	{
-		$data = array('title' => 'Incidents Overview');
+		$data = array('title' => 'Incidents');
 
 		//Get Recent Incidents
 		$recent_incidents = $this->investigation_model->get_all_incidents(); // Contains 'num_rows' & 'data'
@@ -48,12 +48,11 @@ class Pages extends MY_Controller {
 
 		//Get the incidents statistics
 		$data['stats'] = $this->investigation_model->get_incident_stats();
+		$data['content'] = $this->load->view('incidents/main', $data, TRUE);
 
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('admin/tabs');
-		$this->load->view('incidents/main');
+		$this->load->view('templates/content-wrapper', $data);
 		$this->load->view('templates/footer');
 	}
 
@@ -65,6 +64,7 @@ class Pages extends MY_Controller {
 	{
 		//Load Resources
 		$this->load->library('form_validation');
+		$data = array('title' => 'Incidents');
 
 		$this->form_validation->set_rules('incident_name', 'Incident Name', 'required');
 		$this->form_validation->set_rules('incident_date', 'Incident Date', 'required');
@@ -80,31 +80,26 @@ class Pages extends MY_Controller {
 				->auto(FALSE)
 				->create();
 
-			//Success Page
-			$data['title'] = 'Incident Created';
-			$data['success_msg'] = 'The Incident has been created';
-			$data['success_back_url'] = site_url('Incidents');
+			//Success Msg
+			$data['notification'] = 'The Incident has been created';
+			$notifications = $this->load->view('templates/notification', $data, TRUE);
+			$this->session->set_flashdata('notifications', $notifications);
 			
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar', $data);
-			$this->load->view('admin/tabs');
-			$this->load->view('templates/success');
-			$this->load->view('templates/footer');
+			redirect(current_url(),'refresh');
+			
 		}
 		else
 		{
-			$data = array('title' => 'Incidents');
 
 			//Generate Error
 			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
-
+			$data['content'] = $this->load->view('incidents/create', $data, TRUE);
+			//Get Flash Data
+			$data['notifications'] = $this->session->notifications;
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('admin/tabs');
-			$this->load->view('incidents/create');
-			$this->load->view('templates/footer');
+			$this->load->view('templates/content-wrapper', $data);
+			$this->load->view('templates/footer', $data);
 		}
 	}
 
@@ -118,20 +113,20 @@ class Pages extends MY_Controller {
 		$this->load->library('pagination');
 
 		//ID not set so show the selection screen
-		$data['title'] = 'View Incidents';
+		$data['title'] = 'Incidents';
 		$table_data = $this->investigation_model->report_table_data($offset);
 		$num_rows = $this->investigation_model->total_rows;
 		$new_headers = array('Name', 'Date', 'Time', 'Description', 'Automated', 'Created By', 'Report');
 
 		$data['table'] = $this->table->my_generate($table_data, $new_headers);
 		$data['page_links'] = $this->pagination->my_create_links($num_rows, 'Incidents/report/select/');
+		
+		$data['content'] = $this->load->view('incidents/select-report', $data, TRUE);
 
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('admin/tabs');
-		$this->load->view('incidents/select-report', $data);
-		$this->load->view('templates/footer');
+		$this->load->view('templates/content-wrapper', $data);
+		$this->load->view('templates/footer', $data);
 	}
 
 	/**
@@ -143,21 +138,20 @@ class Pages extends MY_Controller {
 		//Set the incident
 		$this->investigator->incident($incident_id);
 		$data['report'] = $this->investigator->get_html_report($incident_id);
-		$data['title'] = "Report for Incident #{$incident_id}";
+		$data['title'] = "Incidents";
+		$data['content'] = $this->load->view('incidents/report-wrapper', $data, TRUE);
 		
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('admin/tabs');
-		$this->load->view('incidents/view-report', $data);
-		$this->load->view('templates/footer');
+		$this->load->view('templates/content-wrapper', $data);
+		$this->load->view('templates/footer', $data);
 	}
 	
 	public function analytics_settings()
 	{
 		//Load Config and initialize some arrays
 		$this->load->config('analytics');
-		$data['title'] = 'Google Analytics Settings';
+		$data['title'] = 'Incidents';
 		$data['metrics'] = $this->config->item('valid_metrics');
 		
 		if ($this->input->server('REQUEST_METHOD') == 'POST')
@@ -189,6 +183,8 @@ class Pages extends MY_Controller {
 
 			//Send a notification
 			$data['notification'] = 'Settings Saved';
+			$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
+
 		}
 
 		//Get Current Settings
@@ -198,14 +194,13 @@ class Pages extends MY_Controller {
 		//Get Config file Settings
 		$data['view_id'] = $this->config->item('view_id');
 		$data['auth_path'] = $this->config->item('auth_file');
+		
+		$data['content'] = $this->load->view('incidents/analytics-settings', $data, TRUE);
 
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('admin/tabs');
-		$this->load->view('templates/notification', $data);
-		$this->load->view('incidents/analytics-settings', $data);
-		$this->load->view('templates/footer');
+		$this->load->view('templates/content-wrapper', $data);
+		$this->load->view('templates/footer', $data);
 	}
 
 }

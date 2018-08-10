@@ -1,4 +1,4 @@
-<section class="container">
+<section class="section">
 	<h1 class="title">
 		<?php echo humanize($table_name).' Table';?>
 	</h1>

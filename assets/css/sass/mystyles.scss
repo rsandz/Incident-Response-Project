@@ -1,8 +1,47 @@
 @charset "utf-8";
+
+/*My Variables */
+$navbar-height: 4.25rem;
+
+$menu-item-hover-background-color: hsl(0, 0%, 48%);
+$menu-item-hover-color: white;
+
 @import "mybulma/bulma.sass";
 @import "select2fix.scss";
 
+
 /* Helper CSS */
 .is-top-marginless {margin-top: 0;}
+.logo-pad {padding: 0.75em}
 
+/* To make the sidebar work */
+html, body, .page-content{
+    min-height: 100%;
+  }
 
+.footer {
+    margin-top: -12px;
+    padding-bottom: 3rem;
+}
+@media screen and (max-width: 768px) {
+    #menu-toggle:checked + .nav-menu {
+        display: block;
+    }
+}
+
+/* Hover for the Sidebar */
+.has-sub-menu{
+    /*Sub menu toggle*/ 
+    &.is-active {
+        .sub-menu {display: block;}
+    }
+    .sub-menu {
+        display: none;
+        transition: display 2s;
+    }
+}
+
+/* My Styles */
+.navbar {
+    border-bottom: 1px solid white;
+}

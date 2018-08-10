@@ -3,7 +3,7 @@
 		<h1 class="title">Select which users to add:</h1>
 		<!--User Selection--> 
 		<h3>Users:</h3>
-		<?php echo form_open('manage_teams/add_users/'.$team_id);?>
+		<?php echo form_open('Manage/teams/add_users/'.$team_id);?>
 			<div class="control">
 				<input class="input" type="text" name="user_search" id="user_search" placeholder="Search for Specific User" style="width:40%">
 			</div>
@@ -19,7 +19,7 @@
 			<div class="level">
 				<div class="level-right">
 					<div class="level-item">
-						<?php echo anchor('manage_teams/'.$team_id, 'Back', 'class="button is-danger"');?>
+						<?php echo anchor('Manage/teams/'.$team_id, 'Back', 'class="button is-danger"');?>
 					</div>
 					<div class="level-item">
 						<input type="Submit" name="submit" value="Add Users" class="button is-info">

@@ -53,12 +53,11 @@ class Modify extends MY_Controller {
 			'colour' => 'is-info');
 		$data['title'] = 'Modify';
 		$data['tables'] = ['actions', 'action_types', 'action_log', 'teams', 'projects', 'users'];
+		$data['content'] = $this->load->view('modify/modify-selection', $data, TRUE);
 
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('admin/tabs');
-		$this->load->view('modify/modify-selection', $data);
+		$this->load->view('templates/content-wrapper', $data);
 		$this->load->view('templates/footer', $data);
 	}
 
@@ -77,12 +76,12 @@ class Modify extends MY_Controller {
 		$data['header'] = array(
 			'text' => "Modify ".humanize($table),
 			'colour' => 'is-info');
-		$data['title'] = "Modify ".humanize($table);
+		$data['title'] = "Modify";
+		$data['content'] = $this->load->view('modify/view-table', $data, TRUE);
 
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('modify/view-table', $data);
+		$this->load->view('templates/content-wrapper', $data);
 		$this->load->view('templates/footer', $data);
 	}
 
@@ -148,7 +147,7 @@ class Modify extends MY_Controller {
 					->desc("Modified Item #{$key} on Table `{$table}`")
 					->log();
 
-				$data['title'] = "Modify ".humanize($table);
+				$data['title'] = "Modify";
 
 				//Make a table to display changes
 				$this->load->library('table');
@@ -158,15 +157,10 @@ class Modify extends MY_Controller {
 					);
 
 				//Make the Success Page
-				$data['success_msg'] = "Item #{$key} in Table `{$table}` has been updated with the following:" ;
-				$data['success_body'] = $update_table;
-				$data['success_back_url'] = site_url('Modify/table/'.$table);
-
-				$this->load->view('templates/header', $data);
-				$this->load->view('templates/hero-head', $data);
-				$this->load->view('templates/navbar', $data);
-				$this->load->view('templates/success', $data);
-				$this->load->view('templates/footer', $data);
+				set_notification('This Item has been Updated');
+				
+				redirect(current_url(),'refresh');
+				
 			}
 			else
 			{
@@ -188,17 +182,15 @@ class Modify extends MY_Controller {
 		$data['fields'] = $this->modify_model->get_modify_form($table, $key);
 
 		//Additional Data
-		$data['header'] = array(
-			'text' => 'Modify',
-			'colour' => 'is-info');
 		$data['title'] = 'Modify';
 		$data['table']  = $table;
 		$data['key'] = $key;
+		$data['content'] = $this->load->view('modify/form', $data, TRUE);
+		$data['notifications'] = $this->notifications;
 
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('modify/form', $data);
+		$this->load->view('templates/content-wrapper', $data);
 		$this->load->view('templates/footer', $data);
 	}
 }

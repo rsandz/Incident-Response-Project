@@ -27,12 +27,10 @@ class Admin extends MY_Controller
 	public function index()
 	{
 		$data['title'] = 'Admin Dashboard';
-
+		$data['content'] = $this->load->view('admin/admin-dashboard', $data, TRUE);
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('admin/tabs');
-		$this->load->view('admin/admin-dashboard');
+		$this->load->view('templates/content-wrapper', $data);
 		$this->load->view('templates/footer');
 	}
 

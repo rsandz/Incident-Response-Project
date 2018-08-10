@@ -46,7 +46,6 @@ class Stats extends MY_Controller {
 		$this->load->helper('form');
 
 		$data['title'] = 'My Statistics';
-		$data['header']['text'] = "My Statistics";
 		
 		//Chart 1
 		$this->chart->title('My Logging Statistics');
@@ -58,12 +57,12 @@ class Stats extends MY_Controller {
 		$this->chart->ajax_url(site_url('Ajax/user_stats/hours'));
 		$data['charts'][] = $this->chart->generate_dynamic();
 
+		$data['content'] = $this->load->view('stats/chart-view', $data, TRUE);
+		$data['content'] .= $this->load->view('stats/graph-search-form', $data, TRUE);
+
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('stats/tabs', $data);
-		$this->load->view('stats/chart-view', $data);
-		$this->load->view('stats/graph-search-form', $data);
+		$this->load->view('templates/content-wrapper', $data);
 		$this->load->view('templates/footer');
 	}
 
@@ -76,12 +75,10 @@ class Stats extends MY_Controller {
 	{
 		$data['project_id'] = $project_id;
 		$data['projects'] = $this->get_model->get_projects($this->authentication->check_admin());
+		$data['title'] = 'Project Statistics';
 
 		if (isset($project_id))
 		{
-			$data['title'] = 'Project Statistics';
-			$data['header']['text'] = "Project Statistics";
-
 			//Chart 1
 			$this->chart->title('Project Logging Statistics');
 			$this->chart->ajax_url(site_url("Ajax/project_stats/{$project_id}/logs"));
@@ -92,25 +89,22 @@ class Stats extends MY_Controller {
 			$this->chart->ajax_url(site_url("Ajax/project_stats/{$project_id}/hours"));
 			$data['charts'][] = $this->chart->generate_dynamic();
 
+			$data['content'] = $this->load->view('stats/chart-view', $data, TRUE);
+			$data['content'] .= $this->load->view('stats/graph-search-form', $data, TRUE);
+
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('stats/tabs', $data);
-			$this->load->view('stats/chart-view', $data);
-			$this->load->view('stats/graph-search-form', $data);
-			$this->load->view('templates/footer');
+			$this->load->view('templates/content-wrapper', $data);
+			$this->load->view('templates/footer', $data);
 		}
 		else
 		{
-			$data['title'] = 'Project Statistics';
-			$data['header']['text'] = "Project Statistics";
+			$data['content'] = $this->load->view('stats/projstats-select', $data, TRUE);
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('stats/tabs', $data);
-			$this->load->view('stats/projstats-select', $data);
-			$this->load->view('templates/footer');
+			$this->load->view('templates/content-wrapper', $data);
+			$this->load->view('templates/footer', $data);
 		}
 	}
 
@@ -122,14 +116,10 @@ class Stats extends MY_Controller {
 	public function team_stats($team_id = NULL)
 	{
 		$data['team_id'] = $team_id;
+		$data['title'] = 'Team Statistics';
 
 		if (!isset($team_id)) //Then we are selecting the team first
 		{
-			$data['header'] = array(
-				'text' => 'Select a Team',
-				'colour' => 'is-info');
-			$data['title'] = 'Teams Statistics';
-
 			$data['teams'] = $this->get_model->get_user_teams(
 				$this->session->user_id, 
 				$this->authentication->check_admin());
@@ -138,26 +128,20 @@ class Stats extends MY_Controller {
 			{
 				$data['team_stats_links'] = array_map(function($x)
 					{
-						return anchor("stats/team_stats/$x->team_id", "View", 'class="button is-info"');
+						return anchor("Stats/team_stats/$x->team_id", "View", 'class="button is-info"');
 					},
 					$data['teams']);
 			}
-
+			
+			$data['content'] = $this->load->view('stats/teamstats-select', $data, TRUE);
+			
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('stats/tabs', $data);
-			$this->load->view('stats/teamstats-select', $data);
+			$this->load->view('templates/content-wrapper', $data);
 			$this->load->view('templates/footer', $data);
 		}
 		else
 		{
-			//Display Team Statistics
-			$data['header'] = array(
-				'text' => 'Team Statistic',
-				'colour' => 'is-info');
-			$data['title'] = 'Team Statistic';
-			
 			//Chart 1
 			$this->chart->title('Team Logging Statistics');
 			$this->chart->ajax_url(site_url("Ajax/team_stats/{$team_id}/logs"));
@@ -168,12 +152,12 @@ class Stats extends MY_Controller {
 			$this->chart->ajax_url(site_url("Ajax/team_stats/{$team_id}/hours"));
 			$data['charts'][] = $this->chart->generate_dynamic();
 
+			$data['content'] = $this->load->view('stats/chart-view', $data, TRUE);
+			$data['content'] .= $this->load->view('stats/graph-search-form', $data, TRUE);
+
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('stats/tabs', $data);
-			$this->load->view('stats/chart-view', $data);
-			$this->load->view('stats/graph-search-form', $data);
+			$this->load->view('templates/content-wrapper', $data);
 			$this->load->view('templates/footer', $data);
 		}
 	}
@@ -226,9 +210,6 @@ class Stats extends MY_Controller {
 		$this->load->helper('search_helper');
 		$data['query_string'] = query_summary($query);
 		
-		$data['header'] = array(
-			'text' => 'Custom Statistic '.$index,
-			'colour' => 'is-info');
 		$data['title'] = 'Custom Statistic '.$index;
 		$data['index'] = $index;
 
@@ -242,13 +223,13 @@ class Stats extends MY_Controller {
 		$this->chart->ajax_url(site_url("Ajax/custom_stats/{$index}/hours"));
 		$data['charts'][] = $this->chart->generate_dynamic();
 
+		$data['content'] = $this->load->view('stats/custom_stats-view', $data, TRUE);
+		$data['content'] .= $this->load->view('stats/chart-view', $data, TRUE);
+		$data['content'] .= $this->load->view('stats/graph-search-form', $data, TRUE);
+
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('stats/tabs', $data);
-		$this->load->view('stats/custom_stats-view');
-		$this->load->view('stats/chart-view');
-		$this->load->view('stats/graph-search-form', $data);
+		$this->load->view('templates/content-wrapper', $data);
 		$this->load->view('templates/footer', $data);
 	}
 
@@ -258,10 +239,7 @@ class Stats extends MY_Controller {
 	 */
 	public function create_custom($index)
 	{
-		$data['header'] = array(
-			'text' => 'Create Custom Statistic '.$index,
-			'colour' => 'is-info');
-		$data['title'] = 'Create Custom Statistic '.$index;
+		$data['title'] = 'Custom Statistic '.$index;
 		$data['index'] = $index; //The custom stat id number.
 
 		//Get things to populate the form
@@ -270,11 +248,11 @@ class Stats extends MY_Controller {
 		$data['projects'] = $this->get_model->get_projects();
 		$data['users'] = $this->get_model->get_users();
 
+		$data['content'] = $this->load->view('stats/custom_stats-create', $data, TRUE);
+
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('stats/tabs', $data);
-		$this->load->view('stats/custom_stats-create', $data);
+		$this->load->view('templates/content-wrapper', $data);
 		$this->load->view('templates/footer', $data);
 	}
 
@@ -284,10 +262,7 @@ class Stats extends MY_Controller {
 	public function compare()
 	{
 		//Display the stats
-		$data['header'] = array(
-			'text' => 'Compare Statistic ',
-			'colour' => 'is-info');
-		$data['title'] = 'Compare Statistic ';
+		$data['title'] = 'Compare Statistics';
 
 		//Chart 1
 		$this->chart->title('Comparing Custom Stats Logs');
@@ -299,12 +274,12 @@ class Stats extends MY_Controller {
 		$this->chart->ajax_url(site_url("Ajax/compare_stats/hours"));
 		$data['charts'][] = $this->chart->generate_dynamic();
 
+		$data['content'] = $this->load->view('stats/chart-view', $data, TRUE);
+		$data['content'] .= $this->load->view('stats/graph-search-form', $data, TRUE);
+
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
 		$this->load->view('templates/navbar', $data);
-		$this->load->view('stats/tabs', $data);
-		$this->load->view('stats/chart-view');
-		$this->load->view('stats/graph-search-form');
+		$this->load->view('templates/content-wrapper', $data);
 		$this->load->view('templates/footer', $data);
 	}
 

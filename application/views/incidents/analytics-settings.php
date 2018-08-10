@@ -1,69 +1,67 @@
 <section class="section is-small">
-    <div class="container">
-        <h1 class="title is-2">Google Analytics Settings</h1>  
+    <h1 class="title is-2">Google Analytics Settings</h1>  
+    <hr>
+    <?php echo form_open()?>
+        <div class="field">
+            <div class="control">
+                <label class="label">
+                    View ID:
+                    <span style="padding-right: 10px" class="tooltip is-tooltip-right"
+                    data-tooltip="The View ID from your Google Anlytics Property">
+                        <i class="far fa-question-circle"></i>
+                    </span>
+                </label>
+                <input class="input" name="view_id" type="text" <?php echo "value='{$view_id}'"?>>
+            </div>
+        </div>
+        <div class="field">
+            <div class="control">
+                <label class="label">
+                    Authentication File Path:
+                    <span style="padding-right: 10px" class="tooltip is-tooltip-right is-tooltip-multiline"
+                    data-tooltip="The Authentication file from your Google Analytics Service Account. 
+                    We Recomend to change this in the config file so you have access to `APPPATH`">
+                        <i class="far fa-question-circle"></i>
+                    </span>
+                </label>
+                <input class="input" name="auth_path" type="text" <?php echo "value='{$auth_path}'"?>>
+            </div>
+        </div>
         <hr>
-        <?php echo form_open()?>
-            <div class="field">
-                <div class="control">
-                    <label class="label">
-                        View ID:
-                        <span style="padding-right: 10px" class="tooltip is-tooltip-right"
-                        data-tooltip="The View ID from your Google Anlytics Property">
-                            <i class="far fa-question-circle"></i>
-                        </span>
-                    </label>
-                    <input class="input" name="view_id" type="text" <?php echo "value='{$view_id}'"?>>
+        <h3 class="title is-3">
+            Metrics to Monitor
+            <span class="tooltip is-tooltip-right"
+                    data-tooltip="Sets conditions that will cause an automatic Incident Creation">
+                <i class="far fa-question-circle"></i>
+            </span>
+        </h3>
+        <div id="metrics-wrapper" class="field">
+        <!-- Current Settings -->
+            <?php echo $current_settings?>
+        </div>  
+        <div class="field">
+            <div class="control">
+                <p class="button" id="new-metric">
+                    <span class="icon is-small">
+                        <i class="far fa-plus-square"></i>
+                    </span>
+                    <span>Add a Metric</span>
+                </a>
+            </div>
+        </div>
+        <hr>
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <?php echo anchor('Incidents', 'Back', 'class="button is-danger is-medium"')?>
+                </div>
+                <div class="level-item">
+                    <?php echo form_submit('submit', 'Update', 'class="button is-info is-medium"')?>
                 </div>
             </div>
-            <div class="field">
-                <div class="control">
-                    <label class="label">
-                        Authentication File Path:
-                        <span style="padding-right: 10px" class="tooltip is-tooltip-right is-tooltip-multiline"
-                        data-tooltip="The Authentication file from your Google Analytics Service Account. 
-                        We Recomend to change this in the config file so you have access to `APPPATH`">
-                            <i class="far fa-question-circle"></i>
-                        </span>
-                    </label>
-                    <input class="input" name="auth_path" type="text" <?php echo "value='{$auth_path}'"?>>
-                </div>
-            </div>
-            <hr>
-            <h3 class="title is-3">
-                Metrics to Monitor
-                <span class="tooltip is-tooltip-right"
-                        data-tooltip="Sets conditions that will cause an automatic Incident Creation">
-                    <i class="far fa-question-circle"></i>
-                </span>
-            </h3>
-            <div id="metrics-wrapper" class="field">
-            <!-- Current Settings -->
-                <?php echo $current_settings?>
-            </div>  
-            <div class="field">
-                <div class="control">
-                    <p class="button" id="new-metric">
-                        <span class="icon is-small">
-                            <i class="far fa-plus-square"></i>
-                        </span>
-                        <span>Add a Metric</span>
-                    </a>
-                </div>
-            </div>
-            <hr>
-            <div class="level">
-                <div class="level-left">
-                    <div class="level-item">
-                        <?php echo anchor('Incidents', 'Back', 'class="button is-danger is-medium"')?>
-                    </div>
-                    <div class="level-item">
-                        <?php echo form_submit('submit', 'Update', 'class="button is-info is-medium"')?>
-                    </div>
-                </div>
-                <div class="level-right"></div>
-            </div>
-        </form>
-    </div>
+            <div class="level-right"></div>
+        </div>
+    </form>
 </section>
 <!--Load Tooltips-->
 <?php $this->load->helper('html');?>

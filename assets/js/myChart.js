@@ -40,16 +40,16 @@ class chartBase {
         //Colors for the DataSets. 1st dataset uses first in array, 2nd uses second in array...
         this.colorSets = [
             {
-                backgroundColor: "rgba(255, 58, 58, 0.5)",
-                borderColor: "rgba(135, 13, 13, 0.5)",
-                hoverBackgroundColor: "rgba(255, 137, 137, 0.5)",
-                hoverBorderColor: "rgba(135, 13, 13, 0.5)"
-            },
-            {
                 backgroundColor: "rgba(50, 14, 200, 0.5)",
                 borderColor: "rgba(10,2,90,0.5)",
                 hoverBackgroundColor: "rgba(99,21,255,0.9)",
                 hoverBorderColor: "rgba(25, 4, 120, 1)"
+            },
+            {
+                backgroundColor: "rgba(255, 58, 58, 0.5)",
+                borderColor: "rgba(135, 13, 13, 0.5)",
+                hoverBackgroundColor: "rgba(255, 137, 137, 0.5)",
+                hoverBorderColor: "rgba(135, 13, 13, 0.5)"
             },
             {
                 backgroundColor: "rgba(13,240,13,0.5)",

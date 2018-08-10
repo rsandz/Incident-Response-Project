@@ -36,7 +36,7 @@ class MY_Pagination extends CI_Pagination {
 		$this->initialize($config);
 
 		$page_links = $this->create_links();
-		$page_links .= '<script src="'.base_url('js/page-link-fix.js').'"></script>'; 
+		$page_links .= script_tag('js/page-link-fix.js'); 
 		
 		// Adds script to fix the page numbers not being clickable
 		return $page_links;

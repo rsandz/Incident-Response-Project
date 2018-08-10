@@ -57,16 +57,15 @@ class Manage extends MY_Controller {
 			{
 				$data['team_modify_links'] = array_map(function($x)
 					{
-						return anchor("manage_teams/{$x->team_id}", "Manage", 'class="button is-info"');
+						return anchor("Manage/teams/{$x->team_id}", "Manage", 'class="button is-info"');
 					},
 					$data['teams']);
 			}
+			$data['content'] = $this->load->view('manage/manage_teams/teams-selection', $data, TRUE);
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('manage/tabs', $data);
-			$this->load->view('manage/manage_teams/teams-selection', $data);
+			$this->load->view('templates/content-wrapper', $data);
 			$this->load->view('templates/footer', $data);
 		}
 		else
@@ -74,19 +73,20 @@ class Manage extends MY_Controller {
 			//Display Team management
 			$data = $this->get_model->get_team_info($team_id);
 
-			$data['title'] = 'Manage Team';
+			$data['title'] = 'Manage Teams';
+			$data['content'] = $this->load->view('manage/manage_teams/modify-team', $data, TRUE);
+			$data['notifications'] = $this->session->notifications;
 
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('manage/tabs', $data);
-			$this->load->view('manage/manage_teams/modify-team', $data);
+			$this->load->view('templates/content-wrapper', $data);
 			$this->load->view('templates/footer', $data);
 		}
 	}
 
 	public function add_users($team_id)
 	{
+		$data['title'] = 'Manage Teams';
 		$data['team_id'] = $team_id;
 
 		//Set form Validation
@@ -117,21 +117,11 @@ class Manage extends MY_Controller {
 				->date('now')
 				->desc('Added `'.implode(', ', $user_name_list)."` to Team `{$team_name}`.")
 				->log();
-
-			$data['header'] = array(
-				'text' => 'Success',
-				'colour' => 'is-info');
-			$data['title'] = 'Manage Team Users';
 			
-			$data['success_msg'] = 'Sucessfully added user(s) to team';
-			$data['success_back_url'] = site_url("manage_teams/$team_id");
-
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
-			$this->load->view('templates/navbar', $data);
-			$this->load->view('manage/tabs', $data);
-			$this->load->view('templates/success', $data);
-			$this->load->view('templates/footer', $data);
+			$data['notification'] = 'Sucessfully added user(s) to team';
+			$notifications = $this->load->view('templates/notification', $data, TRUE);
+			$this->session->set_flashdata('notifications', $notifications);
+			redirect(site_url("Manage/teams/{$team_id}"),'refresh');
 		}
 		else
 		{
@@ -141,15 +131,12 @@ class Manage extends MY_Controller {
 			$data['users'] = $this->get_model->get_users_not_in_team($team_id);
 			$data['team_id'] = $team_id;
 
-			$data['header'] = array(
-				'text' => 'Add Users',
-				'colour' => 'is-info');
-			$data['title'] = 'Manage Team Users';
+			$data['title'] = 'Manage Teams';
+			$data['notifications'] = $this->session->notifications;
+			$data['content'] = $this->load->view('manage/manage_teams/add-user', $data, TRUE);
 			$this->load->view('templates/header', $data);
-			$this->load->view('templates/hero-head', $data);
 			$this->load->view('templates/navbar', $data);
-			$this->load->view('manage/tabs', $data);
-			$this->load->view('manage/manage_teams/add-user', $data);
+			$this->load->view('templates/content-wrapper', $data);
 			$this->load->view('templates/footer', $data);
 		}
 		
@@ -157,6 +144,13 @@ class Manage extends MY_Controller {
 
 	public function remove_users($team_id)
 	{
+		if (empty($this->input->post('users[]', TRUE)))
+		{
+			$data['notification'] = 'No change in Database.';
+			$notifications = $this->load->view('templates/notification', $data, TRUE);
+			$this->session->set_flashdata('notifications', $notifications);
+			redirect('Manage/teams/'.$team_id,'refresh');
+		}
 		foreach ($this->input->post('users[]', TRUE) as $user_id)
 		{
 			$this->modify_model->remove_from_team($team_id, $user_id);
@@ -173,19 +167,13 @@ class Manage extends MY_Controller {
 			->desc('Removed Users `'.implode(', ', $user_name_list)."` from Team `{$team_name}`.")
 			->log();
 
-		$data['header'] = array(
-			'text' => 'Remove Users',
-			'colour' => 'is-info');
-		$data['title'] = 'Manage Team Users';
-		$data['success_msg'] = 'Selected Users have been removed from the team';
-		$data['success_back_url'] = site_url("manage_teams/$team_id");
+		$data['title'] = 'Manage Teams';
 		
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/hero-head', $data);
-		$this->load->view('templates/navbar', $data);
-		$this->load->view('manage/tabs', $data);
-		$this->load->view('templates/success', $data);
-		$this->load->view('templates/footer', $data);
+		$data['notification'] = 'Successfully removed selected Users.';
+		$notifications = $this->load->view('templates/notification', $data, TRUE);
+		$this->session->set_flashdata('notifications', $notifications);
+		
+		redirect('Manage/teams/'.$team_id,'refresh');
 	}
 }
 
