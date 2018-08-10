@@ -159,6 +159,13 @@ class Create extends MY_Controller
 			$this->form_validation->reset_validation();
 			$_POST = array();
 		}
+		//Get Users for project leaders
+		$users = $this->get_model->get_users();
+		foreach($users as $user)
+		{
+			$data['project_leaders'][$user->user_id] = $user->name;
+		}
+
 		//Get errors
 		$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
 		$data['content'] = $this->load->view('create/project', $data, TRUE);
