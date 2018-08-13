@@ -67,6 +67,7 @@
 					<?php echo anchor('Account/admin-settings', 'Admin Settings', 'class="navbar-item"')?>
 				</div>
 			</div>
+			<?php echo anchor('logout', 'Logout', 'class="navbar-item"'); ?>
 		</div>
 		<!-- END For Mobile -->
 

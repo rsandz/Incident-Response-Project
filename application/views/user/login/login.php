@@ -20,23 +20,28 @@
 								<label class="label has-text-white" for="email">Email:</label>
 								<div class="control has-icons-left">
 									<input class="input" type="text" name="email" 
-									value="<?php echo set_value('email'); ?>" id='email'>
+									value="<?php echo set_value('email'); ?>" id='email' required>
 									<span class="icon is-small is-left">
 										<i class="fas fa-envelope"></i>
 									</span>
 								</div>
 							</div>
 					
-							<div class="field">
-								<label class="label has-text-white" for="password">Password:</label>
-								<div class="control has-icons-left">
-									<input class="input" type="Password" name="password" id='password'>
+							<label class="label has-text-white" for="password">Password:</label>
+							<div class="field has-addons">
+								<div class="control has-icons-left is-expanded">
+									<input class="input" type="password" name="password" id='password' required>
 									<span class="icon is-small is-left">
 										<i class="fas fa-key"></i>
 									</span>
 								</div>
+								<div class="control">
+									<p class="button" id="toggle-password">
+										<span class="icon is-small"><i class="fas fa-eye"></i></span>
+									</p>
+								</div>
 							</div>
-					
+												
 					
 							<div class="level">
 								<div class="level-left">
@@ -62,5 +67,16 @@
 			</div>
 		</div>
 	</div>
-
 </section>
+
+<script>
+	$(function(){
+		//JS to show password if hovering on eye
+		$('#toggle-password').mouseenter(function() {
+					$('#password').prop('type', 'text');
+				});
+		$('#toggle-password').mouseleave(function() {
+					$('#password').prop('type', 'password');
+				});
+	});
+</script>
