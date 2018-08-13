@@ -57,22 +57,26 @@
             <?php $attr = ($title == 'Create Action') ? 'is-active' : NULL?>
             <?php echo anchor('Create/action', 'Action', "class='{$attr}'")?>
           </li>
-          <li>
-            <?php $attr = ($title == 'Create Action Type') ? 'is-active' : NULL?>
-            <?php echo anchor('Create/action_type', 'Action Type', "class='{$attr}'");?>
-          </li>
-          <li>
-            <?php $attr = ($title == 'Create Project') ? 'is-active' : NULL?>
-            <?php echo anchor('Create/project', 'Project', "class='{$attr}'");?>
-          </li>
-          <li>
-            <?php $attr = ($title == 'Create Team') ? 'is-active' : NULL?>
-            <?php echo anchor('Create/team', 'Team', "class='{$attr}'");?>
-          </li>
-          <li>
-            <?php $attr = ($title == 'Create User') ? 'is-active' : NULL?>
-            <?php echo anchor('Create/user', 'User', "class='{$attr}'");?>
-          </li>
+          <!-- Only for Admins and team leaders -->
+          <?php if (!$this->authentication->check_privileges('user')):?>
+            <li>
+              <?php $attr = ($title == 'Create Action Type') ? 'is-active' : NULL?>
+              <?php echo anchor('Create/action_type', 'Action Type', "class='{$attr}'");?>
+            </li>
+            <li>
+              <?php $attr = ($title == 'Create Project') ? 'is-active' : NULL?>
+              <?php echo anchor('Create/project', 'Project', "class='{$attr}'");?>
+            </li>
+            <li>
+              <?php $attr = ($title == 'Create Team') ? 'is-active' : NULL?>
+              <?php echo anchor('Create/team', 'Team', "class='{$attr}'");?>
+            </li>
+            <li>
+              <?php $attr = ($title == 'Create User') ? 'is-active' : NULL?>
+              <?php echo anchor('Create/user', 'User', "class='{$attr}'");?>
+            </li>
+          <?php endif;?>
+          <!-- End of Only for Admins and team leaders -->
         </ul>
       </li>
       <li class="has-sub-menu">

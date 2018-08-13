@@ -269,7 +269,7 @@ class Authentication
 	 */
 	function check_privileges($privilege, $redirect = FALSE)
 	{
-		if ($this->CI->session->privilege == $privilege)
+		if ($this->CI->session->privileges == $privilege)
 		{
 			return TRUE;
 		}
