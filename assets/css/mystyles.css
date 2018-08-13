@@ -8538,4 +8538,8 @@ html, body, .page-content {
   border-bottom: 1px solid white;
 }
 
+.input.force-min-width {
+  min-width: 10em;
+}
+
 /*# sourceMappingURL=mystyles.css.map */
