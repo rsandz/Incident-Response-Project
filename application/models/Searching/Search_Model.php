@@ -54,6 +54,8 @@ class Search_model extends MY_Model {
 	
 	protected $SB_from_date      = NULL;
 	protected $SB_to_date        = NULL;
+	protected $SB_from_time		 = NULL;
+	protected $SB_to_time		 = NULL;
 	protected $SB_action_types   = array();
 	protected $SB_projects       = array();
 	protected $SB_teams          = array();
@@ -249,6 +251,94 @@ class Search_model extends MY_Model {
 		$date = date('Y-m-d', $date);
 
 		$this->SB_to_date = $date;
+		return $this;
+	}
+
+	/**	
+	 * Sets both from date and to date for the search
+	 * @param string $from_date Start date of the search
+	 * @param string $to_date End date of the search
+	 * 
+	 * @return Search_model For method chaining
+	 */
+	public function date($from_date, $to_date = NULL)
+	{
+		if (!isset($to_date))
+		{
+			//Set both from_date and to_date to same thing
+			$this->from_date($from_date);
+			$this->to_date($from_date);
+			return $this;
+		}
+
+		$this->from_date($from_date);
+		$this->to_date($to_date);
+		return $this;
+	}
+
+	/**
+	 * Sets the start of the time range for the search
+	 * Automatically converted to proper format
+	 * 
+	 * @param  string $time The Time
+	 * @return Search_Model       Method chaining
+	 */
+	public function from_time($time)
+	{
+		if (empty($time))
+		{
+			return $this;
+		}
+
+		//PHP auto-format
+		$time = strtotime($time);
+		$time = date('H:i:s', $time);
+
+		$this->SB_from_time = $time;
+		return $this;
+	}
+
+	/**
+	 * Sets the end of the time range for the search
+	 * Automatically converted to proper format
+	 * 
+	 * @param  string $time The Time
+	 * @return Search_Model       Method chaining
+	 */
+	public function to_time($time)
+	{
+		if (empty($time))
+		{
+			return $this;
+		}
+
+		//PHP auto-format
+		$time = strtotime($time);
+		$time = date('H:i:s', $time);
+
+		$this->SB_to_time = $time;
+		return $this;
+	}
+
+	/**	
+	 * Sets both the start and end for the time range of the search
+	 * @param string $from_time Start time of the search
+	 * @param string $to_time End time of the search
+	 * 
+	 * @return Search_model For method chaining
+	 */
+	public function time($from_time, $to_time = NULL)
+	{
+		if (!isset($to_time))
+		{
+			//Set both from_time and to_time to same thing
+			$this->from_time($from_time);
+			$this->to_time($from_time);
+			return $this;
+		}
+
+		$this->from_time($from_time);
+		$this->to_time($to_time);
 		return $this;
 	}
 
@@ -605,6 +695,7 @@ class Search_model extends MY_Model {
 
 		$this->apply_keywords();
 		$this->apply_dates();
+		$this->apply_time();
 		$this->apply_projects();
 		$this->apply_teams();
 		$this->apply_types();
@@ -695,8 +786,26 @@ class Search_model extends MY_Model {
 		{
 			$this->db->where('log_date <=', (string) $this->SB_to_date);
 		}
+	}
 
+	public function apply_time()
+	{
+		//If 'to' and 'from' time are the same,
+		if($this->SB_from_time == $this->SB_to_time && !empty($this->SB_from_time))
+		{
+			$this->db->where('log_time', (string) $this->SB_from_time);
+			return;
+		}
 
+		if (!empty($this->SB_from_time))
+		{
+			$this->db->where('log_time >=', (string) $this->SB_from_time);
+		}
+
+		if (!empty($this->SB_to_time))
+		{
+			$this->db->where('log_time <=', (string) $this->SB_to_time);
+		}
 	}
 
 	/**
@@ -867,6 +976,8 @@ class Search_model extends MY_Model {
 			'SB_keyword_type',
 			'SB_from_date',
 			'SB_to_date',
+			'SB_from_time',
+			'SB_to_time',
 			'SB_action_types',
 			'SB_projects',
 			'SB_teams',
@@ -947,6 +1058,8 @@ class Search_model extends MY_Model {
 		
 		$this->SB_from_date      = NULL;
 		$this->SB_to_date        = NULL;
+		$this->SB_from_time		 = NULL;
+		$this->SB_to_time 			 = NULL;
 		$this->SB_action_types   = array();
 		$this->SB_projects       = array();
 		$this->SB_teams          = array();

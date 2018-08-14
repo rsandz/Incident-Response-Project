@@ -112,7 +112,7 @@
 		<!-- For Desktop -->
 		<div class="navbar-end is-hidden-mobile">
 			<div class="navbar-item has-dropdown is-hoverable">
-				<?php echo anchor('Search', 'Search', 'class="navbar-link"');?>
+				<p class="navbar-link">Search</p>
 				<div class="navbar-dropdown is-medium">
 					<!-- Quick Search -->
 					<div class="navbar-item">
@@ -138,8 +138,9 @@
 			</div>
 			
 			<div class="navbar-item has-dropdown is-hoverable">
-				<?php echo anchor('Account', 'Account', 'class="navbar-link"');?>
+				<p class="navbar-link">Account</p>
 				<div class="navbar-dropdown">
+					<?php echo anchor('Account', 'My Account Info', 'class="navbar-item"')?>
 					<?php echo anchor('Account/settings', 'Settings', 'class="navbar-item"')?>
 					<?php echo anchor('Account/admin-settings', 'Admin Settings', 'class="navbar-item"')?>
 				</div>

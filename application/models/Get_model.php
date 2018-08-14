@@ -230,6 +230,26 @@ class Get_model extends MY_Model {
 		return $data;
 	}
 
+	/**
+	 * Gets Info about a user.
+	 * i.e. User logs, hours for the day, etc.
+	 * 
+	 * @param int $user_id The ID of the user to get info for
+	 * @return array Result object containing the info
+	 */
+	public function get_user_info($user_id = NULL)
+	{
+		$user_id = $user_id ?: $this->session->user_id;
+		$query = $this->db
+			->where('user_id', $user_id)
+			->where('log_date', date('Y-m-d'))
+			->select('
+				COUNT(`log_id`) as logs_today,
+				COALESCE(SUM(`hours`), 0) as hours_today
+				')
+			->get('action_log');
+		return $query->row();
+	}
 
 	/**
 	 * Gets the user's name from id

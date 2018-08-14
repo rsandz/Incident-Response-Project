@@ -20,6 +20,15 @@
 $config['per_page'] = 10;
 
 /*
+| Admin Contact Info
+| ==================
+| 
+| Displayed on the dashboard in case users need help
+*/
+
+$config['admin_email'] = 'test@foo.com';
+
+/*
 | =========================================
 | 				Security
 | =========================================

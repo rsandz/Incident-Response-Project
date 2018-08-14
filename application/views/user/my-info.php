@@ -12,7 +12,7 @@
 	<hr>
 	<div class="columns">
 		<div class="column">
-			<div class="box content">
+			<div class="box content is-fullheight">
 				<h2 class="subtitle">User Information</h2>
 				<hr>
 				<p><span class="has-text-weight-bold">Name: </span><?php echo $this->session->name?></p>
@@ -20,14 +20,18 @@
 			</div>
 		</div>
 		<div class="column">
-			<div class="box content">
+			<div class="box content is-fullheight">
 				<h2 class="subtitle">My Teams</h2>
 				<hr>
-				<ul>
-					<?php foreach($user_teams as $index => $team):?>
-					<li><?php echo $team->team_name?></li>
-					<?php endforeach;?>
-				</ul>
+				<?php if (isset($user_teams)):?>
+					<ul>
+						<?php foreach($user_teams as $index => $team):?>
+						<li><?php echo $team->team_name?></li>
+						<?php endforeach;?>
+					</ul>
+				<?php else:?>
+					<p>You are not part of any Teams.</p>
+				<?php endif;?>
 			</div>
 		</div>
 		<div class="column">

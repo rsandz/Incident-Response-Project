@@ -24,6 +24,10 @@ class Dashboard extends MY_Controller {
 	{
 		parent::__construct();
 		
+		$this->load->model('Searching/search_model');
+		$this->load->model('get_model');
+		$this->load->library('table');
+		
 		//User Private - Must be logged in
 		$this->authentication->check_login();
 	}
@@ -33,17 +37,21 @@ class Dashboard extends MY_Controller {
 	 */
 	public function index()
 	{
-		$this->load->model('Searching/search_model');
-		$this->load->library('table');
-
 		$data['title']='Dashboard';
+		$data['name'] = $this->session->name;
 
 		//Loads table for previous entries
 		$this->search_model->pagination($this->config->item('per_page'));
 		$previous_logs = $this->search_model->search();
 
 		$data['entries_table'] = $this->table->my_generate($previous_logs);
-		$data['content'] = $this->load->view('logging/user-entries', $data, TRUE); 
+		
+		$user_info = $this->get_model->get_user_info();
+		$data['user_logs_today'] = $user_info->logs_today;
+		$data['user_hours_today'] = $user_info->hours_today;
+
+		$data['content'] = $this->load->view('user/dashboard-top', $data, TRUE);
+		$data['content'] .= $this->load->view('logging/user-entries', $data, TRUE); 
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/navbar', $data);

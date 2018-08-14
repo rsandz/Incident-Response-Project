@@ -8542,4 +8542,8 @@ html, body, .page-content {
   min-width: 10em;
 }
 
+.box.is-fullheight {
+  height: 100%;
+}
+
 /*# sourceMappingURL=mystyles.css.map */
