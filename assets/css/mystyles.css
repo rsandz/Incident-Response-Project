@@ -8525,12 +8525,16 @@ html, body, .page-content {
 .has-sub-menu {
   /*Sub menu toggle*/
 }
-.has-sub-menu.is-active .sub-menu {
-  display: block;
-}
 .has-sub-menu .sub-menu {
-  display: none;
-  transition: display 2s;
+  visibility: hidden;
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+.has-sub-menu.is-active .sub-menu {
+  visibility: visible;
+  position: inherit;
+  opacity: 1;
 }
 
 /* My Styles */

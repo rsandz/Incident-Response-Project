@@ -31,23 +31,36 @@ html, body, .page-content{
 
 /* Hover for the Sidebar */
 .has-sub-menu{
+    .sub-menu {
+        visibility: hidden;
+        position: absolute;
+        opacity: 0;
+        transition: opacity 0.25s ease-out;
+    }
     /*Sub menu toggle*/ 
     &.is-active {
-        .sub-menu {display: block;}
+        .sub-menu {
+            visibility: visible;
+            position: inherit;
+            opacity: 1;
+        }
     }
-    .sub-menu {
-        display: none;
-        transition: display 2s;
-    }
+
 }
 
 /* My Styles */
+
+//Navbar Borders
 .navbar {
     border-bottom: 1px solid white;
 }
+
+//Used In Search box. Prevents it from being too small
 .input.force-min-width {
     min-width: 10em;
 }
+//Use on boxes in columns to make them fill up the 
+//entire column.
 .box.is-fullheight {
     height: 100%;
 }

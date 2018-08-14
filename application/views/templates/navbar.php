@@ -19,7 +19,7 @@
 					<div class="field has-addons">
 						<div class="control is-expanded">
 							<input class="input" type="text" placeholder="Search for Logs" 
-							name="keywords" autocomplete='off' required>
+							name="keywords" autocomplete='off'>
 						</div>
 						<div class="control">
 							<button class="button">
@@ -94,7 +94,7 @@
 				</a>
 				<div class="navbar-dropdown sub-menu">
 					<?php echo anchor('Account', 'Account Info', 'class="navbar-item"');?>
-					<?php echo anchor('Account/settings', 'Settings', 'class="navbar-item"')?>
+					<!-- <?php echo anchor('Account/settings', 'Settings', 'class="navbar-item"')?> -->
 					<?php echo anchor('Account/admin-settings', 'Admin Settings', 'class="navbar-item"')?>
 				</div>
 			</div>
@@ -120,7 +120,7 @@
 							<div class="field has-addons is-marginless">
 								<div class="control is-expanded">
 									<input class="input force-min-width" type="text" placeholder="Search for Logs" 
-									name="keywords" autocomplete='off' required>
+									name="keywords" autocomplete='off'>
 								</div>
 								<div class="control">
 									<button class="button">
@@ -141,7 +141,7 @@
 				<p class="navbar-link">Account</p>
 				<div class="navbar-dropdown">
 					<?php echo anchor('Account', 'My Account Info', 'class="navbar-item"')?>
-					<?php echo anchor('Account/settings', 'Settings', 'class="navbar-item"')?>
+					<!-- <?php echo anchor('Account/settings', 'Settings', 'class="navbar-item"')?> -->
 					<?php echo anchor('Account/admin-settings', 'Admin Settings', 'class="navbar-item"')?>
 				</div>
 			</div>
