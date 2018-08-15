@@ -111,6 +111,7 @@ $route['recover-form/(:any)/(:any)'] = 'User/recover_form/$1/$2';
 $route['Admin'] = 'Admin/index';
 $route['Admin/view-logs'] = 'Admin/view_logs/0';
 $route['Admin/view-logs/(:any)'] = 'Admin/view_logs/$1';
+$route['Admin/site-settings'] = 'Admin/site_settings';
 
 /*
 	Logging Routes

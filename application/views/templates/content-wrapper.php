@@ -107,6 +107,10 @@
                 <?php $attr = ($title == 'Incidents') ? 'is-active' : NULL?>
                 <?php echo anchor('Incidents', 'Incidents', "class='{$attr}'");?>
               </li>
+              <li>
+                <?php $attr = ($title == 'Site Settings') ? 'is-active' : NULL?>
+                <?php echo anchor('Admin/site-settings', 'Site Settings', "class='{$attr}'")?>
+              </li>
             </ul>
         </li>
       <?php endif;?>

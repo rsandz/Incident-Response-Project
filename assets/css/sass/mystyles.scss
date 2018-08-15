@@ -17,7 +17,10 @@ $menu-item-hover-color: white;
 /* To make the sidebar work */
 html, body, .page-content{
     min-height: 100%;
-  }
+}
+.page-content {
+    min-height: 80vh;
+}
 
 .footer {
     margin-top: -12px;

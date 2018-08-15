@@ -85,6 +85,7 @@
 				<div class="navbar-dropdown sub-menu">
 					<?php echo anchor('Modify', 'Modify Tables', 'class="navbar-item"')?>
 					<?php echo anchor('Incidents', 'Incidents', 'class="navbar-item"')?>
+					<?php echo anchor('Admin/site-settings', 'Site Settings', 'class="navbar-item"')?>
 				</div>				
 			</div>
 			<div class="navbar-item has-dropdown is-hoverable has-sub-menu">

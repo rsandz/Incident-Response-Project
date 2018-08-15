@@ -34,4 +34,17 @@ class Admin extends MY_Controller
 		$this->load->view('templates/footer');
 	}
 
+	/**
+	 * Controller for the site settings page
+	 */
+	public function site_settings() 
+	{
+		$data['title'] = 'Site Settings';
+		$data['content'] = 'test';
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('templates/content-wrapper', $data);
+		$this->load->view('templates/footer', $data);
+	}
+
 }

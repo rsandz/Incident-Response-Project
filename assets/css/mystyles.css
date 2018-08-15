@@ -8511,6 +8511,10 @@ html, body, .page-content {
   min-height: 100%;
 }
 
+.page-content {
+  min-height: 80vh;
+}
+
 .footer {
   margin-top: -12px;
   padding-bottom: 3rem;
