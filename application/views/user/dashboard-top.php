@@ -19,8 +19,8 @@
                 <div class="content">
                     <ul>
                         <li>
-                            <?php echo isset($dashboard_messages) ? 
-                                $dashboard_messages : 'No Messages and Notfications';?>
+                            <?php echo isset($global_notification) ? 
+                                $global_notification : 'No Messages or Notifications';?>
                         </li>
                     </ul>
                 </div>

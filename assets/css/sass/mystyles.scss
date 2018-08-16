@@ -62,8 +62,20 @@ html, body, .page-content{
 .input.force-min-width {
     min-width: 10em;
 }
-//Use on boxes in columns to make them fill up the 
-//entire column.
-.box.is-fullheight {
-    height: 100%;
+
+/* 
+    Box Styling
+*/
+.box {
+    &.is-fullheight {
+        height: 100%;
+
+    }
+    //------------------------
+    // For Selection Pages
+    &.selection-box {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
 }

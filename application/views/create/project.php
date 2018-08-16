@@ -22,9 +22,7 @@
 		<div class="field">
 			<label class="label" for="project-desc">Project Description:</label>
 			<div class="control">
-				<textarea name="project_desc" type="textarea" class="textarea" id="project-desc">
-					<?php echo set_value('project_desc'); ?>
-				</textarea>
+				<textarea name="project_desc" type="textarea" class="textarea" id="project-desc"><?php echo set_value('project_desc'); ?></textarea>
 				<p class="has-text-right">Supports some HTML Markups. Click <?php echo anchor('Help/markups', 'here');?> to learn more.</p>
 			</div>
 		</div>

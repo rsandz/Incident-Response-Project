@@ -19,7 +19,7 @@ class Stats extends MY_Controller {
 	{
 		parent::__construct();
 		$this->load->model('get_model');
-		$this->load->model('statistics_model');
+		$this->load->model('Stats/statistics_model');
 		$this->load->model('search_model');
 		$this->load->helper('form');
 		$this->load->library('chart');

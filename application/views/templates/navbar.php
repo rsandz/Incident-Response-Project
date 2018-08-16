@@ -77,17 +77,19 @@
 					<?php echo anchor('Stats/compare', 'Compare', 'class="navbar-item"')?>
 				</div>				
 			</div>
-			<div class="navbar-item has-dropdown is-hoverable has-sub-menu">
-				<a class="navbar-link" >
-					<span class="icon"><i class="fas fa-key"></i></span> 
-					Admin
-				</a>
-				<div class="navbar-dropdown sub-menu">
-					<?php echo anchor('Modify', 'Modify Tables', 'class="navbar-item"')?>
-					<?php echo anchor('Incidents', 'Incidents', 'class="navbar-item"')?>
-					<?php echo anchor('Admin/site-settings', 'Site Settings', 'class="navbar-item"')?>
-				</div>				
-			</div>
+			<?php if($this->authentication->check_admin()):?>
+				<div class="navbar-item has-dropdown is-hoverable has-sub-menu">
+					<a class="navbar-link" >
+						<span class="icon"><i class="fas fa-key"></i></span> 
+						Admin
+					</a>
+					<div class="navbar-dropdown sub-menu">
+						<?php echo anchor('Modify', 'Modify Tables', 'class="navbar-item"')?>
+						<?php echo anchor('Incidents', 'Incidents', 'class="navbar-item"')?>
+						<?php echo anchor('Admin/site-settings', 'Site Settings', 'class="navbar-item"')?>
+					</div>				
+				</div>
+			<?php endif;?>
 			<div class="navbar-item has-dropdown is-hoverable has-sub-menu">
 				<a class="navbar-link">
 					<i class="fas fa-user"></i>
@@ -96,7 +98,8 @@
 				<div class="navbar-dropdown sub-menu">
 					<?php echo anchor('Account', 'Account Info', 'class="navbar-item"');?>
 					<!-- <?php echo anchor('Account/settings', 'Settings', 'class="navbar-item"')?> -->
-					<?php echo anchor('Account/admin-settings', 'Admin Settings', 'class="navbar-item"')?>
+					<?php  if ($this->authentication->check_admin())
+						echo anchor('Account/admin-settings', 'Admin Settings', 'class="navbar-item"')?>
 				</div>
 			</div>
 			<a href="<?php echo site_url('Search')?>" class="navbar-item">
@@ -143,7 +146,8 @@
 				<div class="navbar-dropdown">
 					<?php echo anchor('Account', 'My Account Info', 'class="navbar-item"')?>
 					<!-- <?php echo anchor('Account/settings', 'Settings', 'class="navbar-item"')?> -->
-					<?php echo anchor('Account/admin-settings', 'Admin Settings', 'class="navbar-item"')?>
+					<?php if($this->authentication->check_admin()) 
+						echo anchor('Account/admin-settings', 'Admin Settings', 'class="navbar-item"')?>
 				</div>
 			</div>
 			<?php echo anchor('logout', 'Logout', 'class="navbar-item"'); ?>

@@ -31,7 +31,8 @@ class Investigate_base
         $this->CI =& get_instance();
 
         //Load the model
-        $this->CI->load->model('Investigation/investigation_model');
+		$this->CI->load->model('Investigation/investigation_model');
+		$this->CI->load->config('incidents');
 	}
 
 	/**

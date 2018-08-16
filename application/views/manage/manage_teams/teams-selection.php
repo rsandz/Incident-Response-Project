@@ -22,19 +22,23 @@
 			<div class="columns is-multiline">
 				<?php foreach($teams as $index => $team):?>
 					<div class="column is-4 selection-item">
-						<article class="box">
-							<h2 class="title is-4">Team Name: <span class="selection-title"><?php echo $team->team_name?></span></h2>
-							<hr>
-							<div class="content selection-info">
-								<ul>
-									<li><b>Team Leader: </b><?php echo $team->team_leader_name?></li>
-									<li>
-										<b>Team Description: </b>
-										<p><?php echo $team->team_desc?></p>
-									</li>
-								</ul>
+						<article class="box is-fullheight selection-box">
+							<div class="selection-body">
+								<h2 class="title is-4">
+									Team Name: <span class="selection-title"><?php echo $team->team_name?></span>
+								</h2>
+								<hr>
+								<div class="content selection-info">
+									<ul>
+										<li><b>Team Leader: </b><?php echo $team->team_leader_name?></li>
+										<li>
+											<b>Team Description: </b>
+											<p><?php echo $team->team_desc?></p>
+										</li>
+									</ul>
+								</div>
 							</div>
-							<div class="level">
+							<div class="selection-footer level">
 								<div class="level-left">
 								</div>
 								<div class="level-right">

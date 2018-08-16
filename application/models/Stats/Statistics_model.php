@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-require_once('Searching/Search_model.php');
+require_once(APPPATH.'models/Searching/Search_model.php');
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use function GuzzleHttp\json_encode;
@@ -384,4 +384,4 @@ class Statistics_model extends Search_Model {
 	}
 }
 /* End of file Statistics_model.php */
-/* Location: ./application/models/Statistics_model.php */
+/* Location: ./application/models/Stats/Statistics_model.php */

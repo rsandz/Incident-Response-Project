@@ -45,6 +45,12 @@ class Incident_builder extends Investigate_base
 	protected $IL_auto = TRUE;
 	protected $IL_user = NULL;
 
+	/**
+	 * Set to True to prevent emails from being sent
+	 * @var boolean
+	 */
+	protected $is_silent = FALSE;
+
 	/** 
 	 * User ID for creating new incidents and logging.
 	 * @var int
@@ -61,7 +67,7 @@ class Incident_builder extends Investigate_base
 		parent::__construct();
         //The library will check to see if user_id was passed. Otherwise, use the one
         //set in the session.
-        $this->user_id = $user_id ?: $this->CI->session->user_id;
+		$this->user_id = $user_id ?: $this->CI->session->user_id;
 	}
 
 	/**
@@ -216,55 +222,19 @@ class Incident_builder extends Investigate_base
 		//Put into Database
 		$this->CI->investigation_model->insert_incident($insert_data);
 
-		$this->notify_admin_new($this->CI->investigation_model->insert_id);
+		//Notify
+		if (!$this->is_silent) 
+		{
+			$this->CI->load->library('Investigation/email_notifier');
+			$this->CI->email_notifier
+				->incident($this->CI->investigation_model->insert_id)
+				->new_incident_notify();
+		}
+
 		$this->reset();
 
 		return TRUE;
 
-	}
-
-	/**
-	 * Notifies admins on new incidents if they have chosen to receive
-	 * notifications on new incidents
-	 * @param  integer $incident_id The ID of the incident
-	 * @return boolean              TRUE on success
-	 */
-	public function notify_admin_new($incident_id)
-	{
-		$this->CI->load->model('Settings/admin_model', 'admin_settings');
-		//Get all the users with notify_new_incident_on
-		
-		//Load Library and Configs
-		$this->CI->load->library('email');
-		$this->CI->load->config('email');
-		$this->CI->load->config('incidents', TRUE);
-
-		$users_send_to = $this->CI->admin_settings->get_notify_new_incidents();
-		$incident_summary = $this->incident_info($incident_id);
-		$incident_title = $this->incident_title($incident_id);
-
-		foreach ($users_send_to as $user)
-		{
-			//Generate the email
-			$this->CI->email->from($this->CI->config->item('smtp_user'), 'Incident Manager');
-			$this->CI->email->to($user->email);
-			
-			$this->CI->email->subject('New Incident');
-			
-			//Message formatting
-			$message = $this->CI->config->item('new_incident_body', 'incidents');
-			$message = str_replace('{name}', $user->name, $message);
-			$message = str_replace('{link}', site_url('Incidents/report/'.$incident_id), $message);
-			$message = str_replace('{summary}', $incident_summary, $message);
-			$message = str_replace('{title}', $incident_title, $message);
-			
-			$this->CI->email->message($message);
-			
-			//Send it out!
-			log_message('info', 'Sending Incident Notification to '.$user->email);
-			$this->CI->email->send();
-		}
-		return TRUE;
 	}
 
 	/**

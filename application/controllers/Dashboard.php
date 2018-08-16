@@ -26,6 +26,7 @@ class Dashboard extends MY_Controller {
 		
 		$this->load->model('Searching/search_model');
 		$this->load->model('get_model');
+		$this->load->model('Settings/site_model', 'site_settings');
 		$this->load->library('table');
 		
 		//User Private - Must be logged in
@@ -42,9 +43,13 @@ class Dashboard extends MY_Controller {
 
 		//Loads table for previous entries
 		$this->search_model->pagination($this->config->item('per_page'));
-		$previous_logs = $this->search_model->search();
+		$previous_logs = $this->search_model
+							->user_lock(TRUE)
+							->search();
 
 		$data['entries_table'] = $this->table->my_generate($previous_logs);
+
+		$data['global_notification'] = $this->site_settings->get_site_notification();
 		
 		$user_info = $this->get_model->get_user_info();
 		$data['user_logs_today'] = $user_info->logs_today;

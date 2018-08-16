@@ -3,6 +3,12 @@
 use function GuzzleHttp\json_decode;
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**	
+ * Testing Controller
+ * ==================
+ * @author Ryan Sandoval
+ * Used for testing features
+ */
 class Test extends MY_Controller {
 
 	public function __construct()
@@ -12,6 +18,7 @@ class Test extends MY_Controller {
 
 	}
 
+	/** Tests Search Model */
 	public function search()
 	{
 		$this->load->model('Searching/search_model');
@@ -31,12 +38,15 @@ class Test extends MY_Controller {
 		echo "<br><br> Errors: ".json_encode($this->search_model->get_errors());
 	}
 
+
+	/** Tests the Query Summary in search helper */
 	public function query_summary()
 	{
 		$this->load->helper('search');
 		echo query_summary('{"SB_keywords":[],"SB_keywords_in":["CONCAT(first_name, \" \", last_name)","team_name","project_name","action_name","type_name","log_desc"],"SB_keyword_type":"any","SB_from_date":null,"SB_to_date":null,"SB_action_types":[],"SB_projects":[],"SB_teams":[],"SB_users":"10","SB_null_teams":true,"SB_null_projects":true}');
 	}
 
+	/** Test Google Analytics */
 	public function gapi()
 	{
 		$this->load->library('Google/analytics');
@@ -49,9 +59,10 @@ class Test extends MY_Controller {
 		echo json_encode($report);
 	}
 
+	/** Tests The stats model */
 	public function stats()
 	{
-		$this->load->model('statistics_model');
+		$this->load->model('Stats/statistics_model');
 		$data = $this->statistics_model
 				->from_date('2018-07-01') //7 Days * 24 Hours * 60 mins * 60 sec
 				->to_date('now')
@@ -61,6 +72,7 @@ class Test extends MY_Controller {
 		echo '<script> console.log('.json_encode($data).'); </script>';
 	}
 
+	/** Tests the stats graphing */
 	public function stats_graph()
 	{
 		$this->load->helper('form');
@@ -68,9 +80,11 @@ class Test extends MY_Controller {
 		$this->load->view('stats/templates/chart-box', $data);
 	}
 
-	public function box()
+	/** Test site notifications changing */
+	public function site_notification()
 	{
-		$this->load->view('test');
+		$this->load->model('Settings/site_model');
+		$this->site_model->set_site_notification('Test Notification');
 	}
 
 }

@@ -24,7 +24,7 @@ class Ajax extends MY_Controller
 	{
 		parent::__construct();
 		$this->load->model('Searching/search_model');
-		$this->load->model('statistics_model');
+		$this->load->model('Stats/statistics_model');
 		$this->load->model('Form_get_model');
 		$this->load->helper('form');
 		if ($_SERVER['REQUEST_METHOD'] !== 'GET') //If not acessed by post, redirect away	

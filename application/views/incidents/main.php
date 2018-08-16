@@ -40,7 +40,10 @@
 					<p class="has-text-weight-bold">Total Incidents:&nbsp</p>
 					<?php echo $stats['total_incidents']?>
 				</div>
-				<div class="panel-block"></div>
+				<div class="panel-block">
+					<span class="has-text-weight-bold">Last Google Analytics Report:&nbsp</span>
+					<?php echo $stats['last_GA_report']?>
+				</div>
 			</nav>
 		</div>
 	</div>

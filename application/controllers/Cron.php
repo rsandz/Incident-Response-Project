@@ -10,6 +10,7 @@ class Cron extends MY_Controller {
 
         //Load Resources
         $this->load->model('Investigation/analytics_model');
+        $this->load->model('Stats/Misc_stats_model');
         $this->load->library('Google/analytics');
         $this->load->library('Investigation/Incident_builder', NULL, 'ib');
         $this->load->config('analytics');
@@ -79,6 +80,7 @@ class Cron extends MY_Controller {
                 
         }
         
+        $this->Misc_stats_model->update_stat('last_GA_report', date('Y-m-d H:i:s'));
     }
 
 }

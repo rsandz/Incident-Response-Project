@@ -26,6 +26,7 @@ class Pages extends MY_Controller {
 		$this->load->library('Investigation/investigator');
 		$this->load->model('Investigation/investigation_model');
 		$this->load->model('Investigation/analytics_model');
+		$this->load->model('Stats/misc_stats_model');
 		$this->load->helper('form');
 
 		$this->authentication->check_admin(TRUE);
@@ -48,6 +49,7 @@ class Pages extends MY_Controller {
 
 		//Get the incidents statistics
 		$data['stats'] = $this->investigation_model->get_incident_stats();
+		$data['stats']['last_GA_report'] = $this->misc_stats_model->get_stat_by_name('last_GA_report');
 		$data['content'] = $this->load->view('incidents/main', $data, TRUE);
 
 		$this->load->view('templates/header', $data);

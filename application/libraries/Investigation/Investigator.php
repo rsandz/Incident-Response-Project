@@ -44,7 +44,7 @@ class Investigator extends Investigate_base
 		parent::__construct();
 
 		$this->CI->load->model('Searching/search_model');
-		$this->CI->load->model('statistics_model');
+		$this->CI->load->model('Stats/statistics_model');
 		$this->CI->load->model('Investigation/investigator_model');
 		$this->CI->load->library('table');
 		$this->CI->load->library('chart');
@@ -215,7 +215,7 @@ class Investigator extends Investigate_base
 	public function relevant_logs()
 	{
 		$dateTime = clone $this->date_time;
-		$scored_logs = $this->CI->investigator_model->score_logs_relevancy();
+		$scored_logs = $this->CI->investigator_model->score_logs_relevancy($this->date_time);
 
 		//Get top relevant Logs
 		$relevant_log_ids = array();
@@ -227,6 +227,7 @@ class Investigator extends Investigate_base
 		
 		//Get the log data to tabulate
 		$result = $this->CI->search_model
+			->user_lock(FALSE)
 			->pagination($this->relevant_logs_amount)
 			->to_date($dateTime->format('Y-m-d'))
 			->custom_sort("FIELD(`log_id`, {$imploded_log_ids})")

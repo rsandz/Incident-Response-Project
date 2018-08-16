@@ -20,7 +20,7 @@ class API extends MY_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('statistics_model');
+		$this->load->model('Stats/statistics_model');
 		$this->load->model('Form_get_model');
 		$this->load->model('search_model');
 		$this->load->helper('form');

@@ -8550,8 +8550,16 @@ html, body, .page-content {
   min-width: 10em;
 }
 
+/* 
+    Box Styling
+*/
 .box.is-fullheight {
   height: 100%;
+}
+.box.selection-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 /*# sourceMappingURL=mystyles.css.map */

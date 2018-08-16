@@ -14,16 +14,6 @@
 				</label>
 			</div>
 		</div>
-		<div class="field">
-			<div class="control">
-					<input name="hidden" name="notify_investigated" value="0" hidden> <!--Hidden field for default-->
-				<label class="checkbox">
-					<input class="checkbox" type="checkbox" name="notify_investigated" value="1" 
-						<?php if ($current_settings->notify_investigated) echo 'checked'?>>
-					Notify on After Incident Investigation
-				</label>
-			</div>
-		</div>
 		<div class="level">
 			<div class="level-left">
 			</div>

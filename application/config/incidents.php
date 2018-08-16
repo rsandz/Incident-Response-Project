@@ -5,10 +5,46 @@
 |  					Incidents Configuration
 | ---------------------------------------------------------
 |
-| This contains the configuration for the incidents
-| library.
-|
+| This contains the configuration for the incidents and
+| investigations library.
 */
+
+/*
+| ---------------------------------------------------------
+|					Relevant Logs Algorithm
+| ---------------------------------------------------------
+|
+| To find logs relevant to an incident, every log is given a score.
+|
+| The relevant action algorithm takes into account the amount
+| of times an action occurs, the hours in the log and the date difference
+| between the log and incident day (in Days)
+|
+| The Relevant Logs Algorithm is as follows:
+| (hours) * (hours_mult) - (action_freq) * (action_mult) - |DATEDIFF(incident_date, log_date) * (date_mult)|
+|
+| Where:
+| 	action_freq 	= 	# Times Action is used in logging)
+|	incident_date 	= 	Date of incident
+|	log_date 		= 	Date of the log
+|	hours 			= 	Hours in the log
+|	*_mult 			= 	Multiplier
+|
+| Note: Action refers to the action_id used in the log.
+|		DATEDIFF is a MySQL Function
+*/
+
+/* 
+| Multipliers for the above algorithm 
+| ===================================
+|	
+| TO disable a component, set to 0;
+*/
+$config['multipliers'] = array(
+	'action' => 0.2,
+	'date'   => 0.5,
+	'hours'  => 1
+);
 
 /*
 | ---------------------------------------------------------
@@ -31,6 +67,11 @@ $config['new_incident_body'] = "
 	<p>
 		{title}
 		{summary}
+		<p>
+			<h2>Relevant Logs:</h2>
+			{relevant_logs}
+		</p>
+	</p>
 	<hr>
 	<p>
 		For more Information, please visit this link: {link}
@@ -40,4 +81,3 @@ $config['new_incident_body'] = "
 	<p>Kind Regards, <br>
 	Incident Manager</p>
 ";
-

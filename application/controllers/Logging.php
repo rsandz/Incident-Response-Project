@@ -61,6 +61,7 @@ class Logging extends MY_controller {
 		{	
 			//Get Errors and content
 			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+			$data['notifications'] = $this->notifications;
 			$data['content'] = $this->load->view('logging/logging-form', $data, TRUE);
 
 			$this->load->view('templates/header', $data);
@@ -84,21 +85,13 @@ class Logging extends MY_controller {
 
 			if (!$result) //Unsuccessful log
 			{
-				$data['notification'] = 'Your activity was not successfully logged.';
-				$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
+				set_notification('Your activity was not successfully logged.');
 			}
 			else
 			{
-				$data['notification'] = 'Your Activity has been inserted into the log table';
-				$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
+				set_notification('Your Activity has been inserted into the log table');
 			}
-
-			$data['content'] = $this->load->view('logging/logging-form', $data, TRUE);
-
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/navbar', $data);
-			$this->load->view('templates/content-wrapper', $data);
-			$this->load->view('templates/footer', $data);
+			redirect(current_url());
 		}
 	}
 }

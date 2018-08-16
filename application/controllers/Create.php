@@ -103,16 +103,13 @@ class Create extends MY_Controller
 				->log();
 			
 			//Success Notification
-			$data['notification'] = "Your Action `{$insert_data['action_name']}` has been created.";
-			$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
-
-			//Reset Validation
-			$this->form_validation->reset_validation();
-			$_POST = array();
+			set_notification("Your Action `{$insert_data['action_name']}` has been created.");
+			redirect(current_url());
 		}
 
 		$data['types'] = $this->get_model->get_action_types();
 		
+		$data['notifications'] = $this->notifications;
 		$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
 		$data['content'] = $this->load->view('create/action', $data, TRUE);
 
@@ -152,14 +149,10 @@ class Create extends MY_Controller
 				->date('now')
 				->desc("Project `{$insert_data['project_name']}` was inserted into the Project Table.")
 				->log();
-			
-			//Create Success Data for success page
-			$data['notification'] = "Project `{$insert_data['project_name']} has been created`";
-			$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
 
-			//Reset Validation
-			$this->form_validation->reset_validation();
-			$_POST = array();
+			//Success Notification
+			set_notification("Project `{$insert_data['project_name']} has been created`");
+			redirect(current_url());
 		}
 		//Get Users for project leaders
 		$users = $this->get_model->get_users();
@@ -171,6 +164,7 @@ class Create extends MY_Controller
 
 		//Get errors
 		$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+		$data['notifications'] = $this->notifications;
 		$data['content'] = $this->load->view('create/project', $data, TRUE);
 
 		$this->load->view('templates/header', $data);
@@ -216,16 +210,13 @@ class Create extends MY_Controller
 				->desc("User `{$full_name}` was inserted into the User table.")
 				->log();
 
-			//Success data for the success page
-			$data['notification'] = "User `{$full_name}` has been created.";
-			$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
-
-			//Reset Validation
-			$this->form_validation->reset_validation();
-			$_POST = array();
+			//Success Notification
+			set_notification("User `{$full_name}` has been created.");
+			redirect(current_url());
 		}
 			//Get errors
 			$data['errors'] = $this->load->view('templates/errors', $data, true);
+			$data['notifications'] = $this->notifications;
 			$data['content'] = $this->load->view('create/user', $data, TRUE);
 
 			$this->load->view('templates/header', $data);
@@ -264,19 +255,16 @@ class Create extends MY_Controller
 				->desc("Team `{$insert_data['team_name']}` was inserted into the Team table.")
 				->log();
 
-			//Success Data for the success page
-			$data['notification'] = "Team `{$insert_data['team_name']}` has been created.";
-			$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
-
-			//Reset Validation
-			$this->form_validation->reset_validation();
-			$_POST = array();
+			//Success Notification
+			set_notification("Team `{$insert_data['team_name']}` has been created.");
+			redirect(current_url());
 		}
 			//Get Team Leaders
 			$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select($this->authentication->check_admin());
 
 			//Get errors
 			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+			$data['notifications'] = $this->notifications;
 			$data['content'] = $this->load->view('create/team', $data, TRUE);
 
 			$this->load->view('templates/header', $data);
@@ -314,15 +302,13 @@ class Create extends MY_Controller
 				->desc("Type `{$insert_data['type_name']}` was inserted into the Action Types table.")
 				->log();
 
-			$data['notification'] = "Action Type `{$insert_data['type_name']}` has been created.";
-			$data['notifications'] = $this->load->view('templates/notification', $data, TRUE);
-		
-			//Reset Validation
-			$this->form_validation->reset_validation();
-			$_POST = array();
+			//Success Notification
+			set_notification("Action Type `{$insert_data['type_name']}` has been created.");
+			redirect(current_url());
 		}
 		//Get errors
 		$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+		$data['notifications'] = $this->notifications;
 		$data['content'] = $this->load->view('create/action_type', $data, TRUE);
 
 		// Make the Form
