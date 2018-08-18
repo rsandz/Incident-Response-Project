@@ -23,8 +23,10 @@ class Google_Service_CloudMachineLearningEngine_GoogleCloudMlV1Version extends G
   public $deploymentUri;
   public $description;
   public $errorMessage;
+  public $etag;
   public $framework;
   public $isDefault;
+  public $labels;
   public $lastUseTime;
   public $machineType;
   protected $manualScalingType = 'Google_Service_CloudMachineLearningEngine_GoogleCloudMlV1ManualScaling';
@@ -80,6 +82,14 @@ class Google_Service_CloudMachineLearningEngine_GoogleCloudMlV1Version extends G
   {
     return $this->errorMessage;
   }
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  public function getEtag()
+  {
+    return $this->etag;
+  }
   public function setFramework($framework)
   {
     $this->framework = $framework;
@@ -95,6 +105,14 @@ class Google_Service_CloudMachineLearningEngine_GoogleCloudMlV1Version extends G
   public function getIsDefault()
   {
     return $this->isDefault;
+  }
+  public function setLabels($labels)
+  {
+    $this->labels = $labels;
+  }
+  public function getLabels()
+  {
+    return $this->labels;
   }
   public function setLastUseTime($lastUseTime)
   {

@@ -516,7 +516,26 @@ class Google_Service_Compute extends Google_Service
         'backendBuckets',
         array(
           'methods' => array(
-            'delete' => array(
+            'addSignedUrlKey' => array(
+              'path' => '{project}/global/backendBuckets/{backendBucket}/addSignedUrlKey',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'backendBucket' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'requestId' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+              ),
+            ),'delete' => array(
               'path' => '{project}/global/backendBuckets/{backendBucket}',
               'httpMethod' => 'DELETE',
               'parameters' => array(
@@ -527,6 +546,30 @@ class Google_Service_Compute extends Google_Service
                 ),
                 'backendBucket' => array(
                   'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'requestId' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+              ),
+            ),'deleteSignedUrlKey' => array(
+              'path' => '{project}/global/backendBuckets/{backendBucket}/deleteSignedUrlKey',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'backendBucket' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'keyName' => array(
+                  'location' => 'query',
                   'type' => 'string',
                   'required' => true,
                 ),
@@ -638,7 +681,26 @@ class Google_Service_Compute extends Google_Service
         'backendServices',
         array(
           'methods' => array(
-            'aggregatedList' => array(
+            'addSignedUrlKey' => array(
+              'path' => '{project}/global/backendServices/{backendService}/addSignedUrlKey',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'backendService' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'requestId' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+              ),
+            ),'aggregatedList' => array(
               'path' => '{project}/aggregated/backendServices',
               'httpMethod' => 'GET',
               'parameters' => array(
@@ -675,6 +737,30 @@ class Google_Service_Compute extends Google_Service
                 ),
                 'backendService' => array(
                   'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'requestId' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+              ),
+            ),'deleteSignedUrlKey' => array(
+              'path' => '{project}/global/backendServices/{backendService}/deleteSignedUrlKey',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'project' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'backendService' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'keyName' => array(
+                  'location' => 'query',
                   'type' => 'string',
                   'required' => true,
                 ),

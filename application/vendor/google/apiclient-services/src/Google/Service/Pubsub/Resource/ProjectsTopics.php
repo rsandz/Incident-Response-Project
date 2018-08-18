@@ -113,6 +113,26 @@ class Google_Service_Pubsub_Resource_ProjectsTopics extends Google_Service_Resou
     return $this->call('list', array($params), "Google_Service_Pubsub_ListTopicsResponse");
   }
   /**
+   * Updates an existing topic. Note that certain properties of a topic are not
+   * modifiable. (topics.patch)
+   *
+   * @param string $name The name of the topic. It must have the format
+   * `"projects/{project}/topics/{topic}"`. `{topic}` must start with a letter,
+   * and contain only letters (`[A-Za-z]`), numbers (`[0-9]`), dashes (`-`),
+   * underscores (`_`), periods (`.`), tildes (`~`), plus (`+`) or percent signs
+   * (`%`). It must be between 3 and 255 characters in length, and it must not
+   * start with `"goog"`.
+   * @param Google_Service_Pubsub_UpdateTopicRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Pubsub_Topic
+   */
+  public function patch($name, Google_Service_Pubsub_UpdateTopicRequest $postBody, $optParams = array())
+  {
+    $params = array('name' => $name, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('patch', array($params), "Google_Service_Pubsub_Topic");
+  }
+  /**
    * Adds one or more messages to the topic. Returns `NOT_FOUND` if the topic does
    * not exist. The message payload must not be empty; it must contain  either a
    * non-empty data field, or at least one attribute. (topics.publish)

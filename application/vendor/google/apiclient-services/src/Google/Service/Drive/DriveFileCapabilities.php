@@ -18,6 +18,7 @@
 class Google_Service_Drive_DriveFileCapabilities extends Google_Model
 {
   public $canAddChildren;
+  public $canChangeCopyRequiresWriterPermission;
   public $canChangeViewersCanCopyContent;
   public $canComment;
   public $canCopy;
@@ -42,6 +43,14 @@ class Google_Service_Drive_DriveFileCapabilities extends Google_Model
   public function getCanAddChildren()
   {
     return $this->canAddChildren;
+  }
+  public function setCanChangeCopyRequiresWriterPermission($canChangeCopyRequiresWriterPermission)
+  {
+    $this->canChangeCopyRequiresWriterPermission = $canChangeCopyRequiresWriterPermission;
+  }
+  public function getCanChangeCopyRequiresWriterPermission()
+  {
+    return $this->canChangeCopyRequiresWriterPermission;
   }
   public function setCanChangeViewersCanCopyContent($canChangeViewersCanCopyContent)
   {

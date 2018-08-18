@@ -29,8 +29,8 @@ class Google_Service_SQLAdmin_Resource_Instances extends Google_Service_Resource
    * Add a new trusted Certificate Authority (CA) version for the specified
    * instance. Required to prepare for a certificate rotation. If a CA version was
    * previously added but never used in a certificate rotation, this operation
-   * replaces that version. There can not be more than one CA version waiting to
-   * be rotated in. (instances.addServerCa)
+   * replaces that version. There cannot be more than one CA version waiting to be
+   * rotated in. (instances.addServerCa)
    *
    * @param string $project Project ID of the project that contains the instance.
    * @param string $instance Cloud SQL instance ID. This does not include the
@@ -45,8 +45,8 @@ class Google_Service_SQLAdmin_Resource_Instances extends Google_Service_Resource
     return $this->call('addServerCa', array($params), "Google_Service_SQLAdmin_Operation");
   }
   /**
-   * Creates a Cloud SQL instance as a clone of the source instance. The API is
-   * not ready for Second Generation instances yet. (instances.cloneInstances)
+   * Creates a Cloud SQL instance as a clone of the source instance.
+   * (instances.cloneInstances)
    *
    * @param string $project Project ID of the source as well as the clone Cloud
    * SQL instance.
@@ -79,7 +79,8 @@ class Google_Service_SQLAdmin_Resource_Instances extends Google_Service_Resource
     return $this->call('delete', array($params), "Google_Service_SQLAdmin_Operation");
   }
   /**
-   * Reserved for future use. (instances.demoteMaster)
+   * Demotes the stand-alone instance to be a Cloud SQL read replica for an
+   * external database server. (instances.demoteMaster)
    *
    * @param string $project ID of the project that contains the instance.
    * @param string $instance Cloud SQL instance name.
@@ -252,9 +253,7 @@ class Google_Service_SQLAdmin_Resource_Instances extends Google_Service_Resource
   }
   /**
    * Deletes all client certificates and generates a new server SSL certificate
-   * for the instance. The changes will not take effect until the instance is
-   * restarted. Existing instances without a server certificate will need to call
-   * this once to set a server certificate. (instances.resetSslConfig)
+   * for the instance. (instances.resetSslConfig)
    *
    * @param string $project Project ID of the project that contains the instance.
    * @param string $instance Cloud SQL instance ID. This does not include the

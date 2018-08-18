@@ -120,11 +120,11 @@ class Google_Service_Pubsub_Resource_ProjectsSnapshots extends Google_Service_Re
    * to. Format is `projects/{project}`.
    * @param array $optParams Optional parameters.
    *
+   * @opt_param int pageSize Maximum number of snapshots to return.
    * @opt_param string pageToken The value returned by the last
    * `ListSnapshotsResponse`; indicates that this is a continuation of a prior
    * `ListSnapshots` call, and that the system should return the next page of
    * data.
-   * @opt_param int pageSize Maximum number of snapshots to return.
    * @return Google_Service_Pubsub_ListSnapshotsResponse
    */
   public function listProjectsSnapshots($project, $optParams = array())

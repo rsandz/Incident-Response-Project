@@ -18,7 +18,10 @@
 class Google_Service_Drive_TeamDriveCapabilities extends Google_Model
 {
   public $canAddChildren;
+  public $canChangeCopyRequiresWriterPermissionRestriction;
+  public $canChangeDomainUsersOnlyRestriction;
   public $canChangeTeamDriveBackground;
+  public $canChangeTeamMembersOnlyRestriction;
   public $canComment;
   public $canCopy;
   public $canDeleteTeamDrive;
@@ -40,6 +43,22 @@ class Google_Service_Drive_TeamDriveCapabilities extends Google_Model
   {
     return $this->canAddChildren;
   }
+  public function setCanChangeCopyRequiresWriterPermissionRestriction($canChangeCopyRequiresWriterPermissionRestriction)
+  {
+    $this->canChangeCopyRequiresWriterPermissionRestriction = $canChangeCopyRequiresWriterPermissionRestriction;
+  }
+  public function getCanChangeCopyRequiresWriterPermissionRestriction()
+  {
+    return $this->canChangeCopyRequiresWriterPermissionRestriction;
+  }
+  public function setCanChangeDomainUsersOnlyRestriction($canChangeDomainUsersOnlyRestriction)
+  {
+    $this->canChangeDomainUsersOnlyRestriction = $canChangeDomainUsersOnlyRestriction;
+  }
+  public function getCanChangeDomainUsersOnlyRestriction()
+  {
+    return $this->canChangeDomainUsersOnlyRestriction;
+  }
   public function setCanChangeTeamDriveBackground($canChangeTeamDriveBackground)
   {
     $this->canChangeTeamDriveBackground = $canChangeTeamDriveBackground;
@@ -47,6 +66,14 @@ class Google_Service_Drive_TeamDriveCapabilities extends Google_Model
   public function getCanChangeTeamDriveBackground()
   {
     return $this->canChangeTeamDriveBackground;
+  }
+  public function setCanChangeTeamMembersOnlyRestriction($canChangeTeamMembersOnlyRestriction)
+  {
+    $this->canChangeTeamMembersOnlyRestriction = $canChangeTeamMembersOnlyRestriction;
+  }
+  public function getCanChangeTeamMembersOnlyRestriction()
+  {
+    return $this->canChangeTeamMembersOnlyRestriction;
   }
   public function setCanComment($canComment)
   {
