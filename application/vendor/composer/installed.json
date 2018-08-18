@@ -110,17 +110,17 @@
     },
     {
         "name": "google/apiclient-services",
-        "version": "v0.64",
-        "version_normalized": "0.64.0.0",
+        "version": "v0.65",
+        "version_normalized": "0.65.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/google/google-api-php-client-services.git",
-            "reference": "0250aa8cadbe58e790aa07d736b675f3bdd87a1c"
+            "reference": "cc7299c4a12a09b379a2d952d2a28ad32396275d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/0250aa8cadbe58e790aa07d736b675f3bdd87a1c",
-            "reference": "0250aa8cadbe58e790aa07d736b675f3bdd87a1c",
+            "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/cc7299c4a12a09b379a2d952d2a28ad32396275d",
+            "reference": "cc7299c4a12a09b379a2d952d2a28ad32396275d",
             "shasum": ""
         },
         "require": {
@@ -129,7 +129,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.8"
         },
-        "time": "2018-06-30T00:22:51+00:00",
+        "time": "2018-07-12T00:23:02+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
