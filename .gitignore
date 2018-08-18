@@ -20,11 +20,13 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 
 application/config/development/*
 application/vendor/*
+IMPORTANT.txt
 
 # IDE Files
 #-------------------------
 /nbproject/
 .idea/*
+*.code-workspace
 
 ## Sublime Text cache files
 *.tmlanguage.cache
