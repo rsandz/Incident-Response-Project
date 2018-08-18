@@ -33,6 +33,6 @@
 		"**/.hg": true,
 		"**/CVS": true,
         "**/.DS_Store": true,
-        "application/vendor/[!n]*": true,
+        "application/vendor/[!nt]*": true,
     },
 }

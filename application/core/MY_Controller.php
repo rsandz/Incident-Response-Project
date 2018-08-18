@@ -12,6 +12,8 @@ class MY_Controller extends CI_Controller {
 
 		//Loads Notifications if flashed
 		$this->notifications = $this->session->notifications;
+		$this->errors = $this->session->errors;
+		
 	}
 
 }

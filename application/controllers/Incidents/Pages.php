@@ -51,6 +51,7 @@ class Pages extends MY_Controller {
 		$data['stats'] = $this->investigation_model->get_incident_stats();
 		$data['stats']['last_GA_report'] = $this->misc_stats_model->get_stat_by_name('last_GA_report');
 		$data['content'] = $this->load->view('incidents/main', $data, TRUE);
+		$data['notifications'] = $this->notifications;
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/navbar', $data);

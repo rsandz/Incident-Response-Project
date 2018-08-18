@@ -4,28 +4,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Admin_model extends MY_Model {
 
 	/**
-	 * Changes the notify on new incident setting
+	 * Changes the notify by email on new incident setting
 	 * @param  integer $user_id The ID of the user to update the setting for
 	 * @param integer $value The value to set the setting too
 	 * @return boolean			TRUE if successful. FALSE otherwise
 	 */
-	public function notify_new_incident($user_id, $value)
+	public function notify_incident_email($user_id, $value)
 	{
 		return $this->db->where('user_id', $user_id)
-				->set(array('notify_new_incident' => $value))
+				->set(array('notify_incident_email' => $value))
 				->update('admin_settings');
 	}
 
 	/**
-	 * Changes the notify on investigation finish setting
+	 * Changes the notify by SMS on new incident setting
 	 * @param  int $user_id The ID of the user to update the setting for
 	 * @param  integer $value   The value to set the setting to
 	 * @return boolean          TRUE if successful, FALSE otherwise.
 	 */
-	public function notify_investigated($user_id, $value)
+	public function notify_incident_sms($user_id, $value)
 	{
 		return $this->db->where('user_id', $user_id)
-				->set(array('notify_investigated' => $value))
+				->set(array('notify_incident_sms' => $value))
 				->update('admin_settings');
 	}
 
@@ -49,12 +49,26 @@ class Admin_model extends MY_Model {
 	 * have chosen to receive emails for new incidents.
 	 * @return array Database result array containing user's name and email
 	 */
-	public function get_notify_new_incidents()
+	public function get_notify_incident_emails()
 	{
 		$this->db
 			->join('users', 'users.user_id = admin_settings.user_id', 'left')
 			->select('users.email, CONCAT(users.first_name, " ", users.last_name) AS name')
-			->where('notify_new_incident', 1);
+			->where('notify_incident_email', 1);
+		return $this->db->get('admin_settings')->result();
+	}
+
+	/**
+	 * Gets all the User names and Phone Number for the admins that
+	 * have chosen to receive sms for new incidents
+	 * @return array Database result array containing name and phone numbers
+	 */
+	public function get_notify_incident_sms()
+	{
+		$this->db
+			->join('users', 'users.user_id = admin_settings.user_id', 'left')
+			->select('users.phone_num, CONCAT(users.first_name, " ", users.last_name) AS name')
+			->where('notify_incident_sms', 1);
 		return $this->db->get('admin_settings')->result();
 	}
 

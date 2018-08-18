@@ -87,6 +87,19 @@ class Test extends MY_Controller {
 		$this->site_model->set_site_notification('Test Notification');
 	}
 
+	/** SMS Test */
+	public function sms()
+	{
+		$this->load->library('Investigation/sms_sender');
+		$this->sms_sender->send_message('+17802451999', 'HELLO! Im sending this using PHP!');
+	}
+
+	/** Post Test */
+	public function post()
+	{
+		echo json_encode($this->input->post());
+	}
+
 }
 /* End of file Test.php */
 /* Location: ./application/controllers/Test.php */

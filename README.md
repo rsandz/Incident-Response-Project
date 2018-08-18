@@ -28,6 +28,7 @@ This application uses the following libraries:
 1. **JQuery**
 2. **Moment.js** - JavaScript Date and Time
 3. **Select2** - Javascript Selection Input Library
+4. **intl-tel-input** - JavaScript Phone Library
 
 **PHP**
 1. **Carbon** - Date and Time Library

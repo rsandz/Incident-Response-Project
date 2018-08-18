@@ -225,10 +225,17 @@ class Incident_builder extends Investigate_base
 		//Notify
 		if (!$this->is_silent) 
 		{
+			//email
 			$this->CI->load->library('Investigation/email_notifier');
 			$this->CI->email_notifier
 				->incident($this->CI->investigation_model->insert_id)
 				->new_incident_notify();
+
+			//sms
+			$this->CI->load->library('Investigation/sms_sender');
+			$this->CI->sms_sender
+				->incident($this->CI->investigation_model->insert_id)
+				->notify_incident();
 		}
 
 		$this->reset();

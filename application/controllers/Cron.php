@@ -22,6 +22,7 @@ class Cron extends MY_Controller {
      */
     public function incident_check()
     {
+        echo 'Starting GA Report Check';
         //Get conditions to check
         $incident_conditions = $this->analytics_model->get_current_metrics();
 
@@ -81,6 +82,12 @@ class Cron extends MY_Controller {
         }
         
         $this->Misc_stats_model->update_stat('last_GA_report', date('Y-m-d H:i:s'));
+        echo 'Check Complete';
+        if (!is_cli())
+        {
+            set_notification('Google Analytics has Finished Running');
+            redirect(site_url('Incidents'));
+        }
     }
 
 }

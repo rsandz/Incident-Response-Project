@@ -75,6 +75,8 @@ $route['Setup'] = 'Setup';
 $route['Account'] = 'User/Account';
 $route['Account/settings'] = 'User/Account/settings';
 $route['Account/admin-settings'] = 'User/Account/admin_settings';
+$route['Account/save-user-info'] = 'User/Account/save_user_info';
+$route['Account/set-password'] = 'User/Account/set_password';
 
 /*
 	Incidents Routing

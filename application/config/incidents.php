@@ -54,6 +54,13 @@ $config['multipliers'] = array(
 | Stores the messages of the following emails:
 |  - New Incident Notification
 |  - Investigation Complete
+| 
+| Use templates to populate the email.
+| {name} - Replaced with User name
+| {link} - Replaced with Link to Incident Report Page
+| {title} - Replaced with Incident Title
+| {summary} - Replaced with Incident Summary
+| {relevat_logs} - Replaced with Relevant Logs Table
 */
 
 $config['new_incident_body'] = "
@@ -81,3 +88,19 @@ $config['new_incident_body'] = "
 	<p>Kind Regards, <br>
 	Incident Manager</p>
 ";
+
+/*
+| ---------------------------------------------------------
+|					SMS Contents
+| ---------------------------------------------------------
+| Define the SMS message here
+| Use templates to populate the Message.
+| {name} - Replaced with User name
+| {link} - Replaced with Link to Incident Report Page
+*/
+
+$config['new_incident_sms']  = '
+Hi {name}.
+A new Incident has occured that may require your attention.
+See {link} for more info.
+';

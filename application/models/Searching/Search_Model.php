@@ -72,8 +72,14 @@ class Search_model extends MY_Model {
 	protected $pagination_limit  = 0;
 	public 	  $unpaginated_rows  = NULL;
 	
-	/** @var boolean Whether to lock searches to the current user */
+	/** 
+	 * @var boolean 
+	 * Whether to lock searches to the current user 
+	 * Non-Admins will only see search matches that have
+	 * their user_id in them
+	 */
 	protected $user_lock         = TRUE;
+
 	protected $curr_user;
 
 	/** @var array Stores Data on last query */

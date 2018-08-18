@@ -1,6 +1,8 @@
 {
     "require": {
         "google/apiclient": "^2.2",
-        "nesbot/carbon": "^1.32"
+        "nesbot/carbon": "^1.32",
+        "twilio/sdk": "^5.21",
+        "giggsey/libphonenumber-for-php": "^8.9"
     }
 }

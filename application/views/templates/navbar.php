@@ -97,7 +97,7 @@
 				</a>
 				<div class="navbar-dropdown sub-menu">
 					<?php echo anchor('Account', 'Account Info', 'class="navbar-item"');?>
-					<!-- <?php echo anchor('Account/settings', 'Settings', 'class="navbar-item"')?> -->
+					<?php echo anchor('Account/settings', 'Account Settings', 'class="navbar-item"')?>
 					<?php  if ($this->authentication->check_admin())
 						echo anchor('Account/admin-settings', 'Admin Settings', 'class="navbar-item"')?>
 				</div>
@@ -145,7 +145,7 @@
 				<p class="navbar-link">Account</p>
 				<div class="navbar-dropdown">
 					<?php echo anchor('Account', 'My Account Info', 'class="navbar-item"')?>
-					<!-- <?php echo anchor('Account/settings', 'Settings', 'class="navbar-item"')?> -->
+					<?php echo anchor('Account/settings', 'Account Settings', 'class="navbar-item"')?>
 					<?php if($this->authentication->check_admin()) 
 						echo anchor('Account/admin-settings', 'Admin Settings', 'class="navbar-item"')?>
 				</div>

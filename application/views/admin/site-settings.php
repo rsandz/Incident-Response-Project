@@ -13,6 +13,10 @@
             </label>
                 <!-- Can't split textarea into multiple lines. Sorry :( -->
                 <textarea class="textarea" name="site_notification" id="site-notification" cols="10" rows="5"><?php echo $current_settings['site_notification']?></textarea>
+                <p class="help">
+                    Supports some HTML Markups. 
+                    Click <?php echo anchor('https://github.com/rsandz/step_project/wiki/HTML-Markup', 'here'); ?> to learn more.
+                </p>
             </div>
         </div>
         <div class="field">

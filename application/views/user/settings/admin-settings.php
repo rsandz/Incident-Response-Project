@@ -6,11 +6,21 @@
 		<hr>
 		<div class="field">
 			<div class="control">
-					<input name="hidden" name="notify_new_incident" value="0" hidden> <!--Hidden field for default-->
+					<input name="hidden" name="notify_incident_email" value="0" hidden> <!--Hidden field for default-->
 				<label class="checkbox">
-					<input class="checkbox" type="checkbox" name="notify_new_incident" value="1" 
-						<?php if ($current_settings->notify_new_incident) echo 'checked'?>>
-					Notify on New Incidents
+					<input class="checkbox" type="checkbox" name="notify_incident_email" value="1" 
+						<?php if ($current_settings->notify_incident_email) echo 'checked'?>>
+					Notify on New Incidents by Email
+				</label>
+			</div>
+		</div>
+		<div class="field">
+			<div class="control">
+					<input name="hidden" name="notify_incident_sms" value="0" hidden> <!--Hidden field for default-->
+				<label class="checkbox">
+					<input class="checkbox" type="checkbox" name="notify_incident_sms" value="1" 
+						<?php if ($current_settings->notify_incident_sms) echo 'checked'?>>
+					Notify on New Incidents by SMS
 				</label>
 			</div>
 		</div>

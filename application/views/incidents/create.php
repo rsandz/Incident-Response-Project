@@ -27,7 +27,7 @@
 			<div class="control">
 				<label class="label">Description:</label>
 				<textarea class="textarea" placeholder="Description" name="incident_desc"></textarea>
-				<p class="has-text-right">
+				<p class="help">
 					Supports HTML Markups. Click 
 					<a href="https://github.com/rsandz/step_project/wiki/HTML-Markup">here</a>
 					for more Information

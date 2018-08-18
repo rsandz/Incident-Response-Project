@@ -159,7 +159,7 @@
 			<div class="control">
 				<textarea class="textarea" name="desc" ><?php echo set_value('desc')?></textarea>
 			</div>
-			<p class="has-text-right">
+			<p class="help">
 				Supports some HTML Markups. 
 				Click <?php echo anchor('https://github.com/rsandz/step_project/wiki/HTML-Markup', 'here'); ?> to learn more.
 			</p>

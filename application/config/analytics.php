@@ -4,7 +4,7 @@
 | ---------------------------------------------
 |   Analytics Configuration
 | ---------------------------------------------
-| Please ote that analytics settings are split between
+| Please note that analytics settings are split between
 | the analytics_metrics table in the database and this
 | configuration file
 */

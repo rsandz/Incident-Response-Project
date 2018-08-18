@@ -33,15 +33,16 @@ class Email_notifier extends Investigate_base
         $this->CI->load->model('Settings/admin_model', 'admin_settings');
 
         //Load Library and Configs
+		$this->CI->load->library('Investigation/investigator');
 		$this->CI->load->library('email');
 		$this->CI->load->config('email');
     }
 
-        /**
-         * Sets the incident to send an email about
-         * @param int $incident_id
-         * @return Email_notifier Method Chaining
-         */
+    /**
+     * Sets the incident to send an email about
+     * @param int $incident_id
+     * @return Email_notifier Method Chaining
+     */
     public function incident($incident_id)
     {
         if (is_int($incident_id))
@@ -66,7 +67,7 @@ class Email_notifier extends Investigate_base
         //Sets incident id in investigator so we can get relevant logs table
         $this->CI->investigator->incident($this->incident_id);
 
-		$users_send_to = $this->CI->admin_settings->get_notify_new_incidents();
+		$users_send_to = $this->CI->admin_settings->get_notify_incident_emails();
 		$incident_summary = $this->incident_info($this->incident_id);
 		$incident_title = $this->incident_title($this->incident_id);
 

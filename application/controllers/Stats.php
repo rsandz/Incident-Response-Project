@@ -242,11 +242,13 @@ class Stats extends MY_Controller {
 		$data['title'] = 'Custom Statistic '.$index;
 		$data['index'] = $index; //The custom stat id number.
 
+		$is_admin = $this->authentication->check_admin();
+
 		//Get things to populate the form
-		$data['action_types'] = $this->get_model->get_action_types();
-		$data['teams'] = $this->get_model->get_teams();
-		$data['projects'] = $this->get_model->get_projects();
-		$data['users'] = $this->get_model->get_users();
+		$data['action_types'] = $this->get_model->get_action_types($is_admin);
+		$data['teams'] = $this->get_model->get_teams($is_admin);
+		$data['projects'] = $this->get_model->get_projects($is_admin);
+		$data['users'] = $this->get_model->get_users(!$is_admin ? $this->session->user_id : NULL);
 
 		$data['content'] = $this->load->view('stats/custom_stats-create', $data, TRUE);
 
