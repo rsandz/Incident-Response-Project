@@ -1,7 +1,6 @@
 <section class="content section">
 	<h1>Team Creation Form</h1>
 	<hr>
-	<?=$errors?>
 	<?php echo form_open('Create/index/team', 'class="form"'); ?>
 		<div class="field">
 			<label class="label">Team Name: <span class="has-text-danger">(Required)</span></label>

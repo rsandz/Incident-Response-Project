@@ -88,6 +88,12 @@
           <li>
             <?php $attr = ($title == 'Manage Teams') ? 'is-active' : NULL?>
             <?php echo anchor('Manage/teams', 'Manage Teams', "class='{$attr}'");?>
+            <?php $attr = ($title == 'Manage Projects') ? 'is-active' : NULL?>
+            <?php echo anchor('Manage/projects', 'Manage Projects', "class='{$attr}'");?>
+            <?php if ($this->authentication->check_admin()):?>
+              <?php $attr = ($title == 'Manage Users') ? 'is-active' : NULL?>
+              <?php echo anchor('Manage/users', 'Manage Users', "class='{$attr}'");?>
+            <?php endif;?>
           </li>
         </ul>
       </li>

@@ -6,28 +6,36 @@ class Action_model extends MY_Model {
 	/** @var int The ID of the action_type to filter by */
 	protected $type_id;
 
+	/*
+	---------------------
+		Get Methods
+	---------------------
+	*/
+
 	/**
-	 * Creates an action using an action name and type id
-	 * 
-	 * @param  array $insert_data The data to insert (Associative array)
-	 * @return integer|boolean     The ID of the action. OR FALSE if it already exists
+	 * Use this to lock the action type when searching for actions.
+	 * @param  string|int $identifier Either Action Name or action type
+	 * @param  string     $type       EIther 'id' or 'name'
+	 * @return void             
 	 */
-	public function make($insert_data)
+	public function lock_type($identifier, $type = 'id')
 	{
-		//Check if action already exists
-		$check_array = array(
-			'action_name' => $insert_data['action_name'],
-			'type_id' => $insert_data['type_id']
-		);
-
-		if ($this->data_exists('actions', $check_array))
+		switch($type)
 		{
-			return FALSE;
+			case 'id':
+				$this->type_id = $identifier;
+				break;
+			case 'name':
+				$id = $this->db
+					->where('type_name', $identifier)
+					->select('type_id')
+					->get('action_types')
+					->row()->type_id;
+				$this->type_id = $id;
+				break;
+			default:
+				$this->error = 'Invalid `type` to retreive action type.';
 		}
-
-		$this->db->insert('actions', $insert_data);
-
-		return $this->db->insert_id();
 	}
 
 	/**
@@ -85,30 +93,47 @@ class Action_model extends MY_Model {
 		}		
 	}
 
+	/*
+	--------------------
+		Make Methods
+	--------------------
+	*/
+
 	/**
-	 * Use this to lock the action type when searching for actions.
-	 * @param  string|int $identifier Either Action Name or action type
-	 * @param  string     $type       EIther 'id' or 'name'
-	 * @return void             
+	 * Creates an action using an action name and type id
+	 * 
+	 * @param  array $insert_data The data to insert (Associative array)
+	 * @param boolean $validate Whether to validate before Inserting
+	 * @return integer|boolean     The ID of the action. OR FALSE if it already exists
 	 */
-	public function type($identifier, $type = 'id')
+	public function make($insert_data, $validate = FALSE)
 	{
-		switch($type)
+		if ($validate && !$this->validate_insert_data($insert_data)) return FALSE;
+
+		$this->db->insert('actions', $insert_data);
+
+		return $this->db->insert_id();
+	}
+
+	/**
+	 * Validates Action insert data
+	 * Same Action should not already exists
+	 * @param $insert_data
+	 * @return boolean If valid (TRUE) or not (FALSE)
+	 */
+	public function valid_insert_data($insert_data)
+	{
+		//Check if action already exists
+		$check_array = array(
+			'action_name' => $insert_data['action_name'],
+			'type_id' => $insert_data['type_id'],
+		);
+
+		if ($this->data_exists('actions', $check_array))
 		{
-			case 'id':
-				$this->type_id = $identifier;
-				break;
-			case 'name':
-				$id = $this->db
-					->where('type_name', $identifier)
-					->select('type_id')
-					->get('action_types')
-					->row()->type_id;
-				$this->type_id = $id;
-				break;
-			default:
-				$this->error = 'Invalid `type` to retreive action type.';
+			return FALSE;
 		}
+		return TRUE;
 	}
 
 	/**

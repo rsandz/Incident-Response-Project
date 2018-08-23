@@ -48,6 +48,7 @@ class Investigator extends Investigate_base
 		$this->CI->load->model('Investigation/investigator_model');
 		$this->CI->load->library('table');
 		$this->CI->load->library('chart');
+		$this->CI->load->library('Investigation/Server_charting/chart_maker', NULL, 'server_chart');
 	}
 
 	/**
@@ -70,6 +71,8 @@ class Investigator extends Investigate_base
 		$this->incident = $this->CI->investigation_model->get_incident($this->incident_id);
 
 		$this->date_time = new Carbon($this->incident->incident_date.$this->incident->incident_time);
+		
+		return $this;
 	}
 
 	/**
@@ -86,7 +89,7 @@ class Investigator extends Investigate_base
 		$data['past_week_search'] = $this->past_week_search();
 		$data['past_month_search'] = $this->past_month_search();
 		$data['past_3days_search'] = $this->past_3days_search();
-		$data['past_week_all_stats'] = $this->past_week_all_stats();
+		$data['past_week_all_stats'] = $this->clientChart_recent_activity();
 		$data['relevant_logs'] = $this->relevant_logs();
 
 		$html = $this->CI->load->view('incidents/templates/report', $data, TRUE);
@@ -119,7 +122,7 @@ class Investigator extends Investigate_base
 	// -------------------------------------------------------------
 
 	/*
-		Chart Methods
+		Client Side Chart Methods
 		========================
 	*/
 
@@ -127,7 +130,7 @@ class Investigator extends Investigate_base
 	 * Creates the HTML chart string for the past week
 	 * logs and hours.
 	 */
-	public function past_week_all_stats()
+	public function clientChart_recent_activity()
 	{
 		//Make a clone so we can modify without afecting original
 		$dateTime = clone $this->date_time; 
@@ -236,6 +239,38 @@ class Investigator extends Investigate_base
 		return $this->CI->table->my_generate($result);
 	}
 
+	// --------------------------------------------------------------
+
+	/*
+		Server Side Charts
+		==================
+		Note: The lib we use needs an associative array with x,y values
+		i.e. array(x1 => y1, x2 => y2)
+	*/
+
+	public function servChart_recent_activity()
+	{
+		$dateTime = clone $this->date_time;
+		$data = $this->CI->statistics_model
+				->to_date($dateTime->format('Y-m-d'))
+				->from_date($dateTime->subWeek()->format('Y-m-d')) 
+				->metrics('hours')
+				->labels('Hours')
+				->metrics('logs')
+				->labels('Logs')
+				->interval_type('daily')
+				->get();
+		echo json_encode($data);
+		$dataset1 = $data['dataSets'][0];
+		$dataset2 = $data['dataSets'][1];
+		$this->CI->server_chart
+			->file_name('recent_activity')
+			->legend(array($dataset1['label'], $dataset2['label']))
+			->add_dataset(array_combine($data['x'], $dataset1['y']))
+			->add_dataset(array_combine($data['x'], $dataset2['y']))
+			->title('Recent Activity Chart')
+			->render();
+	}
 }
 
 /* End of file Investigator.php */

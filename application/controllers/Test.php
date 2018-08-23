@@ -100,6 +100,21 @@ class Test extends MY_Controller {
 		echo json_encode($this->input->post());
 	}
 
+	public function chart()
+	{
+		$this->load->library('Investigation/investigator');
+		$this->investigator
+			->incident(1)
+			->servChart_recent_activity();
+		echo FCPATH.'generated_charts/recent_activity.jpg';
+	}
+
+	/** PHP INFO */
+	public function info()
+	{
+		phpinfo();
+	}
+
 }
 /* End of file Test.php */
 /* Location: ./application/controllers/Test.php */

@@ -77,6 +77,8 @@ $config['new_incident_body'] = "
 		<p>
 			<h2>Relevant Logs:</h2>
 			{relevant_logs}
+			<h2>Recent Activities Chart</h2>
+			{recent_activity_chart}
 		</p>
 	</p>
 	<hr>

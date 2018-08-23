@@ -1,37 +1,29 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once('Table_base.php');
 
 /**
- * User Model 
- * ==========
+ * Authentication Model for the Authentication Library
+ * =========================================
  * @author Ryan Sandoval
+ * @package Authentication
  * @version 1.0
  *
- * User Table operations
+ * Allows for Database access for the authentication library.
+ * Fomrerly called 'user_model'
  */
-class User_model extends Table_base {
+class Auth_model extends My_model {
 
 	/** @var array Contains sort values */
 	protected $sort;
-	
+
 	/**
-	 * Custom Sort function for project model
+	 * Construcor for the Authentication User Model
+	 * Loads the necessary resources
 	 */
-	protected function apply_sort()
+	public function __construct()
 	{
-		 switch ($this->sort['sort_field'])
-		 {
-			 case 'log_num':
-				 $this->db
-				 ->join('action_log', '`action_log`.`user_id` = `users`.`user_id`', 'left')
-				 ->order_by('COUNT(`log_id`)', $this->sort['sort_dir'])
-				 ->group_by('`users`.`user_id`');
-				 break;
-			 default:
-				 parent::apply_sort();
-				 break;
-		 }
+		parent::__construct();
+		$this->load->database();
 	}
 
 	/*
@@ -158,5 +150,5 @@ class User_model extends Table_base {
 	}
 }
 
-/* End of file User_model.php */
-/* Location: ./application/models/Logging/User_model.php */
+/* End of file Auth_model.php */
+/* Location: ./application/models/Authentication/Auth_model.php */

@@ -26,7 +26,7 @@
             
             $.ajax({
                 method: 'GET',
-                url: $('#ajax-link').attr('data')+"/set_sort",
+                url: $('#ajax-link').attr('data')+"/set_sort/search",
                 data: data,
                 dataType: "json",
                 success: function (response) {

@@ -145,7 +145,8 @@ class Log_builder
 	 */
 	public function sys_action($action_name)
 	{
-		$this->CI->action_model->type($this->sys_type_id);
+		//Get Sys Action
+		$this->CI->action_model->lock_type($this->sys_type_id);
 		$sys_action = $this->CI->action_model->get_by_name($action_name);
 		if (!$sys_action) //No system action
 		{

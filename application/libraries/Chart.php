@@ -2,8 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Charting Library
- * ================
+ * Charting Library (Client)
+ * =========================
  * @author Ryan Sandoval
  * @package Chart
  * 

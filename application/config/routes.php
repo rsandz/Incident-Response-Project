@@ -153,6 +153,12 @@ $route['Manage/teams/(:any)'] = 'Manage/manage_teams/$1';
 $route['Manage/teams/add_users/(:any)'] = 'Manage/add_users/$1';
 $route['Manage/teams/remove_users/(:any)'] = 'Manage/remove_users/$1';
 
+$route['Manage/projects'] = 'Manage/manage_projects';
+$route['Manage/projects/(:any)'] = 'Manage/manage_projects/$1';
+
+$route['Manage/users'] = 'Manage/manage_users';
+$route['Manage/users/(:any)'] = 'Manage/manage_users/$1';
+
 $route['Modify/view_tables'] = 'Modify/index';
 $route['Modify/table/(:any)'] = 'Modify/modify_selection/$1'; //For table selection
 $route['Modify/table/(:any)/(:any)'] = 'Modify/modify_selection/$1/$2'; //For pagination

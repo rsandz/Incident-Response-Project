@@ -4,8 +4,11 @@ $(function() {
 	$('#selection-search').keyup(function() {
 		updateSelection($(this).val());
 	});
+
+	$('#select-display').change(updateDisplay)
 });
 
+//During Searching
 function updateSelection(keywords) 
 {
 	$('.selection-title').each(function()
@@ -22,3 +25,17 @@ function updateSelection(keywords)
 			}
 		);
 }
+
+
+//Change Display Format
+	function updateDisplay(){
+		console.log($(this).val());
+		if ($(this).val() == 'bars') {
+			$('.selection-item').removeClass('is-4');
+			$('.selection-item').addClass('is-12');
+		}
+		else {
+			$('.selection-item').addClass('is-4');
+			$('.selection-item').removeClass('is-12');
+		}
+	}

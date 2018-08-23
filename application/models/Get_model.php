@@ -75,8 +75,7 @@ class Get_model extends MY_Model {
 			->select('*, CONCAT(first_name, " ", last_name) as name')
 			->get('users')
 			->result();
-	}
-
+}
 	/**
 	 * Returns the teams that the user is in. If admin mode is TRUE,
 	 * will return all the teams/

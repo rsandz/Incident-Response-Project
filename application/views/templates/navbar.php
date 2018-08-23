@@ -61,6 +61,10 @@
 				</a>
 				<div class="navbar-dropdown sub-menu">
 					<?php echo anchor('Manage/teams', 'Teams', 'class="navbar-item"')?>
+					<?php echo anchor('Manage/projects', 'Projects', 'class="navbar-item"')?>
+					<?php if ($this->authentication->check_admin()):?>
+						<?php echo anchor('Manage/users', 'Users', 'class="navbar-item"')?>
+					<?php endif;?>
 				</div>				
 			</div>
 			<div class="navbar-item has-dropdown is-hoverable has-sub-menu">

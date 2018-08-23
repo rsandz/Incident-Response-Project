@@ -28,7 +28,6 @@ class Create extends MY_Controller
 		$this->load->library('form_validation');
 		$this->load->library('log_builder', null, 'lb');
 		$this->load->helper('form');
-		$this->load->model('get_model');
 		$this->load->model('Form_get_model');
 
 		$this->authentication->check_login(true);
@@ -67,7 +66,11 @@ class Create extends MY_Controller
 	 */
 	public function action_form($data)
 	{
-		$projects = $this->get_model->get_projects();
+		$this->load->model('Tables/action_model');
+		$this->load->model('Tables/project_model');
+		$this->load->model('Tables/action_type_model');
+
+		$projects = $this->project_model->get();
 		foreach ($projects as $project) {
 			$data['projects'][$project->project_id] = $project->project_name;
 		}
@@ -92,7 +95,13 @@ class Create extends MY_Controller
 				'is_global' => $this->input->post('is_global', true) == 1 ? 1 : 0,
 			);
 
-			$this->load->model('Tables/action_model');
+			//Validation
+			if (!$this->action_model->valid_insert_data($insert_data))
+			{
+				set_error('Action Already Exsists. Action Was not Added.');
+				redirect(current_url());
+			}
+
 			$this->action_model->make($insert_data);
 
 			//Create Log
@@ -107,10 +116,10 @@ class Create extends MY_Controller
 			redirect(current_url());
 		}
 
-		$data['types'] = $this->get_model->get_action_types();
+		$data['types'] = $this->action_type_model->get();
 		
 		$data['notifications'] = $this->notifications;
-		$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+		$data['errors'] = $this->errors;
 		$data['content'] = $this->load->view('create/action', $data, TRUE);
 
 		// Make the Form
@@ -126,6 +135,8 @@ class Create extends MY_Controller
 	 */
 	public function project_form($data)
 	{
+		$this->load->model('Tables/project_model');
+
 		//Form Validation Rules
 		$this->form_validation->set_rules('project_name', 'Project Name', 'trim|required');
 		$this->form_validation->set_rules('project_leader', 'Project Leader', 'trim');
@@ -140,7 +151,13 @@ class Create extends MY_Controller
 				'is_active' => 1
 			);
 
-			$this->load->model('Tables/project_model');
+			//Validation
+			if (!$this->project_model->valid_insert_data($insert_data))
+			{
+				set_error('Project Name already Exsist');
+				redirect(current_url());
+			}
+
 			$this->project_model->make($insert_data);
 			
 			//Create the log
@@ -155,7 +172,7 @@ class Create extends MY_Controller
 			redirect(current_url());
 		}
 		//Get Users for project leaders
-		$users = $this->get_model->get_users();
+		$users = $this->user_model->get();
 		$data['project_leaders'][''] = ''; //Need an empty option for select2 to display placeholder
 		foreach($users as $user)
 		{
@@ -163,7 +180,7 @@ class Create extends MY_Controller
 		}
 
 		//Get errors
-		$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+		$data['errors'] = $this->errors;
 		$data['notifications'] = $this->notifications;
 		$data['content'] = $this->load->view('create/project', $data, TRUE);
 
@@ -180,6 +197,8 @@ class Create extends MY_Controller
 	 */
 	public function user_form($data)
 	{
+		$this->load->model('Tables/user_model');
+
 		//Form Valiation
 		$this->form_validation->set_rules('first_name', 'First Name', 'trim|required');
 		$this->form_validation->set_rules('last_name', 'Last Name', 'trim|required');
@@ -197,10 +216,16 @@ class Create extends MY_Controller
 				'privileges' => 'user',
 			);
 
+			//Validate insert data
+			if (!$this->user_model->valid_insert_data($insert_data))
+			{
+				set_error('That Email has already been taken. User was not created.');
+				redirect(current_url());
+			}
+
 			$full_name = $insert_data['first_name'] . " " . $insert_data['last_name'];
 
 			//Put into Database
-			$this->load->model('Tables/user_model');
 			$this->user_model->make($insert_data);
 
 			//Create the log
@@ -215,7 +240,7 @@ class Create extends MY_Controller
 			redirect(current_url());
 		}
 			//Get errors
-			$data['errors'] = $this->load->view('templates/errors', $data, true);
+			$data['errors'] = $this->errors;
 			$data['notifications'] = $this->notifications;
 			$data['content'] = $this->load->view('create/user', $data, TRUE);
 
@@ -231,6 +256,7 @@ class Create extends MY_Controller
 	 */
 	public function team_form($data)
 	{
+		$this->load->model('Tables/team_model');
 
 		//Form Validation Rules
 		$this->form_validation->set_rules('team_name', 'Team Name', 'trim|required');
@@ -245,7 +271,14 @@ class Create extends MY_Controller
 				'team_leader' => $this->input->post('team_leader', true),
 			);
 
-			$this->load->model('Tables/team_model');
+			//Validation
+			if (!$this->team_model->valid_insert_data($insert_data))
+			{
+				set_error('Team Name already Exists');
+				redirect(current_url());
+			}
+
+			//Insert
 			$this->team_model->make($insert_data);
 
 			//Create the log
@@ -263,7 +296,7 @@ class Create extends MY_Controller
 			$data['team_leaders_select'] = $this->Form_get_model->team_leaders_select($this->authentication->check_admin());
 
 			//Get errors
-			$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+			$data['errors'] = $this->errors;
 			$data['notifications'] = $this->notifications;
 			$data['content'] = $this->load->view('create/team', $data, TRUE);
 
@@ -279,6 +312,8 @@ class Create extends MY_Controller
 	 */
 	public function action_type_form($data)
 	{
+		$this->load->model('Tables/action_type_model');
+
 		//Form Validation Rules
 		$this->form_validation->set_rules('action_type_name', 'Action Type Name', 'trim|required');
 		$this->form_validation->set_rules('action_type_desc', 'Action Description', 'trim');
@@ -292,7 +327,13 @@ class Create extends MY_Controller
 				'is_active' => $this->input->post('is_active') ? : 0
 			);
 
-			$this->load->model('Tables/action_type_model');
+			//Validation
+			if (!$this->action_type_model->valid_insert_data($insert_data))
+			{
+				set_error('Action Type Name is already taken.');
+				redirect(current_url());
+			}
+			
 			$this->action_type_model->make($insert_data);
 
 			//Create the log
@@ -307,7 +348,7 @@ class Create extends MY_Controller
 			redirect(current_url());
 		}
 		//Get errors
-		$data['errors'] = $this->load->view('templates/errors', $data, TRUE);
+		$data['errors'] = $this->errors;
 		$data['notifications'] = $this->notifications;
 		$data['content'] = $this->load->view('create/action_type', $data, TRUE);
 
@@ -322,3 +363,4 @@ class Create extends MY_Controller
 
 /* End of file Create.php */
 /* Location: ./application/controllers/Create.php */
+

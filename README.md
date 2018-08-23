@@ -33,6 +33,9 @@ This application uses the following libraries:
 **PHP**
 1. **Carbon** - Date and Time Library
 	- __Note:__ This library can only handle dates up to 2038 if PHP and the server is 32-bit.
+2. **PHPGraphLib** - Charting
+3. See composer.json in application folder for the rest.
+
 
 **CSS**
 Although you may make changes to the css file directly, we do not recommend doing so.

@@ -67,8 +67,9 @@ class Admin_model extends MY_Model {
 	{
 		$this->db
 			->join('users', 'users.user_id = admin_settings.user_id', 'left')
-			->select('users.phone_num, CONCAT(users.first_name, " ", users.last_name) AS name')
-			->where('notify_incident_sms', 1);
+			->select('`users.phone_num`, CONCAT(users.first_name, " ", users.last_name) AS `name`')
+			->where('notify_incident_sms', 1)
+			->where('(`phone_num` IS NOT NULL AND `phone_num` != "")');
 		return $this->db->get('admin_settings')->result();
 	}
 

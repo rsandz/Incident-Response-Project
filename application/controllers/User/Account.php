@@ -25,8 +25,8 @@ class Account extends MY_Controller {
 		parent::__construct();
 
 		//Load Resources
-		$this->load->model('get_model');
 		$this->load->model('Tables/user_model');
+		$this->load->model('Tables/team_model');
 		$this->load->library('form_validation');
 
 		$this->authentication->check_login();
@@ -42,7 +42,7 @@ class Account extends MY_Controller {
 	 */
 	public function index()
 	{
-		$data['user_teams'] = $this->get_model->get_user_teams($this->session->user_id, FALSE);
+		$data['user_teams'] = $this->team_model->get_user_teams($this->session->user_id, FALSE);
 		$data['title'] = 'Account';
 		
 		//Content
@@ -160,6 +160,7 @@ class Account extends MY_Controller {
 		{
 			//Create form
 			$data['current_settings'] = $this->admin_settings->get_current_settings($this->session->user_id);
+			$data['has_phone_num'] = $this->user_model->get_by_id($this->session->user_id)->phone_num !== NULL;
 			$data['notifications'] = $this->session->notifications;
 			$data['content'] = $this->load->view('user/settings/admin-settings', $data, TRUE);
 

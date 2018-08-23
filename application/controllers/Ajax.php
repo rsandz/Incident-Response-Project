@@ -1,4 +1,6 @@
 <?php
+
+use function GuzzleHttp\Promise\each;
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
@@ -226,17 +228,33 @@ class Ajax extends MY_Controller
 		echo json_encode($data1);
 	}
 
-	public function set_sort()
+	/**
+	 * Sets the sort values for a certain idenifier
+	 * @param string The form to set the search for
+	 */
+	public function set_sort($identifier = 'default')
 	{
 		$sort_field = $this->input->get('sort_field', TRUE);
 		$sort_dir = $this->input->get('sort_dir', TRUE);
+		//Specific routine for search sort
+		if ($identifier == 'search')
+		{
+			$this->load->helper('search');
+			set_search_sort($sort_field, $sort_dir);
 
-		$this->load->helper('search');
-		set_search_sort($sort_field, $sort_dir);
+			$data['msg'] = 'Search Sort Changed';
+			$data['new_sort_by'] = get_search_sort();
+			echo json_encode($data);
+		}
+		else
+		{
+			$this->load->helper('sort');
+			set_sort($identifier, $sort_field, $sort_dir);
 
-		$data['msg'] = 'Sort Changed';
-		$data['new_sort_by'] = get_search_sort();
-		echo json_encode($data);
+			$data['msg'] = "Sort for '{$identifier}' Changed";
+			$data['new_sort_by'] = get_sort($identifier);
+			echo json_encode($data);
+		}
 	}
 }
 

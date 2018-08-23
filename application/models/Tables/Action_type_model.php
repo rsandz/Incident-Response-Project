@@ -3,20 +3,61 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Action_type_model extends MY_Model {
 
+	/** @var boolean Whether Current user is admin or not */
+	protected $admin_mode;
+
 	public function __construct()
 	{
 		parent::__construct();
 
 		//Initialization
 		$this->sys_type_name = 'System';
+		$this->admin_mode = $this->authentication->check_admin();
 	}
+
+	/*
+	--------------------
+		Make Methods
+	--------------------
+	*/
 
 	/**
 	 * Create a new action type and then insert it based
 	 * on the insert array given.
+	 * @param boolean $validate Whether to validate before Inserting
 	 * @return integer The ID of the action type created
 	 */
-	public function make($insert_data)
+	public function make($insert_data, $validate = FALSE)
+	{
+		if ($validate && !$this->validate_insert_data($insert_data)) return FALSE;
+
+		$this->db->insert('action_types', $insert_data);
+
+		return $this->db->insert_id();
+	}
+
+	/**
+	 * Creates the System Action Type
+	 * @return void
+	 */
+	public function make_sys_type()
+	{
+		$insert_data = array(
+			'type_name' => $this->sys_type_name,
+			'is_active' => 0
+		);
+
+		return $this->db
+			->insert('action_types', $insert_data);
+	}
+
+	/**
+	 * Validates Action Type insert data
+	 * ACtion type mustnot already exist
+	 * @param $insert_data
+	 * @return boolean If valid (TRUE) or not (FALSE)
+	 */
+	public function valid_insert_data($insert_data)
 	{
 		//Check if action already exists
 		$check_array = array(
@@ -27,10 +68,44 @@ class Action_type_model extends MY_Model {
 		{
 			return FALSE;
 		}
+		return TRUE;
+	}
 
-		$this->db->insert('action_types', $insert_data);
+	/*
+	---------------------
+		Get Methods
+	---------------------
+	*/
 
-		return $this->db->insert_id();
+	/**
+	 * Gets all the action types that are active. If admin_mode is TRUE, 
+	 * will also get inactive action types
+	 * @param  boolean $admin_mode Gets inactive action types if TRUE
+	 * @return array              Array of result objects.
+	 */
+	public function get($type_ids = NULL, $admin_mode = NULL)
+	{
+		//Admin Check
+		if (!isset($admin_mode)) $admin_mode = $this->admin_mode;
+		if (!$admin_mode)
+		{
+			$this->db->where('is_active', 1);
+		}
+
+		//Filter
+		if (isset($type_ids))
+		{
+			if (is_array($type_ids))
+			{
+				$this->db->where_in($type_ids);
+			}
+			else
+			{
+				$this->db->where($type_ids);
+			}
+		}
+
+		return $this->db->get('action_types')->result();
 	}
 
 	/**
@@ -68,21 +143,6 @@ class Action_type_model extends MY_Model {
 		{
 			return FALSE;
 		}		
-	}
-
-	/**
-	 * Creates the System Action Type
-	 * @return void
-	 */
-	public function make_sys_type()
-	{
-		$insert_data = array(
-			'type_name' => $this->sys_type_name,
-			'is_active' => 0
-		);
-
-		return $this->db
-			->insert('action_types', $insert_data);
 	}
 
 	/**

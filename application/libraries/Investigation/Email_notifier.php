@@ -34,6 +34,7 @@ class Email_notifier extends Investigate_base
 
         //Load Library and Configs
 		$this->CI->load->library('Investigation/investigator');
+		$this->CI->load->library('Charting/chart_maker');
 		$this->CI->load->library('email');
 		$this->CI->load->config('email');
     }
@@ -68,8 +69,11 @@ class Email_notifier extends Investigate_base
         $this->CI->investigator->incident($this->incident_id);
 
 		$users_send_to = $this->CI->admin_settings->get_notify_incident_emails();
-		$incident_summary = $this->incident_info($this->incident_id);
 		$incident_title = $this->incident_title($this->incident_id);
+        
+        //Create Info to put in email
+        $incident_summary = $this->incident_info($this->incident_id);
+        $this->CI->investigator->servChart_recent_activity();
 
 		foreach ($users_send_to as $user)
 		{
@@ -86,7 +90,12 @@ class Email_notifier extends Investigate_base
 			$message = str_replace('{link}', site_url('Incidents/report/'.$this->incident_id), $message);
 			$message = str_replace('{summary}', $incident_summary, $message);
 			$message = str_replace('{title}', $incident_title, $message);
-			$message = str_replace('{relevant_logs}', $this->CI->investigator->relevant_logs(), $message);
+            $message = str_replace('{relevant_logs}', $this->CI->investigator->relevant_logs(), $message);
+            //Attach the Recent Activity Chart
+            $file_path = FCPATH.'generated_charts/recent_activity.jpg';
+            $cid = $this->CI->email->attach($file_path, 'inline');
+            $cid = $this->CI->email->attachment_cid($file_path);
+            $message = str_replace('{recent_activity_chart}', "<img src='cid:{$cid}' border='0'>", $message);
 
 			$this->CI->email->message($message);
 			
