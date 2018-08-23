@@ -19,7 +19,7 @@
 					<?php echo anchor('Incidents/report/select', 'View Reports', 'class="button is-light is-fullwidth"');?>
 				</div>
 				<div class="panel-block">
-					<?php echo anchor('Account/admin-settings', 'Your Incident Settings', 'class="button is-light is-fullwidth"');?>
+					<?php echo anchor('Account/admin-settings', 'Your Admin Settings', 'class="button is-light is-fullwidth"');?>
 				</div>
 			</nav>
 			<nav class="panel">

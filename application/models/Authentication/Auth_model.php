@@ -50,7 +50,6 @@ class Auth_model extends My_model {
 	 */
 	public function get($user_id = NULL)
 	{
-		$this->apply_sort();
 		if (isset($user_id))
 		{
 			if (is_array($user_id))
@@ -77,7 +76,6 @@ class Auth_model extends My_model {
 	 */
 	public function get_by_email($email)
 	{
-		$this->apply_sort();
 		$this->db->select('*, CONCAT(first_name, " ", last_name) as name');
 		return $this->db->where('email', $email)->get('users')->row();
 	}
@@ -89,7 +87,6 @@ class Auth_model extends My_model {
 	 */
 	public function get_by_name($name)
 	{
-		$this->apply_sort();
 		$this->db->select('*, CONCAT(first_name, " ", last_name) as name');
 		return $this->db->where('name', $name)->get('users')->row();
 	}

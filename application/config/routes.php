@@ -104,8 +104,8 @@ $route['Help/markups'] = 'Help/markups';
 /*
 	Password Recovery Routes
  */
-$route['recover'] = 'User/recover_password';
-$route['recover-form/(:any)/(:any)'] = 'User/recover_form/$1/$2';
+$route['recover'] = 'User/Login/recover_password';
+$route['recover-form/(:any)/(:any)'] = 'User/Login/recover_form/$1/$2';
 
 /*
 	Admin Routes
