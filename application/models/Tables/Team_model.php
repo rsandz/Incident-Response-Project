@@ -1,7 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+require_once('Table_base.php');
 
-class Team_model extends MY_Model {
+class Team_model extends Table_base {
 
 	/*
 	---------------------
@@ -55,6 +56,7 @@ class Team_model extends MY_Model {
 	 */
 	public function get_user_teams($user_id, $admin_mode = FALSE)
 	{
+		$this->apply_sort();
 		if (!$admin_mode)
 		{
 			//Get the teams that the user is in
@@ -90,6 +92,7 @@ class Team_model extends MY_Model {
 	 */
 	public function get_team_users($team_id)
 	{
+		$this->apply_sort();
 		if (is_array($team_id))
 		{
 			$user_ids = $this->db->where('team_id', $team_id)->get('user_teams');
@@ -125,6 +128,7 @@ class Team_model extends MY_Model {
 	 */
 	public function get_users_not_in_team($team_id)
 	{
+		$this->apply_sort();
 		$users_in_team = $this->get_team_users($team_id);
 		if (!empty($users_in_team))
 		{
@@ -191,6 +195,25 @@ class Team_model extends MY_Model {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Custom Sort function for Team Model
+	 */
+	public function apply_sort()
+	{
+		switch ($this->sort['sort_field'])
+		{
+			case 'log_num':
+				$this->db
+				->join('action_log', '`action_log`.`team_id` = `teams`.`team_id`', 'left')
+				->order_by('COUNT(`log_id`)', $this->sort['sort_dir'])
+				->group_by('team_id');
+				break;
+			default:
+				parent::apply_sort();
+				break;
+		}
 	}
 
 	/*

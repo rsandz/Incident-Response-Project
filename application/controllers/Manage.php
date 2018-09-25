@@ -49,44 +49,61 @@ class Manage extends MY_Controller {
 	 */
 	public function manage_teams($team_id = NULL)
 	{
+		$this->load->model("Tables/team_model");
+		$this->load->model("Stats/team_stats");
+		$data['title'] = 'Manage Teams';
+
 		if (!isset($team_id)) //Then we are selecting the team first
 		{
-			$data['title'] = 'Manage Teams';
+			//Select Team to manage
+			$selection['title'] = 'Select a Team to Manage';
+			$selection['empty_data_msg'] = $this->load->view('selection/empty_box_projects', NULL, TRUE);
 
-			//Get data for team selection
-			$data['teams'] = $this->get_model->get_user_teams(
-				$this->session->user_id, 
-				$this->authentication->check_admin()
+			//Sorting
+			$selection['sort_options'] = array(
+				'team_name' => 'Team Name',
+				'team_leader' => 'Team Leader',
+				'log_num' => 'Log Number'
 			);
-			if(!empty($data['teams']))
-			{
-				$data['team_modify_links'] = array_map(function($x)
-					{
-						return anchor("Manage/teams/{$x->team_id}", "Manage", 'class="button is-info"');
-					},
-					$data['teams']);
-			}
-			$data['content'] = $this->load->view('manage/manage_teams/teams-selection', $data, TRUE);
+			$selection['current_sort'] = get_sort('team', 'team_name');
+			$selection['sort_identifier'] = 'team';
 
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/navbar', $data);
-			$this->load->view('templates/content-wrapper', $data);
-			$this->load->view('templates/footer', $data);
+			$teams = $this->team_model
+				->sort(get_sort('team'))
+				->get_user_teams($this->session->user_id, $this->authentication->check_admin());
+
+			//Make selection Items
+			foreach ($teams as $team)
+			{
+				$selection_item['title'] = $team->team_name;
+				$selection_item['body'] = "
+				<ul>
+					<li>Team Leader: {$team->team_leader_name}</li>
+					<li>Team Description: {$team->team_desc}</li>
+					<li>Total Logs: {$this->team_stats->total_logs($team->team_id)} </li>
+				</ul>
+				";
+				$selection_item['link'] = site_url('Manage/teams/'.$team->team_id);
+				$selection_item['link_name'] = 'Manage';
+				$selection['selection_items'][] = $selection_item;
+			}
+			
+			$data['content'] = $this->load->view('selection/selection_main', $selection, TRUE);
+
 		}
 		else
 		{
 			//Display Team management
-			$data = $this->get_model->get_team_info($team_id);
+			$data += $this->get_model->get_team_info($team_id);
 
-			$data['title'] = 'Manage Teams';
 			$data['content'] = $this->load->view('manage/manage_teams/modify-team', $data, TRUE);
 			$data['notifications'] = $this->session->notifications;
-
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/navbar', $data);
-			$this->load->view('templates/content-wrapper', $data);
-			$this->load->view('templates/footer', $data);
 		}
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/navbar', $data);
+		$this->load->view('templates/content-wrapper', $data);
+		$this->load->view('templates/footer', $data);
 	}
 
 	public function add_users($team_id)
@@ -289,7 +306,7 @@ class Manage extends MY_Controller {
 			$last_log = $this->search_model->search_for_logs($data['stats']['last_log']->log_id);
 			$data['stats']['last_log'] = $this->table->my_generate($last_log);
 			$data['stats']['action_ranking'] = $this->table->my_generate($data['stats']['action_ranking']);
-			$data['content'] = $this->load->view('Manage/users/view', $data, TRUE);
+			$data['content'] = $this->load->view('manage/users/view', $data, TRUE);
 		}
 		else
 		{
